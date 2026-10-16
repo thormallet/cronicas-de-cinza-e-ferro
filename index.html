@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#170e09">
-<title>Crônicas de Cinza e Ferro — Edição Explorador v3.4.1</title>
+<title>Crônicas de Cinza e Ferro — Edição Explorador v3.5</title>
 <link rel="stylesheet" href="css/01_base.css">
 <link rel="stylesheet" href="css/02_layout.css">
 <link rel="stylesheet" href="css/03_abas_cronica.css">
@@ -88,13 +88,14 @@
 
 <!-- CARTÃO DE EVENTO NARRATIVO ANUAL -->
 <div id="event-popup-backdrop" class="custom-dialog-backdrop">
-  <div class="custom-dialog event-popup" role="dialog" aria-modal="true" aria-labelledby="ev-title">
+  <div id="event-popup" class="custom-dialog event-popup" role="dialog" aria-modal="true" aria-labelledby="ev-title">
     <div id="ev-art" class="dialog-art" aria-hidden="true">📜</div>
     <div class="ev-head">
       <h3 id="ev-title">Evento</h3>
       <span id="ev-year-badge" class="badge gold">Ano</span>
     </div>
     <p id="ev-desc"></p>
+    <div id="ev-qte-box"></div>
     <div id="ev-choices" class="choices-list"></div>
   </div>
 </div>
@@ -162,7 +163,7 @@
     <div class="brand-crest">👑</div>
     <div>
       <h1>Crônicas de Cinza e Ferro</h1>
-      <span class="royal-subtitle">🧭 Edição Explorador • v3.4.1 🧭</span>
+      <span class="royal-subtitle">🧭 Edição Explorador • v3.5 🧭</span>
     </div>
   </div>
   <button type="button" class="icon-btn" aria-label="Configurações" onclick="window.UI.openSheet('sheet-config')">⚙️</button>
@@ -547,6 +548,8 @@
       <div class="stat-pill span-2"><small>Ofício / Cargo Atual</small><strong id="st-job">-</strong></div>
       <div class="stat-pill"><small>Tesouro Pessoal</small><strong style="color:var(--gold)"><span id="st-gold">0</span> 🪙</strong></div>
       <div class="stat-pill"><small>Balanço / Dívida</small><strong><span id="st-income">0</span> / <span id="st-debt" style="color:var(--bad)">0</span></strong></div>
+      <div class="stat-pill"><small>Honra da Casa</small><strong><span id="st-sheet-honor">50</span>/100</strong></div>
+      <div class="stat-pill"><small>Reputação &amp; Fama</small><strong id="st-sheet-rep">0/10</strong></div>
     </div>
     <h4>⚜️ Aptidões Corporais &amp; Mentais</h4>
     <div id="st-attrs" class="attrs-list"></div>
@@ -569,7 +572,7 @@
       <input type="file" id="import-input" style="display:none" accept=".json" onchange="window.Storage.importSave(event)">
       <button type="button" onclick="window.UI.showScreen('screen-menu')">🏰 Menu</button>
     </div>
-    <p class="cfg-version">Crônicas de Cinza e Ferro — Edição Explorador<br>v3.4.1 · Viagens, Descobertas &amp; Carreiras Itinerantes</p>
+    <p class="cfg-version">Crônicas de Cinza e Ferro — Edição Explorador<br>v3.5 · Reações Rápidas, Honra &amp; Desonra</p>
   </div>
 </div>
 
@@ -587,6 +590,7 @@
 <script src="js/08_eventos_base_a.js"></script>
 <script src="js/09_eventos_base_b.js"></script>
 <script src="js/10_eventos_base_c.js"></script>
+<script src="js/10b_eventos_expansao_35.js"></script>
 <script src="js/11_eventos_temas_oficio.js"></script>
 <script src="js/12_eventos_contextos.js"></script>
 <script src="js/12b_eventos_explorador.js"></script>

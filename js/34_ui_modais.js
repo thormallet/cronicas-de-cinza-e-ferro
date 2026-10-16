@@ -2,6 +2,23 @@
    [UI · MODAIS E CARDS] — audiência com NPC, pop-up de evento e card de pessoa
    ============================================================================ */
 Object.assign(UI, {
+  qteIntervalId: null,
+
+  cancelQTETimer() {
+    if (this.qteIntervalId) {
+      clearInterval(this.qteIntervalId);
+      this.qteIntervalId = null;
+    }
+    const popup = document.getElementById("event-popup-backdrop");
+    if (popup) popup.classList.remove("qte-active");
+    const qteBox = document.getElementById("ev-qte-box");
+    if (qteBox) qteBox.innerHTML = "";
+
+    if (window.Engine && typeof window.Engine.cancelQTETimer === "function" && window.Engine.qteTimeoutId) {
+      window.Engine.cancelQTETimer();
+    }
+  },
+
   openNPCModal(npcId) {
     const npc = STATE.npcs.find(n => n.id === npcId);
     if (!npc || !npc.alive) return;
@@ -155,19 +172,23 @@ Object.assign(UI, {
   },
 
   renderEventModal() {
+    this.cancelQTETimer();
     const popup = document.getElementById("event-popup-backdrop");
     const btnNext = document.getElementById("btn-next-year");
+    const qteBox = document.getElementById("ev-qte-box");
 
     if (STATE && STATE.specialTrial) {
+      if (popup) popup.classList.remove("qte-active");
+      if (qteBox) qteBox.innerHTML = "";
       const tr = STATE.specialTrial;
       const st = tr.stages[tr.stageIdx];
       if (!st) {
         STATE.specialTrial = null;
-        popup.classList.remove("active");
+        if (popup) popup.classList.remove("active");
         if (btnNext) btnNext.disabled = false;
         return;
       }
-      popup.classList.add("active");
+      if (popup) popup.classList.add("active");
       if (btnNext) btnNext.disabled = true;
       this.setModalArt("ev-art", "\u2694\uFE0F");
       document.getElementById("ev-title").textContent = Engine.formatText(tr.title);
@@ -206,25 +227,79 @@ Object.assign(UI, {
     }
 
     if (!STATE || !STATE.activeEvent) {
-      popup.classList.remove("active");
+      if (popup) {
+        popup.classList.remove("active");
+        popup.classList.remove("qte-active");
+      }
+      if (qteBox) qteBox.innerHTML = "";
       if (btnNext) btnNext.disabled = false;
       return;
     }
+
     const ev = STATE.activeEvent;
-    popup.classList.add("active");
+    if (popup) popup.classList.add("active");
     if (btnNext) btnNext.disabled = true;
+
+    const isQTE = !!(ev && ev.isQTE);
+    const totalTime = ev.qteDuration || 4000;
+
+    if (isQTE) {
+      if (popup) popup.classList.add("qte-active");
+      let targetQteBox = qteBox;
+      if (!targetQteBox) {
+        targetQteBox = document.createElement("div");
+        targetQteBox.id = "ev-qte-box";
+        const choicesEl = document.getElementById("ev-choices");
+        if (choicesEl && choicesEl.parentNode) {
+          choicesEl.parentNode.insertBefore(targetQteBox, choicesEl);
+        }
+      }
+      if (targetQteBox) {
+        targetQteBox.innerHTML = `
+          <div class="qte-banner">⚡ REAÇÃO RÁPIDA — PERIGO IMINENTE ⚡</div>
+          <div class="qte-timer-container"><div id="qte-timer-progress" class="qte-timer-progress" style="width:100%"></div></div>
+          <div id="qte-timer-text" class="qte-countdown-text">Tempo de reação: ${(totalTime / 1000).toFixed(1)}s</div>
+        `;
+      }
+    } else {
+      if (popup) popup.classList.remove("qte-active");
+      if (qteBox) qteBox.innerHTML = "";
+    }
+
     const scopeLabel = ev.scope === "exclusivo" ? "Exclusivo" : (ev.scope === "compartilhado" ? "Compartilhado" : "Universal");
     const cityObj = Engine.getCityObj ? Engine.getCityObj(STATE.currentCityId, STATE.kingdom) : { name: "" };
-    this.setModalArt("ev-art", ev.icon || "\uD83D\uDCDC");
+    this.setModalArt("ev-art", ev.icon || (isQTE ? "⚡" : "\uD83D\uDCDC"));
     document.getElementById("ev-title").textContent = Engine.formatText(ev.title);
     document.getElementById("ev-year-badge").textContent = `${scopeLabel} • ${cityObj.name} • Ano ${STATE.year}`;
     document.getElementById("ev-desc").textContent = Engine.formatText(ev.desc);
+
+    const choiceClass = isQTE ? "choice-btn qte-choice" : "choice-btn";
+    const choiceIcon = isQTE ? "⚡" : "\u2694";
     document.getElementById("ev-choices").innerHTML = ev.choices.map((c, idx) => `
-      <button type="button" class="choice-btn" onclick="window.Engine.resolveEventChoice(${idx})">
-        <span>&#9876; ${Engine.formatText(c.label)}</span>
+      <button type="button" class="${choiceClass}" onclick="window.Engine.resolveEventChoice(${idx})">
+        <span>${choiceIcon} ${Engine.formatText(c.label)}</span>
         <span>&#10148;</span>
       </button>
     `).join("");
+
+    if (isQTE) {
+      const startTime = Date.now();
+      UI.qteIntervalId = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, totalTime - elapsed);
+        const pct = Math.max(0, (remaining / totalTime) * 100);
+        const pBar = document.getElementById("qte-timer-progress");
+        const tText = document.getElementById("qte-timer-text");
+        if (pBar) pBar.style.width = pct + "%";
+        if (tText) tText.textContent = `Tempo de reação: ${(remaining / 1000).toFixed(1)}s`;
+        if (remaining <= 0) {
+          UI.cancelQTETimer();
+          if (window.Engine && window.Engine.resolveQTETimeout) {
+            window.Engine.resolveQTETimeout();
+          }
+        }
+      }, 50);
+    }
   },
 
   renderPersonCard(n) {

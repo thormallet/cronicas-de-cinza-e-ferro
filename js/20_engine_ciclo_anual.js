@@ -170,6 +170,17 @@ Object.assign(Engine, {
         this.addLog("Endividado e sem moedas para o sustento, você passou privações.", "bad");
       }
 
+      if (STATE.debt > 0) {
+        if (STATE.debt > 40 || STATE.gold <= 0) {
+          STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
+          STATE.honor = Utils.clamp(STATE.honor - 4, 0, 100);
+          this.addLog("Cobradores e usurários denunciam seus calotes na praça da comarca (-1 Reputação, -4 Honra).", "bad");
+        } else if (Math.random() < 0.35) {
+          STATE.honor = Utils.clamp(STATE.honor - 2, 0, 100);
+          this.addLog("A má fama de devedor corrói sua palavra de honra (-2 Honra).", "bad");
+        }
+      }
+
       if (STATE.debt > 60 && STATE.gold <= 0 && Math.random() < 0.35) {
         const attrLoss = Math.random() < 0.5 ? "saude" : "carisma";
         if ((STATE.attrs[attrLoss] || 15) > 10) {
@@ -182,6 +193,19 @@ Object.assign(Engine, {
           this.addLog(`A penúria das dívidas sufocantes, o assédio dos cobradores e a humilhação degradaram seu estado (-1 ${attrLabel}).`, "bad");
         }
       }
+    }
+
+    if (STATE.age >= 20 && STATE.socialClass !== "nobre" && !this.hasActiveOccupation() && (!STATE.properties || STATE.properties.length === 0)) {
+      if (Math.random() < 0.35) {
+        STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
+        this.addLog("Viver como ocioso sem ofício ou terras mancha sua imagem perante a comunidade (-1 Reputação).", "bad");
+      }
+    }
+
+    STATE.flags = STATE.flags || [];
+    if (STATE.flags.includes("trapaceiro") && Math.random() < 0.35) {
+      STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
+      this.addLog("Os rumores de suas trapaças passadas continuam a persegui-lo (-1 Reputação).", "bad");
     }
 
     if (STATE.pregnancy) {

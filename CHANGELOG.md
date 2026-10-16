@@ -7,7 +7,8 @@ O formato baseia-se nas diretrizes do [Keep a Changelog](https://keepachangelog.
 ---
 
 ## Sumário
-- [3.4.1 — 2026-10-16](#341--2026-10-16) *(Destaque / Atual)*
+- [3.5.0 — Quick-Time Events, Moralidade & Dilemas Feudais](#350--2026-10-16) *(Destaque / Atual)*
+- [3.4.1 — 2026-10-16](#341--2026-10-16)
 - [3.4.0 — Edição Explorador, Viagens & Carreiras Itinerantes](#340--edição-explorador-viagens--carreiras-itinerantes)
 - [3.3.0 — Novo HUD Estilo BitLife & Design System](#330--novo-hud-estilo-bitlife--design-system)
 - [3.2.1 — Edição Explorador Refinada & Antroponímia Regional](#321--edição-explorador-refinada--antroponímia-regional)
@@ -18,6 +19,52 @@ O formato baseia-se nas diretrizes do [Keep a Changelog](https://keepachangelog.
 - [3.0.0 — O Grande Salto Modular & Retratos Procedurais](#300--o-grande-salto-modular--retratos-procedurais)
 - [2.0.0 — Reinos Históricos & Dinastias](#200--reinos-históricos--dinastias)
 - [1.0.0 — Fundação de Cinza e Ferro](#100--fundação-de-cinza-e-ferro)
+
+---
+
+## [3.5.0] — 2026-10-16
+### Quick-Time Events (QTEs), Moralidade & Dilemas Feudais
+
+> **Destaque:** Esta grande atualização traz eventos de tempo de reação imediata (QTEs com barra de contagem regressiva pulsante), uma nova leva de atividades medievais de risco, honra e devoção, o sistema orgânico de perda de Honra e Reputação negativa (com novos títulos de desonra, calotes públicos e ociosidade) e uma seleção enriquecida de dilemas morais medievais.
+
+#### 1. Quick-Time Events (QTEs) de Alta Adrenalina
+- **Eventos com Tempo Real de Resposta (4 segundos):**
+  - *Emboscada na Garganta do Lobo:* Reação veloz sob ataque furtivo nas estradas e gargantas.
+  - *Cavalo Desgovernado na Feira:* Domar a montaria enfurecida em meio aos feirantes e mercadores.
+  - *Lâmina Sob o Veludo:* Esquivar de um golpe de adaga traiçoeira em banquetes e vielas escuras.
+  - *Fogo nas Estrebarias:* Luta contra o tempo para conter as chamas e salvar animais e vigas.
+- **Barra de Contagem Regressiva e Alerta Pulsante:**
+  - Renderização visual em tempo real no modal de evento com contagem regressiva de alta precisão e animação de urgência rubro/âmbar.
+  - **Penalidade Severa por Hesitação:** Caso o tempo expire sem decisão do jogador, a inércia acarreta consequências desastrosas imediatas (**-6 Honra**, **-1 Reputação** e dano físico à Saúde por ferimentos ou queimaduras).
+
+#### 2. Nova Leva de Atividades Medievais (Risco, Honra e Moralidade)
+- **7 Novas Atividades Adicionadas ao Catálogo:**
+  - *Duelo Clandestino de Apostas:* Luta bruta em becos e arenas clandestinas com risco de espancamento e ganho em moedas.
+  - *Caça Furtiva nas Terras do Barão:* Desafio audacioso à autoridade senhorial; falhas acarretam multas pesadas de caça e humilhação.
+  - *Promover Festejo Desregrado:* Orgia e bebedeira regadas a vinho caro; eleva a popularidade local à custa da honra e dos cofres.
+  - *Penitência Pública e Cinzas:* Rito rigoroso de mortificação da carne na praça da igreja; restaura a Honra e a Fé perante o clero.
+  - *Patrocinar Grande Liça de Armas:* Alto investimento financeiro para celebrar um torneio de cavaleiros e alavancar a Reputação.
+  - *Doar Dízimo Vultoso à Catedral:* Oferenda de ouro ao alto clero em troca de redenção espiritual e prestígio eclesiástico.
+  - *Usar Dados Viciados na Taverna:* Trapaça audaciosa nos jogos de taberna para obter ouro fácil, com grave risco de estigma social.
+- **Consequências Profundas e Ramificações:**
+  - Desfechos de sucesso e fracasso com espancamento físico, multas feudais, escândalos e oscilações substanciais de renome social.
+
+#### 3. Sistema Orgânico de Perda de Honra e Reputação
+- **Patamares e Rótulos Autênticos de Reputação Negativa:**
+  - `Malvisto (-1 a -3):` O herói passa a ser visto com reservas e desconfiança pelos aldeões e comerciantes.
+  - `Desprezado (-4 a -7):` Rejeição aberta na comunidade, portas fechadas e desdém social.
+  - `Infame / Pária (-8 a -10):` Ostracismo total, considerado escória ou criminoso notório perante todo o feudo.
+- **Consequências Anuais de Calotes e Endividamento:**
+  - Protagonistas com dívidas não quitadas (`STATE.debt > 40`) sofrem cobrança e escárnio público anual (**-1 Reputação** e **-4 Honra** a cada passagem de ano).
+- **Ociosidade e Vadiagem:**
+  - Adultos aptos sem ofício formal ou terras sofrem declínio social contínuo perante a comunidade por vadiagem.
+- **Marca de Trapaceiro:**
+  - O flagrante de trapaça em jogos de azar impõe estigma social contínuo perante a comunidade.
+
+#### 4. Leva Expandida de Eventos Narrativos de Dilemas Morais
+- **Dilemas Éticos e Conflitos Feudais:**
+  - Novos eventos com disputas de herança fraterna, calúnias públicas difamatórias, dívidas de sangue feudais, hereges portando relíquias roubadas e motins civis.
+  - Escolhas de covardia, perjúrio ou corrupção acarretam rebaixamento severo e permanente de Honra e Reputação, testando a integridade moral do herói.
 
 ---
 

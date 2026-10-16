@@ -82,6 +82,9 @@ function buildEventsCatalog() {
   if (typeof buildExplorerExclusiveEvents === "function") {
     catalog.push(...buildExplorerExclusiveEvents(), ...buildExplorerSharedEvents());
   }
+  if (typeof buildEventsExpansao35 === "function") {
+    catalog.push(...buildEventsExpansao35());
+  }
   return (typeof adaptCatalogForExplorer === "function") ? adaptCatalogForExplorer(catalog) : catalog;
 }
 

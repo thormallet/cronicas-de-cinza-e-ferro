@@ -1,5 +1,5 @@
 /* ============================================================================
-   [UI · RENDERIZAÇÃO GERAL v3.4.1] — renderAll — redesenha HUD, painéis, abas e listas
+   [UI · RENDERIZAÇÃO GERAL v3.5] — renderAll — redesenha HUD, painéis, abas e listas
    ============================================================================ */
 Object.assign(UI, {
   renderAll() {
@@ -70,9 +70,62 @@ Object.assign(UI, {
     document.getElementById("st-gold").textContent = STATE.gold;
     document.getElementById("st-income").textContent = `${fin.net >= 0 ? "+" : ""}${fin.net}`;
     document.getElementById("st-debt").textContent = STATE.debt;
-    document.getElementById("st-rep").textContent = STATE.reputation;
     document.getElementById("st-honor").textContent = STATE.honor;
     document.getElementById("st-ap").textContent = `(${STATE.vigor}/${STATE.maxVigor})`;
+
+    let dishonorLabel = "";
+    if (STATE.reputation <= -8) dishonorLabel = "Infame / Pária";
+    else if (STATE.reputation <= -4) dishonorLabel = "Desprezado";
+    else if (STATE.reputation <= -1) dishonorLabel = "Malvisto";
+
+    const repEl = document.getElementById("st-rep");
+    const repBar = document.getElementById("st-rep-bar");
+    const repSbar = document.querySelector('.sbar[data-stat="rep"]');
+
+    if (STATE.reputation < 0) {
+      if (repEl) {
+        repEl.className = "aff-bad";
+        repEl.style.color = "#ef4444";
+        repEl.innerHTML = `${STATE.reputation} <span class="rep-dishonor-badge" style="color:#ef4444;font-size:0.72rem" title="${dishonorLabel}">(${dishonorLabel})</span>`;
+      }
+      if (repBar) {
+        repBar.className = "stat-fill rep aff-bad";
+        repBar.style.background = "linear-gradient(90deg, #8a0f0f, #e0392f)";
+      }
+      if (repSbar) {
+        repSbar.classList.add("crit");
+        repSbar.title = `Reputação: ${STATE.reputation}/10 — ${dishonorLabel}`;
+      }
+    } else {
+      if (repEl) {
+        repEl.className = "";
+        repEl.style.color = "";
+        repEl.textContent = STATE.reputation;
+      }
+      if (repBar) {
+        repBar.className = "stat-fill rep";
+        repBar.style.background = "";
+      }
+      if (repSbar) {
+        repSbar.title = `Reputação: ${STATE.reputation}/10`;
+      }
+    }
+
+    const sheetHonorEl = document.getElementById("st-sheet-honor");
+    if (sheetHonorEl) sheetHonorEl.textContent = STATE.honor;
+
+    const sheetRepEl = document.getElementById("st-sheet-rep");
+    if (sheetRepEl) {
+      if (STATE.reputation < 0) {
+        sheetRepEl.className = "aff-bad";
+        sheetRepEl.style.color = "#ef4444";
+        sheetRepEl.innerHTML = `${STATE.reputation}/10 <span class="badge bad" style="font-size:0.75rem">${dishonorLabel}</span>`;
+      } else {
+        sheetRepEl.className = "";
+        sheetRepEl.style.color = "";
+        sheetRepEl.textContent = `${STATE.reputation}/10`;
+      }
+    }
 
     STATE.maxHp = Math.max(10, Engine.getEffectiveAttr("saude"));
     document.getElementById("st-hp-val").textContent = `${STATE.hp}/${STATE.maxHp}`;
@@ -83,7 +136,6 @@ Object.assign(UI, {
 
     const honorBar = document.getElementById("st-honor-bar");
     if (honorBar) honorBar.style.width = `${Utils.clamp(STATE.honor, 0, 100)}%`;
-    const repBar = document.getElementById("st-rep-bar");
     if (repBar) repBar.style.width = `${Utils.clamp((STATE.reputation + 10) * 5, 0, 100)}%`;
 
     document.getElementById("st-attrs").innerHTML = DATA.attributes.map(a => {

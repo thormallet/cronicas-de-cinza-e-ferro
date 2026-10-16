@@ -112,6 +112,56 @@ Object.assign(Engine, {
         if (!STATE.flags.includes("conspirador")) STATE.flags.push("conspirador");
         popMsg = `Sua articulação secreta derrubou rivais e rendeu influência e ouro (+50 🪙, +2 Reputação)!`;
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
+      } else if (act.id === "duelo_clandestino") {
+        sfx = "sword";
+        const goldGain = Utils.rand(35, 70);
+        STATE.reputation = Utils.clamp(STATE.reputation + 1, -10, 10);
+        STATE.gold += goldGain;
+        STATE.attrs.forca = Math.min(100, (STATE.attrs.forca || 20) + 2);
+        popMsg = `Vitória implacável no ringue clandestino (+1 Reputação, +${goldGain} Ouro, +2 Força)!`;
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
+      } else if (act.id === "caca_furtiva") {
+        sfx = "sword";
+        const goldGain = Utils.rand(20, 42);
+        STATE.gold += goldGain;
+        STATE.attrs.destreza = Math.min(100, (STATE.attrs.destreza || 20) + 2);
+        popMsg = `Caçada furtiva bem-sucedida nos bosques senhoriais (+${goldGain} Ouro, +2 Destreza)!`;
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
+      } else if (act.id === "festejo_desregrado") {
+        sfx = "love";
+        STATE.attrs.carisma = Math.min(100, (STATE.attrs.carisma || 20) + 3);
+        STATE.attrs.beleza = Math.min(100, (STATE.attrs.beleza || 20) + 2);
+        STATE.vigor = Math.min(STATE.maxVigor, STATE.vigor + 10);
+        popMsg = `A noitada desregrada renovou o ânimo (+3 Carisma, +2 Beleza, +10 Vigor)!`;
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
+      } else if (act.id === "penitencia_flagelo") {
+        sfx = "bells";
+        STATE.honor = Utils.clamp(STATE.honor + 15, 0, 100);
+        STATE.attrs.fe = Math.min(100, (STATE.attrs.fe || 20) + 4);
+        STATE.hp = Math.max(5, STATE.hp - 6);
+        popMsg = `Sua penitência severa e o cilício expiaram suas faltas (+15 Honra, +4 Fé, -6 Saúde)!`;
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
+      } else if (act.id === "patrocinar_torneio") {
+        sfx = "bells";
+        STATE.honor = Utils.clamp(STATE.honor + 18, 0, 100);
+        STATE.reputation = Utils.clamp(STATE.reputation + 2, -10, 10);
+        STATE.attrs.carisma = Math.min(100, (STATE.attrs.carisma || 20) + 4);
+        popMsg = `O grande torneio patrocinado por você consagrou seu renome (+18 Honra, +2 Reputação, +4 Carisma)!`;
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
+      } else if (act.id === "doar_dizimo_extraordinario") {
+        sfx = "bells";
+        STATE.honor = Utils.clamp(STATE.honor + 12, 0, 100);
+        STATE.reputation = Utils.clamp(STATE.reputation + 1, -10, 10);
+        STATE.attrs.fe = Math.min(100, (STATE.attrs.fe || 20) + 3);
+        popMsg = `Sua doação generosa às obras da Sé foi abençoada pelo clero (+12 Honra, +1 Reputação, +3 Fé)!`;
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
+      } else if (act.id === "jogos_dados_viciados") {
+        sfx = "coin";
+        const goldGain = Utils.rand(50, 95);
+        STATE.gold += goldGain;
+        STATE.attrs.destreza = Math.min(100, (STATE.attrs.destreza || 20) + 2);
+        popMsg = `Com dados raspados e destreza furtiva, você limpou as bolsas da mesa (+${goldGain} Ouro, +2 Destreza)!`;
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
       } else {
         if (["treinar_armas","treinar_arco","disputar_torneio","desafiar_duelo","marchar_guerra","liderar_cerco","cacar_lobos","cacar_floresta"].includes(act.id)) {
           sfx = "sword";
@@ -165,8 +215,6 @@ Object.assign(Engine, {
       }
     } else {
       sfx = "fail";
-      const dmg = STATE.age < 12 ? 2 : 6;
-      STATE.hp = Math.max(STATE.age < 12 ? 5 : 0, STATE.hp - dmg);
       let penaltyMsg = "";
 
       const martialActs = ["treinar_armas","treinar_arco","disputar_torneio","desafiar_duelo","marchar_guerra","liderar_cerco","cacar_lobos","cacar_floresta"];
@@ -189,12 +237,46 @@ Object.assign(Engine, {
         penaltyMsg = " (-1 Fé por crise de espírito)";
       }
 
-      if (["furtar_bolsas","assaltar_estrada","saquear_navio"].includes(act.id)) {
+      if (act.id === "duelo_clandestino") {
         STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
         STATE.honor = Utils.clamp(STATE.honor - 5, 0, 100);
-        popMsg = `Os guardas deram o alarme e você escapou ferido pelos becos (-1 Rep, -5 Honra, -${dmg} Saúde, -${vigorCost} Vigor)${penaltyMsg}!`;
+        STATE.hp = Math.max(1, STATE.hp - 16);
+        popMsg = "Derrotado e vaiado na arena clandestina: -1 Reputação, -5 Honra, -16 HP.";
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "bad");
+      } else if (act.id === "caca_furtiva") {
+        STATE.reputation = Utils.clamp(STATE.reputation - 2, -10, 10);
+        STATE.honor = Utils.clamp(STATE.honor - 8, 0, 100);
+        STATE.hp = Math.max(5, STATE.hp - 12);
+        STATE.gold = Math.max(0, STATE.gold - 20);
+        popMsg = "Pego em flagrante nos bosques senhoriais: açoitado e multado (-2 Rep, -8 Honra, -12 HP, -20 🪙)!";
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "bad");
+      } else if (act.id === "festejo_desregrado") {
+        STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
+        STATE.honor = Utils.clamp(STATE.honor - 6, 0, 100);
+        popMsg = "A festa virou pancadaria pública e queixas de vizinhos (-1 Reputação, -6 Honra).";
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "bad");
+      } else if (act.id === "jogos_dados_viciados") {
+        STATE.reputation = Utils.clamp(STATE.reputation - 2, -10, 10);
+        STATE.honor = Utils.clamp(STATE.honor - 12, 0, 100);
+        STATE.hp = Math.max(1, STATE.hp - 20);
+        STATE.flags = STATE.flags || [];
+        if (!STATE.flags.includes("trapaceiro")) STATE.flags.push("trapaceiro");
+        popMsg = "Desmascarado com dados viciados! Espancado pelos fregueses e marcado como trapaceiro (-2 Rep, -12 Honra, -20 HP)!";
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "bad");
+      } else if (act.id === "patrocinar_torneio") {
+        STATE.honor = Utils.clamp(STATE.honor + 4, 0, 100);
+        popMsg = "Briga entre cavaleiros mancha a justa: gasto de ouro rendeu pouco renome (+4 Honra).";
+        this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "bad");
+      } else if (["furtar_bolsas","assaltar_estrada","saquear_navio"].includes(act.id)) {
+        const dmg = STATE.age < 12 ? 2 : 6;
+        STATE.hp = Math.max(STATE.age < 12 ? 5 : 0, STATE.hp - dmg);
+        STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
+        STATE.honor = Utils.clamp(STATE.honor - 6, 0, 100);
+        popMsg = `Os guardas deram o alarme e você escapou ferido pelos becos (-1 Rep, -6 Honra, -${dmg} Saúde, -${vigorCost} Vigor)${penaltyMsg}!`;
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "bad");
       } else {
+        const dmg = STATE.age < 12 ? 2 : 6;
+        STATE.hp = Math.max(STATE.age < 12 ? 5 : 0, STATE.hp - dmg);
         popMsg = `O esforço exaustivo malogrou e cobrou pedágio do seu corpo (-${dmg} Saúde${vigorCost ? `, -${vigorCost} Vigor` : ""})${penaltyMsg}.`;
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "bad");
       }

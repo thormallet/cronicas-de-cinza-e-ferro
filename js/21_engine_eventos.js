@@ -2,6 +2,29 @@
    [ENGINE · EVENTOS NARRATIVOS] — sorteio e resolução dos eventos anuais
    ============================================================================ */
 Object.assign(Engine, {
+  qteTimeoutId: null,
+
+  cancelQTETimer() {
+    if (this.qteTimeoutId) {
+      clearTimeout(this.qteTimeoutId);
+      this.qteTimeoutId = null;
+    }
+  },
+
+  resolveQTETimeout() {
+    this.cancelQTETimer();
+    SoundFX.play("fail");
+    STATE.honor = Utils.clamp(STATE.honor - 6, 0, 100);
+    STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
+    const dmg = STATE.age < 12 ? 6 : 18;
+    STATE.hp = Math.max(1, STATE.hp - dmg);
+    this.addLog(`⚡ [Reação Lenta] Você hesitou diante do perigo iminente! O pânico paralisou seus reflexos (-6 Honra, -1 Reputação, -${dmg} Saúde).`, "bad");
+    UI.notify("⚡ Tempo Esgotado!", "A hesitação custou caro: você foi atingido e perdeu Honra e Reputação!", "fail");
+    STATE.activeEvent = null;
+    Storage.saveToSlot(CONFIG.activeSlot);
+    UI.renderAll();
+  },
+
   triggerYearlyEvent() {
     const phase = this.getPhase();
     const activeJobId = STATE.guildTraining ? STATE.guildTraining.jobId : STATE.job;
@@ -57,6 +80,8 @@ Object.assign(Engine, {
   },
 
   resolveEventChoice(choiceIdx) {
+    this.cancelQTETimer();
+    if (UI.cancelQTETimer) UI.cancelQTETimer();
     const ev = STATE.activeEvent;
     if (!ev) return;
     const ch = ev.choices[choiceIdx];
