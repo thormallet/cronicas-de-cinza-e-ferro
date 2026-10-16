@@ -1,0 +1,110 @@
+/* CRÔNICA: FEED EM LINHA DO TEMPO VERTICAL (ANO → ENTRADAS) E CARTÕES DE AÇÃO */
+.log-box {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.7rem 0.8rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,245,215,0.22), transparent 60%),
+    var(--bg);
+}
+.log-year {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--border-gold);
+  margin-left: 0.35rem;
+  animation: fadeSlideUp 0.22s ease;
+}
+.log-year-head {
+  position: sticky;
+  top: 0.1rem;
+  z-index: 1;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: -1.5rem;
+  padding: 0.22rem 0.85rem 0.22rem 0.7rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+  color: #ffefc7;
+  border: 1.5px solid var(--gold-bright);
+  font-size: 0.78rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px var(--shadow);
+}
+.log-year-head .log-dot { opacity: 0.6; }
+.log-entry {
+  padding: 0.6rem 0.8rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border-gold);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  animation: fadeSlideUp 0.22s ease;
+}
+.log-entry.year-header {
+  background: transparent;
+  border: none;
+  border-left: 3px solid var(--gold-bright);
+  border-radius: 0;
+  box-shadow: none;
+  font-style: italic;
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  padding: 0.1rem 0.6rem;
+}
+.log-entry.good { color: var(--good); border-left-color: var(--good); background: rgba(40, 89, 34, 0.12); }
+.log-entry.bad { color: var(--bad); border-left-color: var(--bad); background: rgba(143, 29, 29, 0.1); }
+.log-entry.epoch { color: var(--gold); font-weight: bold; border-left-color: var(--gold-bright); background: rgba(201, 156, 51, 0.16); }
+[data-theme="dark"] .log-entry.year-header { color: var(--text-muted); }
+
+/* CARTÕES DE AÇÃO (ATIVIDADES, DESEMPENHO DE OFÍCIO, DECRETOS DO FEUDO) */
+.actions-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.action-btn {
+  display: flex; align-items: center; gap: 0.8rem; text-align: left;
+  width: 100%; min-height: 64px; padding: 0.7rem 0.85rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-gold);
+  border-left: 5px solid var(--gold-bright);
+  background: var(--panel);
+  color: var(--text);
+  text-shadow: none;
+  box-shadow: 0 2px 6px var(--shadow);
+  font-size: 0.95rem;
+}
+.action-btn > div { flex: 1; min-width: 0; }
+.action-btn br { display: none; }
+.action-btn small { display: block; margin-top: 0.15rem; font-size: 0.78rem; opacity: 0.85; }
+.action-btn:hover:not(:disabled) {
+  background: var(--panel-inner);
+  color: var(--text);
+  border-color: var(--gold-bright);
+  transform: none;
+  box-shadow: 0 3px 10px var(--shadow);
+}
+.action-btn.primary {
+  background: linear-gradient(135deg, #8f191f 0%, #5c0e13 60%, #38112e 100%);
+  color: #ffefc7;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+.action-btn.primary:hover:not(:disabled) { filter: brightness(1.15); animation: none; color: #fff; }
+.action-btn:active:not(:disabled) { transform: scale(0.985); }
+.act-icon {
+  font-size: 1.8rem; line-height: 1; min-width: 38px; text-align: center;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+  transition: transform 0.2s ease;
+}
+.action-btn:hover:not(:disabled) .act-icon { transform: scale(1.12) rotate(-5deg); }

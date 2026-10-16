@@ -1,0 +1,234 @@
+======================================================================
+Crônicas de Cinza e Ferro — Versão 3.4.1 (Patch de Balanceamento & Refinamento de UI)
+======================================================================
+
+COMO EXECUTAR:
+- Abra index.html em qualquer navegador moderno (Chrome, Edge, Firefox, etc.).
+- Não requer instalação, servidor local ou dependências externas (100% vanilla JS/HTML/CSS).
+
+ESTRUTURA MODULAR:
+- css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
+- js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
+  A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+PRINCIPAIS MELHORIAS E CORREÇÕES NA VERSÃO 3.1.1:
+1. Modal de Provação Especial:
+   - Corrigido ReferenceError onde a variável de evento 'ev' era acessada antes da declaração.
+   - Fluxo de provação especial completamente isolado com retorno limpo.
+
+2. Placeholders de Eventos:
+   - Títulos, descrições, badges e botões de escolha agora passam por Engine.formatText(...),
+     eliminando tags brutas como {city}, {fisco}, {lord}, {heir}, etc.
+
+3. Diálogo de Viagem (🧭 Explorador):
+   - Corrigidos identificadores de DOM (dialog-backdrop e remoção de dialog-icon inexistente),
+     garantindo abertura suave da janela de confirmação de viagem entre comarcas.
+
+4. Ciclo Anual e Mortalidade:
+   - A morte do personagem interrompe imediatamente o ciclo anual, evitando avanço de idade
+     pós-morte e autosave indevido de estado falecido.
+
+5. Remoção Completa de Ofícios Residuais (Rei e Barão):
+   - Excluídos os ofícios obsoletos "rei" e "barao" de DATA.jobs, temas de ofício, filtros marciais,
+     testes de impostos e sucessão feudal, agora 100% integrados à nobreza dinâmica de 5 tiers.
+   - Removidos painel monárquico e métodos residuais em favor do sistema de títulos e cortes.
+
+6. Motor de Retratos e Resolução de Erros de Execução:
+   - Restaurado o helper de correspondência de ocupação `matchJob` em js/02_retrato_render.js,
+     eliminando ReferenceError que bloqueava a renderização de retratos no menu e criador.
+
+7. Persistência e Salvamento:
+   - Adicionado autosave em ações com impacto patrimonial (empréstimos, quitação de dívidas e atividades).
+   - Flag de óbito agora sincroniza STATE.alive = false e STATE.isDead = true.
+
+8. Concordância Narrativa e Polimento:
+   - Ajustada narrativa de parto e herdeiros para personagens femininas ("você deu à luz")
+     e bastardos ("fruto de um romance furtivo").
+   - Correção tipográfica em títulos e referências eclesiásticas ("Paróquias").
+======================================================================
+
+PRINCIPAIS MELHORIAS E CORREÇÕES NA VERSÃO 3.1.2:
+1. Soberano Único por Reino:
+   - Garantido que exista apenas UM Soberano vivo por reino na Alta Corte, impedindo a geração
+     duplicada de monarcas e mantendo a hierarquia feudal consistente.
+
+2. Formatação Completa do Log de Eventos:
+   - Títulos de eventos agora passam por Engine.formatText(...) antes do registro no log anual,
+     garantindo a interpolação correta de {city}, {kingdom} e demais placeholders contextuais.
+
+3. Títulos Culturais Dinâmicos nos Botões Feudais:
+   - As ações administrativas do feudo agora exibem dinamicamente os títulos culturais
+     de cada grau (Grau 2 a 5) conforme o reino atual do personagem.
+
+4. Otimização de Ordens Senhoriais e Integridade de Estado:
+   - Ações feudais disparadas via ofício remoto (fromOrder = true) durante o avanço anual
+     não disparam saves ou re-renderizações intermediárias desnecessárias.
+   - Estado de vida sincronizado (alive / isDead) na criação e sucessão de personagens.
+======================================================================
+PRINCIPAIS NOVIDADES NA VERSÃO 3.2 (EDIÇÃO EXPLORADOR COMPLETA):
+1. Restrição Geográfica de Ofícios (Vila, Cidade e Capital):
+   - Mapeamento completo através de `jobLocalityRules`: ofícios rurais/manuais residem em Vilas;
+     ofícios artesanais e mercantis em Cidades e Capitais; cargos de Estado, Corte e Chancelaria restritos à Capital.
+   - Listagens de ofícios e guildas exibem badges informando a localização permitida e a natureza do ofício (🏠 Fixo vs 🧭 Itinerante).
+
+2. Perda Condicional de Ofício ao Viajar:
+   - Mudar-se para um assentamento incompatível encerra o vínculo profissional e os aprendizados de guilda.
+   - Colegas de ofício da comarca anterior são dispensados ao mudar de localidade ou de reino.
+
+3. Sistema Completo de Migração Entre Reinos:
+   - Viagens transfronteiriças liberadas a partir dos 15 anos através de `travelToKingdom` e modal dedicado.
+   - Apenas ofícios com portabilidade internacional (Explorador, Mercador, Mercenário, Corsário, Bardo) retêm a carreira com leve penalidade de desempenho; títulos de nobreza estrangeiros convertem-se ao 1º grau local com reorganização da Corte.
+
+4. Soberano Único na Alta Corte:
+   - Garantido que haja sempre exatamente um Soberano vivo por Coroa (`isSovereign = true`), eliminando geração duplicada de reis ou rainhas regentes.
+
+5. Custos Escalonados de Viagem e Bônus de Destriero:
+   - Custos de Vigor e Ouro calculados dinamicamente pela distância e hierarquia dos assentamentos (Vila ↔ Vila mais barato, Capital mais custosa).
+   - Posse de `cavalo_guerra` reduz o consumo de vigor (-4⚡) e concede 20% de desconto em ouro nas viagens.
+
+6. Especialização Econômica Regional:
+   - `calcAnnualFinances()` com bônus setoriais: +15% de renda para ofícios rurais e -20% de custo de vida em Vilas;
+     +15% para manufaturas e comércio em Cidades; +15% para cargos de Corte/Estado e +25% de custo de vida na Capital.
+======================================================================
+PRINCIPAIS NOVIDADES NA VERSÃO 3.2.1 (EDIÇÃO EXPLORADOR REFINADA):
+1. Antroponímia Regional e Cultural por Reino:
+   - Criação de `DATA.culturalNames` com conjuntos específicos de prenomes e patronímicos para Oriente, Oriente Médio,
+     Norte/Leste Eslavo, Mediterrâneo e Ocidente Feudal.
+   - O Criador de Personagens e `Utils.genNPC()` agora respeitam automaticamente a cultura do reino de origem.
+
+2. Modularização Enxuta da Engine:
+   - Criação de `05c_dados_cultura_oficios.js` e divisão de `27b_engine_explorador.js` com extração de `27c_engine_viagens.js`,
+     mantendo todos os arquivos abaixo do limite de 200–250 linhas para manutenção ágil.
+
+3. Vínculo Geográfico e Localização de Habitantes:
+   - Cônjuge e filhos menores acompanham o jogador nas mudanças de comarca e emigrações entre reinos.
+   - Demais NPCs permanecem vinculados às suas localidades natais.
+   - Audiências presenciais são bloqueadas caso o NPC resida em outra comarca (com exibição de badge `📍 Em [Cidade]`).
+   - Sabotagens de rivais restritas à mesma comarca/reino.
+
+4. Ações Dedicadas e Provação Tática de Expedição:
+   - Grupo dedicado `explorerIds` (Explorador, Caçador, Pescador) com ações corporativas próprias.
+   - Nova Provação Especial interativa em 3 etapas: `expedition` ("Fronteiras do Desconhecido").
+
+5. Economia Imobiliária, Renda e Liquidação:
+   - Implementada a venda de propriedades (`Engine.sellProperty`) com liquidação de escrituras a 75% do valor.
+   - Rastreamento de procedência com `STATE.propertyMeta` e dedução de -35% em propriedades mantidas em reinos estrangeiros.
+   - Renda de patentes nobiliárquicas escalonada pela prosperidade do feudo.
+
+6. Eventos de Época Geográficos e Crise Feudal:
+   - Peste bubônica diferenciada entre vilas e capitais/cidades adensadas; impacto da defesa do feudo em invasões de guerra;
+     resoluções dedicadas para Cruzadas Santas e Torneios Reais.
+   - Verificação anual de crise e motim no feudo sob descontentamento severo de servos ou vassalos.
+
+7. Sucessão e Consistência da Alta Corte:
+   - Herdeiros preservam sua cidade natal e residência original na transição dinástica.
+   - Alta Corte assegura incondicionalmente a presença de um Soberano vivo antes do teto de membros.
+======================================================================
+======================================================================
+VERSÃO 3.3 — NOVO HUD ESTILO BITLIFE:
+1. HUD Compacto Superior:
+   - Exibição condensada e legível de ano, idade, assentamento/reino, ocupação e tesouro.
+   - Retrato do herói com clique para abertura rápida da ficha do personagem.
+
+2. Crônica Anual e Feed Contínuo:
+   - Folheador e registro anual formatado com agrupamentos visuais elegantes (.log-year-head).
+   - Suporte a formatação com destaque em negrito e escape rigoroso de HTML.
+
+3. Barras de Status e Dock:
+   - Medidores de Saúde, Vigor, Honra e Reputação totalmente visíveis e sem sobreposição em mobile (360px/390px).
+
+4. Selo Central "Avançar Ano":
+   - Selo heráldico (.seal-btn) integrado ao dock sem cobrir barras de status ou botões da navbar.
+
+5. Navbar de 5 Ícones:
+   - Acesso ágil com tooltips descritivos aos painéis: Ofícios, Relações, Atividades, Bens e Crônica.
+   - Botões com altura >= 44px e feedback interativo.
+
+6. Painéis Deslizantes (Sheets):
+   - Painéis bottom-sheet no mobile e docados à direita no desktop, com transições fluidas e backdrop.
+
+7. Atividades em Cartões:
+   - Listagem em cards acessíveis, com categorização limpa e verificação imediata de requisitos de vigor/ouro.
+
+8. Ficha do Herói e Configurações:
+   - Modal central de configurações (alternância de som, digitação e temas claro/escuro).
+   - Ficha com atributos e linhagem com navegação simplificada.
+
+9. Layout Desktop em 3 Colunas (>= 1200px):
+   - Shell centralizado em 1360px com Coluna Esquerda (Ficha fixa de 300px), Centro (Crônica, Barras e Dock) e Coluna Direita (Painel ativo docado de 440px).
+   - Telas de menu, criação e morte refinadas com grid de 2 colunas e largura máxima de 920px.
+
+ARQUIVOS NOVOS:
+- css/05_hud_bitlife.css
+- css/06_sheets.css
+- css/07_desktop.css
+- js/35b_ui_hud.js
+
+NOTA:
+Engine, dados e regras do jogo NÃO foram alterados na 3.3.
+======================================================================
+======================================================================
+VERSÃO 3.4 — EDIÇÃO EXPLORADOR, VIAGENS & CARREIRAS ITINERANTES:
+1. Maioridade Plena para Viagens (16+ anos):
+   - Bloqueadas todas as viagens entre comarcas e emigrações entre reinos para personagens menores de 16 anos.
+   - Botões no HUD e na Ficha de Personagem exibem "🔒 16+ anos" com bloqueio de clique durante a infância/juventude.
+   - Ao atingir 16 anos, um marco na Crônica Anual anuncia a conquista da autonomia para viajar e desbravar o mundo.
+
+2. Rebalanceamento Estrutural dos Custos de Viagem:
+   - Custos base significativamente elevados para representar um gasto de peso na economia do jogador.
+   - Escalonamento estamental: plebeus viajam com comitiva modesta (1.0x), classe média com padrão intermediário (1.35x) e nobreza com escolta aparatosa e comitiva de carruagens (1.75x–1.85x).
+   - Cobrança adicional proporcional para cada dependente vivo (cônjuge e filhos menores de 16 anos) que acompanha o protagonista.
+   - Descontos mantidos e integrados para montarias de guerra (Destriero) e bônus específicos das carreiras itinerantes.
+
+3. Modos de Viagem Estratégicos:
+   - "Marcha Econômica": a pé ou em carroça comum (+25% Vigor, -25% Ouro, maior probabilidade de encontros/perigos na rota).
+   - "Caravana Regular": comboio mercante tradicional em estradas e estalagens (custo e segurança equilibrados).
+   - "Escolta Armorial": guardas armados e montarias velozes (-20% Vigor, +50% Ouro, menor risco e +3 Honra ao chegar).
+
+4. Diário de Exploração e Bônus de Descoberta:
+   - Rastreamento dinâmico de todas as comarcas visitadas (até 50) e reinos conhecidos (até 10).
+   - Visitar uma comarca ou reino pela primeira vez concede bônus imediato em Ouro, Intelecto, Reputação e Honra.
+   - Indicador visual "✨ Inédita (+Bônus)" no mapa de viagens e sumário de progresso na aba "Anais & Linhagem".
+
+5. Especialidades Regionais e Oportunidades Locais:
+   - Cada um dos 10 Reinos possui uma especialidade única acessível diretamente no modal de viagens (ex.: Feira da Seda em Tianxia, Forjas Tamahagane em Yamato, Banco de Câmbio na Sereníssima, Lã Real em Álbion, Aço Damasceno em Al-Zahra).
+   - Possibilidade de investir Vigor e Ouro para lucrar, aprimorar atributos vitais e alavancar o desempenho profissional.
+
+6. Encontros Interativos de Estrada e Mar:
+   - Viagens contam com chances de disparar eventos dinâmicos na travessia (pontes com pedágio forçado, caravanas atoladas na neblina, marcos ancestrais esquecidos e tormentas em desfiladeiros/mares).
+   - Escolhas táticas baseadas em Força, Destreza, Intelecto, Fé e Sorte com recompensas ou reveses reais.
+
+7. Reformulação Completa das Carreiras Itinerantes:
+   - As 13 carreiras móveis (Explorador, Mercador, Corsário/Pirata, Mercenário, Bardo, Diplomata, Caçador, Salteador, Ladrão, Soldado, Espião, Cavaleiro e Escudeiro) ganharam benefícios e funções compartilhadas:
+     * Descontos em Vigor e Ouro para viagens locais e entre reinos.
+     * Multiplicadores maiores nos bônus de descoberta do Diário de Exploração.
+     * "[Itinerante] Reconhecer Rotas & Entrepostos": função compartilhada para mapear caminhos e elevar desempenho.
+     * "[Itinerante] Cumprir Encomenda da Comarca": contrato local móvel com rendimento de ouro escalonado pela quantidade de comarcas já catalogadas no Diário.
+   - Cada carreira itinerante recebeu uma ação de especialidade única e exclusiva (ex.: Explorador sonda ruínas, Mercador realiza arbitragem de câmbio, Corsário realiza incursões costeiras, Bardo canta crônicas de terras distantes, Diplomata apresenta credenciais e salvo-conduto).
+======================================================================
+======================================================================
+VERSÃO 3.4.1 — PATCH DE BALANCEAMENTO DE ATRIBUTOS, ECONOMIA E REFINAMENTO DE UI:
+1. Balanceamento de Atributos & Retornos Decrescentes (Diminishing Returns):
+   - Ganhos de atributos escalonados conforme o patamar atual (<40: +2~3; 40-69: +1~2; 70-84: +1 ou foco; 85+: +1 raro; teto em 100).
+   - Fadiga acumulada por repetição do mesmo treino no mesmo ano reduzindo chances de bônus consecutivos.
+2. Mecânicas Reais de Perda de Atributos e Desgaste Vital:
+   - Falhas em atividades marciais/físicas podem causar distensões ou lesões (-1 Força ou Destreza).
+   - Falhas sociais/taverna acarretam vexame público (-1 Carisma); falhas religiosas geram crise de espírito (-1 Fé).
+   - Desgaste biológico por envelhecimento: declínio gradual a partir dos 48 anos, agravado aos 60 e 72+ anos.
+   - Penúria e dívidas pesadas geram estresse e definhamento (-1 Saúde ou Carisma).
+3. Eliminação da Fábrica de Ouro Gratuito e Ajuste Econômico:
+   - Atividades comuns de atributos (treino com armas, orações, leitura de manuscritos) não geram mais ouro aleatório.
+   - As recompensas de treino comum agora premiam dedicação e disciplina (+1 Honra).
+   - Ajustados custos e riscos de atividades de esforço dobrado e jogos de azar.
+4. Reformulação de "Repouso e Ervas Medicinais":
+   - Uso limitado rigorosamente a 1 vez por ano (STATE.healthCareUsedThisYear), eliminando o loop de vigor infinito no mesmo turno.
+   - Custo balanceado para 12 moedas de ouro; cura calibrada para +16~20 HP e +10 Vigor (alívio moderado).
+   - Feedback visual nos cartões com badge indicativo de 1x/ano ou já realizado.
+5. Refinamento Ergonômico de Interface (Mobile & Desktop):
+   - Modal de Viagens: separação das opções de cidades e reinos em container com rolagem interna (.travel-grid), liberando os botões fixos de ação.
+   - Mobile: HUD superior mais compacto, concedendo espaço nobre de leitura à crônica; navbar e selo central calibrados para telas pequenas (360px–400px).
+   - Desktop: eliminação da área vazia à direita quando não há painéis docados e suporte a grid de 2 colunas para viagens.
+======================================================================
+
+

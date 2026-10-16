@@ -1,0 +1,63 @@
+/* ============================================================================
+   [DADOS · NOMES E BRASÕES] — nomes, sobrenomes e brasões de família (objeto global DATA)
+   ============================================================================ */
+const DATA = {
+  namesM: ["Aldous","Beren","Cedric","Dorian","Edric","Fulk","Gareth","Hadrian","Ivor","Jorah","Kaelen","Leoric","Merek","Nolan","Oswin","Piers","Quentin","Roderick","Severin","Trystan","Ulric","Vane","Wulfric","Yorick","Zane","Alaric","Baldwin","Corwin","Godfrey","Hector","Lothar","Martim","Fernão","Diogo","Gonçalo","Ramiro","Vasco","Afonso","Lourenço","Nuno","Paio","Soeiro","Egas","Mem","Gil","Rui","Álvaro","Lopo","Sancho","Beltrão","Tristão","Gawain","Percival","Sigurd","Ragnar","Cassian","Lucian","Evander","Theron","Duarte","Estêvão","Garcia","Henrique","Jorge","Aires","Gomes","Pero","Telo","Viriato","Balthazar","Gaspar","Melchior","Reynaldo","Theobald","Valdemar","Anselmo","Bernardo","Conrado","Frederico","Guilherme","Humberto"],
+
+  namesF: ["Adelina","Beatriz","Cateline","Dahlia","Elowen","Freya","Gwyneira","Helena","Isolde","Juliana","Katarina","Lyra","Morwen","Nerina","Odette","Rowena","Sybil","Thalia","Ursula","Valeria","Winifred","Ysolde","Astrid","Branwen","Constança","Leonor","Mafalda","Inês","Guiomar","Elvira","Sancha","Urraca","Teresa","Berengária","Aldonça","Violante","Mécia","Branca","Catarina","Joana","Margarida","Briolanja","Genevieve","Seraphina","Cordelia","Aurelia","Giselle","Vivienne","Elysia","Maeve","Ximena","Ouroana","Chamoa","Dordia","Elba","Fronilde","Gontinha","Ilduara","Maior","Onega","Toda","Iria","Mór","Tareja","Clemência","Adelaide","Matilde","Hildegarda","Rosamunda"],
+
+  surnames: ["de Valença","Corvo Negro","Ferrovelho","da Mata","Montemor","Espinhoso","de Várzea","Lobato","Pedra-Fria","Sangue-Forte","de Alvor","Cinzento","do Vale","Severo","Mallet","de Bragança","Mão-de-Ferro","de Rochedo","Alencastro","Castelbranco","de Guimarães","Sousa","Meneses","Távora","Bettencourt","de Coimbra","Lança-Rota","Monteiro","Valadão","Caminha","de Viseu","Pimentel","Coutinho","Albuquerque","de Sintra","de Évora","de Silves","Noronha","Pereira","da Cunha","de Melo","de Castro","Ataíde","Mascarenhas","de Lima","Sá","Barreto","Moniz","Teixeira","Cabral"],
+
+  familyCrests: {
+    "de Valença":    { symbol: "🦅", bg: "#5a1818", fg: "#f4d068", motto: "Altivez e Sangue" },
+    "Corvo Negro":   { symbol: "🐦‍⬛", bg: "#1c1c24", fg: "#d8d8e8", motto: "Nas Sombras Vigiando" },
+    "Ferrovelho":    { symbol: "⚒️", bg: "#3d352e", fg: "#e09f5a", motto: "Forjado na Brasa" },
+    "da Mata":       { symbol: "🦌", bg: "#1e4422", fg: "#d8e8c8", motto: "Raízes Profundas" },
+    "Montemor":      { symbol: "🏰", bg: "#4a3c2c", fg: "#f0e6d2", motto: "Inabalável como a Rocha" },
+    "Espinhoso":     { symbol: "🌹", bg: "#4e1a2a", fg: "#f2b8c6", motto: "Fere Quem Toca" },
+    "de Várzea":     { symbol: "🌾", bg: "#5c4818", fg: "#f5e49c", motto: "Da Terra o Pão" },
+    "Lobato":        { symbol: "🐺", bg: "#2b303a", fg: "#c8d4e3", motto: "Fome de Inverno" },
+    "Pedra-Fria":    { symbol: "⛰️", bg: "#37414a", fg: "#d6e4f0", motto: "Frio e Eterno" },
+    "Sangue-Forte":  { symbol: "🩸", bg: "#6b1111", fg: "#ffd6d6", motto: "Jamais Dobra" },
+    "de Alvor":      { symbol: "☀️", bg: "#6e4e0e", fg: "#fff0a8", motto: "Luz sobre a Névoa" },
+    "Cinzento":      { symbol: "🌫️", bg: "#484848", fg: "#e2e2e2", motto: "Silêncio e Cinza" },
+    "do Vale":       { symbol: "⚜️", bg: "#1e3554", fg: "#e8d084", motto: "Honra no Vale" },
+    "Severo":        { symbol: "⚖️", bg: "#33223b", fg: "#e0c8eb", motto: "Dura Lex" },
+    "Mallet":        { symbol: "🔨", bg: "#611c1c", fg: "#f0c869", motto: "Incola Ego Sum in Terra" },
+    "de Bragança":   { symbol: "👑", bg: "#4a154b", fg: "#f7d969", motto: "Soberania Antiga" },
+    "Mão-de-Ferro":  { symbol: "🛡️", bg: "#2d383a", fg: "#d9e2e5", motto: "Punho Cerrado" },
+    "de Rochedo":    { symbol: "⚓", bg: "#153b47", fg: "#bfe3f0", motto: "Contra a Maré" },
+    "Alencastro":    { symbol: "🦁", bg: "#692016", fg: "#f5d476", motto: "Coragem Real" },
+    "Castelbranco":  { symbol: "🦢", bg: "#2e4052", fg: "#ffffff", motto: "Pureza e Aço" },
+    "de Guimarães":  { symbol: "🗡️", bg: "#4d1919", fg: "#f2d675", motto: "Primeiro na Batalha" },
+    "Sousa":         { symbol: "🌙", bg: "#1b2845", fg: "#e6ecf5", motto: "Sob o Luar Vencemos" },
+    "Meneses":       { symbol: "⚜️", bg: "#574312", fg: "#ffea9f", motto: "Ouro sem Mancha" },
+    "Távora":        { symbol: "🐬", bg: "#13404d", fg: "#a8e6f7", motto: "Nas Águas Profundas" },
+    "Bettencourt":   { symbol: "🦁", bg: "#3b1d4a", fg: "#f5c676", motto: "Lealdade e Audácia" },
+    "de Coimbra":    { symbol: "🐍", bg: "#1f422b", fg: "#c7f2d6", motto: "Prudência e Saber" },
+    "Lança-Rota":    { symbol: "🏇", bg: "#592512", fg: "#f7d2b5", motto: "Até o Último Estilhaço" },
+    "Monteiro":      { symbol: "📯", bg: "#2c401b", fg: "#e4f2c9", motto: "Senhores da Caçada" },
+    "Valadão":       { symbol: "🧱", bg: "#473828", fg: "#e8d5c0", motto: "Muralha Intransponível" },
+    "Caminha":       { symbol: "⛵", bg: "#17375e", fg: "#cfe2f7", motto: "Horizonte Aberto" },
+    "de Viseu":      { symbol: "🌲", bg: "#183b28", fg: "#cbe8d8", motto: "Sombra que Protege" },
+    "Pimentel":      { symbol: "🐚", bg: "#522121", fg: "#f5d7b8", motto: "Fé e Peregrinação" },
+    "Coutinho":      { symbol: "⭐", bg: "#4a1428", fg: "#fae19c", motto: "Cinco Estrelas de Sangue" },
+    "Albuquerque":   { symbol: "🌳", bg: "#2e4219", fg: "#e8f5c8", motto: "Raiz de Ferro" },
+    "de Sintra":     { symbol: "🦉", bg: "#2a243b", fg: "#dcd3f5", motto: "Mistério e Vigília" },
+    "de Évora":      { symbol: "🐎", bg: "#4a2511", fg: "#f5dcb5", motto: "Vento da Planície" },
+    "de Silves":     { symbol: "🌴", bg: "#1b4738", fg: "#d8f5e5", motto: "Sol do Meio-Dia" },
+    "Noronha":       { symbol: "🏰", bg: "#381c4a", fg: "#f0d4ff", motto: "Sangue Real" },
+    "Pereira":       { symbol: "✝️", bg: "#5c1616", fg: "#ffe2e2", motto: "Pela Cruz Vencemos" },
+    "da Cunha":      { symbol: "⛰️", bg: "#3d3b24", fg: "#f7f3c8", motto: "Nove Cunhas de Pedra" },
+    "de Melo":       { symbol: "🦅", bg: "#611b2a", fg: "#f7d4dc", motto: "Voo Soberano" },
+    "de Castro":     { symbol: "🛡️", bg: "#1d3054", fg: "#d6e4ff", motto: "Seis Arruelas de Ouro" },
+    "Ataíde":        { symbol: "🌊", bg: "#153c4d", fg: "#c2f0ff", motto: "Firme na Tormenta" },
+    "Mascarenhas":   { symbol: "🦁", bg: "#592218", fg: "#f7d99c", motto: "Força e Lealdade" },
+    "de Lima":       { symbol: "⚜️", bg: "#4d3c13", fg: "#fff0b8", motto: "Antiga Fidalguia" },
+    "Sá":            { symbol: "🏁", bg: "#262c36", fg: "#e8eef5", motto: "Ordem e Honra" },
+    "Barreto":       { symbol: "🗡️", bg: "#451829", fg: "#f5d0df", motto: "Guarda Fiel" },
+    "Moniz":         { symbol: "⭐", bg: "#1a2f4a", fg: "#f5e396", motto: "Luz na Batalha" },
+    "Teixeira":      { symbol: "🌲", bg: "#1f3d23", fg: "#d7f2db", motto: "Cervo e Teixo" },
+    "Cabral":        { symbol: "🐐", bg: "#42213d", fg: "#f2d5ed", motto: "Nos Cumes Mais Altos" }
+  }
+};

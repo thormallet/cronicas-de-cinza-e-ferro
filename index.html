@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#170e09">
+<title>Crônicas de Cinza e Ferro — Edição Explorador v3.4.1</title>
+<link rel="stylesheet" href="css/01_base.css">
+<link rel="stylesheet" href="css/02_layout.css">
+<link rel="stylesheet" href="css/03_abas_cronica.css">
+<link rel="stylesheet" href="css/04_cards_modais.css">
+<link rel="stylesheet" href="css/05_hud_bitlife.css">
+<link rel="stylesheet" href="css/06_sheets.css">
+<link rel="stylesheet" href="css/07_desktop.css">
+</head>
+<body>
+<!-- BANCO DE SÍMBOLOS SVG (<symbol>/<use>) PARA RETRATOS PROCEDURAIS E ÍCONES DE ATRIBUTOS -->
+<svg width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <defs>
+    <!-- Ícones de Atributos -->
+    <symbol id="ico-forca" viewBox="0 0 24 24"><path d="M19 3l2 2-9 9-2-2 9-9zM5 13l4 4-5 5-2-2 3-3-2-2 2-2zm9.5-1.5L17 14l-2 2-2.5-2.5 2-2z"/></symbol>
+    <symbol id="ico-destreza" viewBox="0 0 24 24"><path d="M12 2C7 4 4 9 4 15l2 1c1-5 3-9 6-11 3 2 5 6 6 11l2-1c0-6-3-11-8-13zm0 5l-1 13h2L12 7z"/></symbol>
+    <symbol id="ico-intelecto" viewBox="0 0 24 24"><path d="M4 4h14a2 2 0 012 2v12a2 2 0 01-2 2H4V4zm2 2v12h12V6H6zm2 2h8v2H8V8zm0 4h6v2H8v-2z"/></symbol>
+    <symbol id="ico-carisma" viewBox="0 0 24 24"><path d="M3 17h18v2H3v-2zm0-2l3-9 6 5 6-5 3 9H3z"/></symbol>
+    <symbol id="ico-beleza" viewBox="0 0 24 24"><path d="M12 2l2.6 6.4L21 9.2l-5 4.4 1.5 6.4L12 16.6 6.5 20 8 13.6 3 9.2l6.4-.8L12 2z"/></symbol>
+    <symbol id="ico-saude" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></symbol>
+    <symbol id="ico-fe" viewBox="0 0 24 24"><path d="M11 2h2v6h5v2h-5v12h-2V10H6V8h5V2z"/></symbol>
+    <symbol id="ico-sorte" viewBox="0 0 24 24"><path d="M12 2a4 4 0 013.5 6A4 4 0 0118 15.5 4 4 0 0113 19v3h-2v-3a4 4 0 01-5-3.5A4 4 0 018.5 8 4 4 0 0112 2z"/></symbol>
+
+    <!-- Peças de Retrato Reutilizáveis via <use> -->
+    <symbol id="pt-scar-1" viewBox="0 0 80 80"><path d="M27,26 L33,40 M28,31 L32,30" stroke="#7a2020" stroke-width="1.2" opacity="0.78" stroke-linecap="round"/></symbol>
+    <symbol id="pt-scar-2" viewBox="0 0 80 80"><path d="M46,28 L52,44 M47,36 L51,35" stroke="#7a2020" stroke-width="1.2" opacity="0.78" stroke-linecap="round"/></symbol>
+    <symbol id="pt-scar-3" viewBox="0 0 80 80"><path d="M32,45 L46,49" stroke="#7a2020" stroke-width="1.1" opacity="0.72" stroke-linecap="round"/></symbol>
+    <symbol id="pt-eyepatch-L" viewBox="0 0 80 80">
+      <path d="M20,27 L58,39" stroke="#18120e" stroke-width="1.6"/>
+      <ellipse cx="33" cy="35.5" rx="4.2" ry="3.4" fill="#18120e" stroke="#523a28" stroke-width="0.8"/>
+    </symbol>
+    <symbol id="pt-eyepatch-R" viewBox="0 0 80 80">
+      <path d="M60,27 L22,39" stroke="#18120e" stroke-width="1.6"/>
+      <ellipse cx="47" cy="35.5" rx="4.2" ry="3.4" fill="#18120e" stroke="#523a28" stroke-width="0.8"/>
+    </symbol>
+    <symbol id="pt-crown-king" viewBox="0 0 80 80">
+      <polygon points="21,21 25,9 33,16 40,6 47,16 55,9 59,21" fill="#ffd24c" stroke="#593a04" stroke-width="1.5"/>
+      <rect x="21" y="19" width="38" height="3.5" rx="1" fill="#e0a82e" stroke="#593a04" stroke-width="1"/>
+      <circle cx="40" cy="14" r="2.2" fill="#d91e36"/>
+      <circle cx="30" cy="16" r="1.6" fill="#1d6fd9"/>
+      <circle cx="50" cy="16" r="1.6" fill="#1d6fd9"/>
+    </symbol>
+    <symbol id="pt-coronet-noble" viewBox="0 0 80 80">
+      <path d="M23,20 Q40,15 57,20 L56,23.5 Q40,18.5 24,23.5 Z" fill="#f0c243" stroke="#5c3e06" stroke-width="1.1"/>
+      <circle cx="40" cy="19.5" r="2" fill="#b81d2a"/>
+      <circle cx="31" cy="20.5" r="1.3" fill="#2c785c"/>
+      <circle cx="49" cy="20.5" r="1.3" fill="#2c785c"/>
+    </symbol>
+    <symbol id="pt-mitre-bishop" viewBox="0 0 80 80">
+      <path d="M24,22 L28,6 L40,2 L52,6 L56,22 Z" fill="#f7f2e6" stroke="#b88d28" stroke-width="1.6"/>
+      <path d="M40,3 L40,21 M32,12 L48,12" stroke="#c99c33" stroke-width="2.2"/>
+    </symbol>
+    <symbol id="pt-helm-knight" viewBox="0 0 80 80">
+      <path d="M21,25 C21,11 59,11 59,25 L57,30 L23,30 Z" fill="#8b949c" stroke="#2c3238" stroke-width="1.5"/>
+      <path d="M40,12 L40,31" stroke="#c99c33" stroke-width="1.8"/>
+    </symbol>
+    <symbol id="pt-hood-monk" viewBox="0 0 80 80">
+      <path d="M16,44 C15,12 65,12 64,44 C61,25 54,18 40,18 C26,18 19,25 16,44 Z" fill="#3b2b1e" stroke="#1c130c" stroke-width="1.4"/>
+    </symbol>
+    <symbol id="pt-veil-nun" viewBox="0 0 80 80">
+      <path d="M15,58 C14,12 66,12 65,58 L57,58 C57,26 51,19 40,19 C29,19 23,26 23,58 Z" fill="#232329" stroke="#111" stroke-width="1.3"/>
+      <path d="M24,18 Q40,14 56,18 L54,23 Q40,19 26,23 Z" fill="#f2efe9"/>
+    </symbol>
+    <symbol id="pt-hat-merchant" viewBox="0 0 80 80">
+      <ellipse cx="40" cy="19" rx="22" ry="6" fill="#4f1824" stroke="#260a10" stroke-width="1.3"/>
+      <path d="M25,19 C25,10 55,10 55,19 Z" fill="#6b2030" stroke="#c99c33" stroke-width="1.1"/>
+    </symbol>
+    <symbol id="pt-hat-bard" viewBox="0 0 80 80">
+      <path d="M20,22 Q40,12 61,19 L54,23 Q38,19 20,22 Z" fill="#244d29" stroke="#122915" stroke-width="1.2"/>
+      <path d="M51,17 C57,9 64,7 67,4 C64,11 59,16 53,19 Z" fill="#e63946"/>
+    </symbol>
+    <symbol id="pt-bandana-pirate" viewBox="0 0 80 80">
+      <path d="M21,23 C24,13 56,13 59,23 Z" fill="#7d1515" stroke="#2e0707" stroke-width="1.2"/>
+      <path d="M58,21 L65,26 M58,23 L63,29" stroke="#7d1515" stroke-width="2.2" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+
+<!-- OVERLAY DE EFEITOS CURTOS (NASCIMENTO, CASAMENTO, MORTE) -->
+<div id="fx-stage-overlay"><div id="fx-stage-emblem" class="fx-emblem">✨</div></div>
+
+<!-- CARTÃO DE EVENTO NARRATIVO ANUAL -->
+<div id="event-popup-backdrop" class="custom-dialog-backdrop">
+  <div class="custom-dialog event-popup" role="dialog" aria-modal="true" aria-labelledby="ev-title">
+    <div id="ev-art" class="dialog-art" aria-hidden="true">📜</div>
+    <div class="ev-head">
+      <h3 id="ev-title">Evento</h3>
+      <span id="ev-year-badge" class="badge gold">Ano</span>
+    </div>
+    <p id="ev-desc"></p>
+    <div id="ev-choices" class="choices-list"></div>
+  </div>
+</div>
+
+<!-- CARTÃO DE AUDIÊNCIA COM PERSONAGEM (NPC) -->
+<div id="npc-modal-backdrop" class="custom-dialog-backdrop" style="z-index:9998">
+  <div class="custom-dialog npc-dialog" role="dialog" aria-modal="true">
+    <div id="npc-modal-header" class="hero-header"></div>
+    <div id="npc-modal-house" class="house-banner"></div>
+    <div class="npc-aff-box">
+      <div class="npc-aff-row">
+        <span>Laço de Afinidade &amp; Devoção</span>
+        <span id="npc-modal-aff-label">Harmonia</span>
+      </div>
+      <div class="stat-bar" style="height:11px"><div id="npc-modal-aff-bar" class="stat-fill aff-good" style="width:50%"></div></div>
+      <small id="npc-modal-memory"></small>
+    </div>
+    <h4>Interações Sociais (Custam Vigor Vital ou Ouro — <span id="npc-modal-ap">100</span> Vigor atual)</h4>
+    <div id="npc-modal-actions" class="interaction-grid"></div>
+    <div class="custom-dialog-buttons">
+      <button type="button" onclick="window.UI.closeNPCModal()">Fechar Audiência</button>
+    </div>
+  </div>
+</div>
+
+<!-- CARTÃO DE BATISMO / ESCOLHA DO NOME DO FILHO -->
+<div id="child-name-backdrop" class="custom-dialog-backdrop" style="z-index:10001">
+  <div class="custom-dialog" role="dialog" aria-modal="true">
+    <div class="dialog-art" aria-hidden="true">👶</div>
+    <h3 id="child-modal-title">✨ Nascimento na Linhagem</h3>
+    <p id="child-modal-desc">O parto chegou ao fim e um novo herdeiro chora nos braços da parteira.</p>
+    <div class="form-group">
+      <label>Escolha o Nome de Batismo da Criança</label>
+      <div style="display:flex;gap:0.4rem">
+        <input type="text" id="child-custom-name" placeholder="Primeiro nome">
+        <button type="button" onclick="window.Engine.randomChildModalName()">🎲 Sugerir</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Linhagem / Sobrenome (Paterno ou Materno)</label>
+      <select id="child-custom-surname"></select>
+    </div>
+    <div class="custom-dialog-buttons">
+      <button type="button" class="primary" onclick="window.Engine.confirmChildName()">Batizar e Registrar nos Anais</button>
+    </div>
+  </div>
+</div>
+
+<!-- CARTÃO DE AVISO / CONFIRMAÇÃO -->
+<div id="dialog-backdrop" class="custom-dialog-backdrop" style="z-index:10000">
+  <div class="custom-dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+    <div class="dialog-art" aria-hidden="true">⚜️</div>
+    <h3 id="dialog-title">Aviso</h3>
+    <p id="dialog-msg"></p>
+    <div id="dialog-buttons" class="custom-dialog-buttons"></div>
+  </div>
+</div>
+
+<!-- SHELL DO APP: COLUNA ÚNICA CENTRAL (MOBILE-FIRST) -->
+<div id="app-shell">
+
+<!-- CABEÇALHO GLOBAL (MENU / CRIAÇÃO / MORTE) — NO JOGO É SUBSTITUÍDO PELO HUD -->
+<header id="app-header">
+  <div class="brand-box">
+    <div class="brand-crest">👑</div>
+    <div>
+      <h1>Crônicas de Cinza e Ferro</h1>
+      <span class="royal-subtitle">🧭 Edição Explorador • v3.4.1 🧭</span>
+    </div>
+  </div>
+  <button type="button" class="icon-btn" aria-label="Configurações" onclick="window.UI.openSheet('sheet-config')">⚙️</button>
+</header>
+
+<!-- TELA 1: MENU -->
+<section id="screen-menu" class="screen active">
+  <div class="menu-container">
+    <div class="card">
+      <div class="royal-hero-banner">
+        <h2>👑 Crônicas de Cinza e Ferro</h2>
+        <div style="margin-bottom:0.5rem"><span class="royal-subtitle">Edição Explorador — Dinastias, Guildas & Coroa</span></div>
+        <p style="font-size:0.9rem;opacity:0.92">
+          Nasça do barro ou da púrpura real. Ingresse em corporações de ofício, receba Cartas de Nobreza com seu cônjuge consorte e herdeiros, governe feudos e forje sua dinastia.
+        </p>
+      </div>
+      <button type="button" class="primary" style="width:100%;padding:0.8rem;font-size:1.08rem;margin-bottom:0.9rem" onclick="window.Creator.init()">⚔️ Iniciar Nova Linhagem Régia</button>
+      <h3>📜 Crônicas Salvas (Autosave Anual)</h3>
+      <div id="menu-slots" class="slot-list"></div>
+    </div>
+    <div class="card">
+      <h3>🏛️ Panteão de Dinastias e Vidas Passadas</h3>
+      <div id="dynasty-gallery" class="slot-list" style="max-height:220px;overflow-y:auto"></div>
+    </div>
+  </div>
+</section>
+
+<!-- TELA 2: CRIAÇÃO (FICHA DE HERÓI ILUMINADA) -->
+<section id="screen-create" class="screen">
+  <div class="screen-scroll-inner">
+    <div class="card" style="max-width:1180px;margin:0 auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem">
+        <h2>📜 Carta de Nascença & Ficha de Herói</h2>
+        <div class="create-top-buttons">
+          <button type="button" onclick="window.Creator.randomize()">🎲 Sorteio Ponderado (70/25/5%)</button>
+          <button type="button" onclick="window.Creator.rerollAll()">🔄 Rerrolar Tudo</button>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div id="cr-hero-preview" class="hero-header"></div>
+          <div class="form-group">
+            <label>Nome e Linhagem (Define seu Brasão e Casa)</label>
+            <div style="display:flex;gap:0.4rem;align-items:center">
+              <input type="text" id="cr-name" placeholder="Nome do personagem" oninput="window.Creator.updateCrestPreview()">
+              <button type="button" onclick="window.Creator.randomName()">Gerar</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Sexo</label>
+            <select id="cr-sex" onchange="window.Creator.randomName()">
+              <option value="M">Masculino</option>
+              <option value="F">Feminino</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Reino Natal</label>
+            <select id="cr-kingdom" onchange="window.Creator.updateKingdomInfo()"></select>
+            <small id="cr-kingdom-desc" style="display:block;margin-top:0.25rem;color:var(--text-muted);font-size:0.8rem"></small>
+          </div>
+          <div class="form-group">
+            <label>Estamento de Nascimento</label>
+            <select id="cr-class" onchange="window.Creator.updateCrestPreview()">
+              <option value="plebeu">Plebeu (Servo / Camponês — Moldura de Madeira, ascensão árdua)</option>
+              <option value="media">Classe Média (Artesão / Mercador — Moldura de Bronze/Prata)</option>
+              <option value="nobre">Alta Nobreza (Sangue Azul — Moldura de Ouro Real, terras e intrigas)</option>
+            </select>
+          </div>
+          <div class="card" style="background:var(--panel-inner);margin-top:0.6rem;margin-bottom:0;padding:0.75rem">
+            <h4>Índole Secreta do Destino</h4>
+            <p style="font-size:0.82rem;color:var(--text-muted)">
+              Seus traços congênitos e feições genéticas são sorteados pelo destino e transmitidos aos seus filhos com variações sutis ao longo das gerações.
+            </p>
+          </div>
+        </div>
+        <div>
+          <h4>Aptidões de Nascença (<span id="cr-points">10</span> impulsos restantes)</h4>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.4rem">Atributos moldam seus testes de destino e são exibidos com insígnias SVG.</p>
+          <div id="cr-attrs"></div>
+        </div>
+      </div>
+      <div class="create-actions-sticky">
+        <button type="button" onclick="window.UI.showScreen('screen-menu')">Cancelar</button>
+        <button type="button" class="primary" onclick="window.Creator.startGame()">🔥 Nascer neste Mundo</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TELA 3: JOGO — HUD COMPACTO + FEED (CRÔNICA) + BARRAS DE STATUS + NAVEGAÇÃO INFERIOR -->
+<section id="screen-game" class="screen">
+  <div class="game-app">
+
+    <!-- HUD SUPERIOR: RETRATO, NOME, IDADE/ANO, OFÍCIO, OURO, LOCAL, ENGRENAGEM -->
+    <div id="hud-top-bar" class="hud">
+      <div class="hud-main">
+        <button type="button" id="hud-avatar-btn" class="hud-avatar" aria-label="Abrir ficha e aptidões" onclick="window.UI.openSheet('sheet-ficha')"><span id="hud-avatar"></span></button>
+        <div class="hud-id">
+          <div class="hud-name" id="hud-name">-</div>
+          <div class="hud-meta">
+            <span>Idade <strong id="hud-age">0a</strong></span>
+            <span>Ano <strong id="hud-year">1140</strong></span>
+          </div>
+          <div class="hud-job">⚒️ <span id="hud-job">-</span></div>
+        </div>
+        <div class="hud-gold" title="Tesouro pessoal"><strong id="hud-gold">0 🪙</strong><small>Arca</small></div>
+        <button type="button" class="icon-btn" aria-label="Configurações" onclick="window.UI.openSheet('sheet-config')">⚙️</button>
+      </div>
+      <div class="hud-loc">
+        <span class="hud-loc-name">📍 <strong id="hud-kingdom">-</strong></span>
+        <button type="button" id="btn-hud-travel" class="chip-btn" onclick="window.Engine.openTravelDialog()">🧭 Viajar</button>
+      </div>
+    </div>
+
+    <!-- FEED CENTRAL: A CRÔNICA EM LINHA DO TEMPO VERTICAL -->
+    <main class="feed-wrap">
+      <div class="feed-folio">
+        <span>📜 Crônica da Linhagem</span>
+        <span id="book-folio-label">Fólio Régio</span>
+      </div>
+      <div id="tab-cronica" class="tab-content feed-pane active">
+        <div id="log-container" class="log-box"></div>
+      </div>
+    </main>
+
+    <!-- DOCK INFERIOR: BARRAS DE STATUS + NAVEGAÇÃO COM SELO CENTRAL -->
+    <footer class="dock">
+      <div class="status-bars" id="status-bars">
+        <div class="sbar" data-stat="hp" title="Saúde Vital">
+          <span class="sbar-ico">❤️</span>
+          <div class="stat-bar"><div id="st-hp-bar" class="stat-fill hp" style="width:100%"></div></div>
+          <span class="sbar-val" id="st-hp-val">100/100</span>
+        </div>
+        <div class="sbar" data-stat="vigor" title="Vigor (Energia Anual)">
+          <span class="sbar-ico">⚡</span>
+          <div class="stat-bar"><div id="st-vigor-bar" class="stat-fill vigor" style="width:100%"></div></div>
+          <span class="sbar-val" id="st-vigor-val">100/100</span>
+        </div>
+        <div class="sbar" data-stat="honor" title="Honra da Casa">
+          <span class="sbar-ico">🛡️</span>
+          <div class="stat-bar"><div id="st-honor-bar" class="stat-fill honor" style="width:50%"></div></div>
+          <span class="sbar-val"><span id="st-honor">50</span>/100</span>
+        </div>
+        <div class="sbar" data-stat="rep" title="Reputação">
+          <span class="sbar-ico">👑</span>
+          <div class="stat-bar"><div id="st-rep-bar" class="stat-fill rep" style="width:50%"></div></div>
+          <span class="sbar-val"><span id="st-rep">0</span>/10</span>
+        </div>
+      </div>
+
+      <nav class="navbar" aria-label="Navegação principal">
+        <div class="nav-side">
+          <button type="button" class="nav-btn" aria-label="Ofícios e Guildas" title="Ofícios e Guildas" onclick="window.UI.switchTab('tab-oficios', this)"><span class="nav-ico">⚜️</span><span class="nav-lbl">Ofícios</span></button>
+          <button type="button" class="nav-btn" aria-label="Relações" title="Relações Sociais, Família & Corte" onclick="window.UI.switchTab('tab-relacoes', this)"><span class="nav-ico">👑</span><span class="nav-lbl">Relações</span><span class="nav-count" id="cnt-rel">0</span></button>
+          <button type="button" class="nav-btn" aria-label="Atividades" title="Atividades e Ações" onclick="window.UI.switchTab('tab-atividades', this)"><span class="nav-ico">⚒️</span><span class="nav-lbl">Atividades</span></button>
+        </div>
+        <button type="button" id="btn-next-year" class="seal-btn" aria-label="Avançar Ano" title="Avançar Ano" onclick="window.Engine.advanceYear()"><span class="seal-ico">⏳</span><span class="seal-lbl">Avançar Ano</span></button>
+        <div class="nav-side">
+          <button type="button" class="nav-btn" aria-label="Bens e Mercado" title="Bens, Posses & Mercado" onclick="window.UI.switchTab('tab-inventario', this)"><span class="nav-ico">⚖️</span><span class="nav-lbl">Bens</span><span class="nav-count" id="cnt-inv">0</span></button>
+          <button type="button" class="nav-btn" aria-label="Anais e Linhagem" title="Anais, Linhagem & Histórico" onclick="window.UI.switchTab('tab-historico', this)"><span class="nav-ico">🏛️</span><span class="nav-lbl">Anais</span></button>
+          <button type="button" id="tab-btn-reino" class="nav-btn" aria-label="Gestão do Reino" title="Gestão do Reino" style="display:none" onclick="window.UI.switchTab('tab-reino', this)"><span class="nav-ico">🏰</span><span class="nav-lbl">Reino</span></button>
+        </div>
+      </nav>
+    </footer>
+
+  </div>
+</section>
+
+<!-- TELA 4: MORTE & SUCESSÃO DRAMÁTICA -->
+<section id="screen-death" class="screen">
+  <div class="menu-container" style="max-width:780px">
+    <div class="card death-card-dramatic">
+      <h2>🕯️ Memento Mori — O Fim da Jornada</h2>
+      <div id="death-portrait-box" style="display:flex;justify-content:center;margin:0.85rem 0"></div>
+      <div id="death-epitaph" class="epitaph-box"></div>
+      <div id="death-summary" style="text-align:left;margin-bottom:1.1rem;font-size:0.92rem"></div>
+      <h3>👑 Sucessão Dinástica</h3>
+      <p id="sucession-law-desc" style="font-size:0.88rem;color:#bda98c;margin-bottom:0.8rem"></p>
+      <div id="heirs-list" class="slot-list"></div>
+      <div class="death-actions">
+        <button type="button" class="primary" onclick="window.Creator.init()">Criar Novo Personagem</button>
+        <button type="button" onclick="window.UI.showScreen('screen-menu')">Voltar ao Menu</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= BOTTOM SHEETS (PAINÉIS DESLIZANTES) ======================= -->
+<div id="sheet-backdrop" class="sheet-backdrop" onclick="window.UI.closeSheets()"></div>
+
+<!-- SHEET: ATIVIDADES -->
+<div id="tab-atividades" class="tab-content sheet" role="dialog" aria-label="Atividades">
+  <div class="sheet-head">
+    <h3>⚒️ Atividades <span id="st-ap" class="sheet-sub"></span></h3>
+    <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div id="actions-container" class="act-groups"></div>
+  </div>
+</div>
+
+<!-- SHEET: RELAÇÕES -->
+<div id="tab-relacoes" class="tab-content sheet" role="dialog" aria-label="Relações">
+  <div class="sheet-head">
+    <h3>👑 Relações Sociais, Família &amp; Corte</h3>
+    <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="chips">
+      <button type="button" class="tab-btn active" onclick="window.UI.switchRelSubTab('sub-rel-fam', this)">🩸 Sangue &amp; Cônjuge</button>
+      <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-amigos', this)">🤝 Amigos (<span id="cnt-friends">0</span>)</button>
+      <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-vila', this)">🏘️ Comarca (<span id="cnt-vila">0</span>)</button>
+      <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-pretendentes', this)">🌹 Pretendentes (<span id="cnt-suitors">0</span>)</button>
+      <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-rivais', this)">⚔️ Rivais (<span id="cnt-rivals">0</span>)</button>
+      <button type="button" id="tab-btn-rel-corte" class="tab-btn" style="display:none" onclick="window.UI.switchRelSubTab('sub-rel-corte-real', this)">👑 Corte (<span id="cnt-court">0</span>)</button>
+      <button type="button" id="tab-btn-rel-oficio" class="tab-btn" style="display:none" onclick="window.UI.switchRelSubTab('sub-rel-oficio', this)">⚒️ Guilda / Ofício (<span id="cnt-colleagues">0</span>)</button>
+      <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-memoriam', this)">🕯️ In Memoriam (<span id="cnt-memoriam">0</span>)</button>
+    </div>
+
+    <p class="sheet-hint">Suas opções mudam conforme a idade e o papel social. Toda ação tem consequências reais sobre honra, ciúmes, alianças e vingança.</p>
+    <div class="rel-actions">
+      <button type="button" class="primary" onclick="window.Engine.introduceSuitor()">🌹 Procurar Pretendente (-5 Ouro)</button>
+      <button type="button" id="btn-intro-local" onclick="window.Engine.introduceCourtier()">🍷 Conhecer na Comarca (-8 Vigor)</button>
+      <button type="button" id="btn-intro-royal" style="display:none" onclick="window.Engine.introduceRoyalCourtier()">👑 Apresentar-se na Corte Real (-10 Vigor)</button>
+      <button type="button" id="btn-intro-colleague" onclick="window.Engine.introduceColleague()">⚒️ Novo Colega de Ofício/Guilda (-8 Vigor)</button>
+    </div>
+
+    <div id="sub-rel-fam" class="rel-sub-panel">
+      <h4>Sangue, Cônjuge &amp; Descendência</h4>
+      <div id="family-list" class="people-grid"></div>
+    </div>
+
+    <div id="sub-rel-amigos" class="rel-sub-panel" style="display:none">
+      <h4>Amigos Íntimos &amp; Aliados</h4>
+      <div id="friends-list" class="people-grid"></div>
+    </div>
+
+    <div id="sub-rel-vila" class="rel-sub-panel" style="display:none">
+      <h4>Habitantes da Vila, Mentores &amp; Conhecidos</h4>
+      <div id="vila-list" class="people-grid"></div>
+    </div>
+
+    <div id="sub-rel-pretendentes" class="rel-sub-panel" style="display:none">
+      <h4>Pretendentes &amp; Amores</h4>
+      <div id="suitors-list" class="people-grid"></div>
+    </div>
+
+    <div id="sub-rel-rivais" class="rel-sub-panel" style="display:none">
+      <h4>Rivais &amp; Inimigos Declarados</h4>
+      <div id="rivals-list" class="people-grid"></div>
+    </div>
+
+    <div id="sub-rel-corte-real" class="rel-sub-panel" style="display:none">
+      <h4>Salão da Corte Real &amp; Nobreza Titular</h4>
+      <p class="sheet-hint">Realeza, Duques, Condes, Viscondes, Barões e Fidalgos que frequentam o Paço Real.</p>
+      <div id="court-list" class="people-grid"></div>
+    </div>
+
+    <div id="sub-rel-oficio" class="rel-sub-panel" style="display:none">
+      <h4>Relações Sociais de <span id="rel-job-title">Ofício / Guilda</span></h4>
+      <p class="sheet-hint">Mestres, aprendizes e pares que convivem com você na Guilda ou no Ofício. Você pode travar amizade, cooperar para elevar seu desempenho, seduzir em segredo, casar ou sabotar rivais.</p>
+      <div id="colleagues-list" class="people-grid"></div>
+    </div>
+
+    <div id="sub-rel-memoriam" class="rel-sub-panel" style="display:none">
+      <h4>Memorial dos que Partiram (In Memoriam)</h4>
+      <div id="memoriam-list" class="people-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHEET: OFÍCIOS E GUILDAS -->
+<div id="tab-oficios" class="tab-content sheet" role="dialog" aria-label="Ofícios e Guildas">
+  <div class="sheet-head">
+    <h3>⚜️ Ofícios &amp; Guildas</h3>
+    <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div id="guild-perf-panel" class="card" style="display:none">
+      <div class="perf-head">
+        <h3 id="perf-panel-title">Desempenho no Ofício / Guilda</h3>
+        <span id="perf-status-badge" class="badge gold">Ativo</span>
+      </div>
+      <p id="perf-panel-desc" class="sheet-hint"></p>
+      <div class="perf-bar-box">
+        <div class="perf-bar-row">
+          <span>Barra de Desempenho &amp; Maestria</span>
+          <span id="perf-bar-label">50/100</span>
+        </div>
+        <div class="stat-bar" style="height:12px"><div id="perf-bar-fill" class="stat-fill perf" style="width:50%"></div></div>
+      </div>
+      <h4>Ações de Desempenho &amp; Dedicação</h4>
+      <div id="perf-actions" class="actions-panel"></div>
+    </div>
+
+    <div class="chips">
+      <button type="button" class="tab-btn active" onclick="window.UI.switchJobSubTab('sub-job-oficios', this)">⚒️ Ofícios (<span id="cnt-sub-jobs">0</span>)</button>
+      <button type="button" class="tab-btn" onclick="window.UI.switchJobSubTab('sub-job-guildas', this)">🏛️ Guildas (<span id="cnt-sub-guilds">0</span>)</button>
+    </div>
+    <p class="sheet-hint">Apenas os caminhos acessíveis ao seu estamento atual são revelados. Alguns ofícios exigem que você cumpra primeiro os anos de formação na sub-aba de <strong>Guildas</strong> antes de assumir a carreira plena.</p>
+
+    <div id="sub-job-oficios" class="job-sub-panel">
+      <div id="jobs-list" class="stack-list"></div>
+    </div>
+
+    <div id="sub-job-guildas" class="job-sub-panel" style="display:none">
+      <div id="guilds-list" class="stack-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHEET: GESTÃO DO REINO E FEUDO -->
+<div id="tab-reino" class="tab-content sheet" role="dialog" aria-label="Gestão do Reino">
+  <div class="sheet-head">
+    <h3 id="fief-panel-title">🏰 Conselho de Administração Feudal &amp; Real</h3>
+    <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
+  </div>
+  <div class="sheet-body">
+    <span id="fief-title-badge" class="badge gold" style="align-self:flex-start">Fidalgo</span>
+    <p id="fief-panel-desc" class="sheet-hint"></p>
+    <div id="fief-stats" class="stat-grid fief-stats-box"></div>
+    <h4>Decretos e Ações de Governação (De acordo com seu Grau de Nobreza)</h4>
+    <div id="fief-actions" class="actions-panel"></div>
+  </div>
+</div>
+
+<!-- SHEET: BENS E MERCADO -->
+<div id="tab-inventario" class="tab-content sheet" role="dialog" aria-label="Bens e Mercado">
+  <div class="sheet-head">
+    <h3>⚖️ Bens &amp; Mercado</h3>
+    <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="card">
+      <h3>Posses, Relíquias e Propriedades</h3>
+      <div id="inventory-list" class="stack-list"></div>
+    </div>
+    <div class="card">
+      <h3>Mercado, Empréstimos e Feudos</h3>
+      <div class="market-actions">
+        <button type="button" onclick="window.Engine.takeLoan(50)">⚖️ Tomar Empréstimo (+50 Ouro / +65 Dívida)</button>
+        <button type="button" onclick="window.Engine.payDebt()">🪙 Quitar Dívidas</button>
+      </div>
+      <div id="shop-list" class="stack-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHEET: ANAIS E LINHAGEM -->
+<div id="tab-historico" class="tab-content sheet" role="dialog" aria-label="Anais e Linhagem">
+  <div class="sheet-head">
+    <h3>🏛️ Anais &amp; Linhagem</h3>
+    <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="card">
+      <h3>Anais da Casa, Flags de Destino e Crônica Completa</h3>
+      <div id="history-flags" style="margin-bottom:0.8rem"></div>
+      <div id="full-history-list" class="history-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHEET: FICHA DO PERSONAGEM E APTIDÕES (TOQUE NO RETRATO) -->
+<div id="sheet-ficha" class="sheet" role="dialog" aria-label="Ficha do Personagem">
+  <div class="sheet-head">
+    <h3>🧙 Ficha &amp; Aptidões</h3>
+    <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div id="st-hero-header" class="hero-header"></div>
+    <div id="st-house-banner" class="house-banner"></div>
+    <div class="stat-grid">
+      <div class="stat-pill"><small>Idade &amp; Fase</small><strong><span id="st-age">0</span>a (<span id="st-phase">Infância</span>)</strong></div>
+      <div class="stat-pill"><small>Ano do Senhor</small><strong><span id="st-year">1140</span></strong></div>
+      <div class="stat-pill"><small>Reino</small><strong id="st-kingdom">-</strong></div>
+      <div class="stat-pill"><small>Estamento</small><strong id="st-class">-</strong></div>
+      <div class="stat-pill span-2 stat-city">
+        <div><small>Localidade Atual</small><strong id="st-city">-</strong></div>
+        <button type="button" id="btn-sheet-travel" class="chip-btn" onclick="window.UI.closeSheets();window.Engine.openTravelDialog()">🧭 Viajar</button>
+      </div>
+      <div class="stat-pill span-2"><small>Ofício / Cargo Atual</small><strong id="st-job">-</strong></div>
+      <div class="stat-pill"><small>Tesouro Pessoal</small><strong style="color:var(--gold)"><span id="st-gold">0</span> 🪙</strong></div>
+      <div class="stat-pill"><small>Balanço / Dívida</small><strong><span id="st-income">0</span> / <span id="st-debt" style="color:var(--bad)">0</span></strong></div>
+    </div>
+    <h4>⚜️ Aptidões Corporais &amp; Mentais</h4>
+    <div id="st-attrs" class="attrs-list"></div>
+  </div>
+</div>
+
+<!-- SHEET: CONFIGURAÇÕES -->
+<div id="sheet-config" class="sheet sheet-small" role="dialog" aria-label="Configurações">
+  <div class="sheet-head">
+    <h3>⚙️ Configurações</h3>
+    <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="cfg-list">
+      <button type="button" id="btn-sound" onclick="window.SoundFX.toggle()">🔊 Som: ON</button>
+      <button type="button" id="btn-typewriter" onclick="window.UI.toggleTypewriter()">✒️ Digitação: OFF</button>
+      <button type="button" id="btn-theme" onclick="window.UI.toggleTheme()">☀️ Tema: Claro</button>
+      <button type="button" onclick="window.Storage.exportSave()">💾 Exportar</button>
+      <button type="button" onclick="document.getElementById('import-input').click()">📂 Importar</button>
+      <input type="file" id="import-input" style="display:none" accept=".json" onchange="window.Storage.importSave(event)">
+      <button type="button" onclick="window.UI.showScreen('screen-menu')">🏰 Menu</button>
+    </div>
+    <p class="cfg-version">Crônicas de Cinza e Ferro — Edição Explorador<br>v3.4.1 · Viagens, Descobertas &amp; Carreiras Itinerantes</p>
+  </div>
+</div>
+
+</div><!-- /#app-shell -->
+
+<script src="js/01_retrato_dados.js"></script>
+<script src="js/02_retrato_render.js"></script>
+<script src="js/03_som.js"></script>
+<script src="js/04_dados_nomes.js"></script>
+<script src="js/05_dados_reinos.js"></script>
+<script src="js/05b_dados_explorador.js"></script>
+<script src="js/05c_dados_cultura_oficios.js"></script>
+<script src="js/06_dados_oficios.js"></script>
+<script src="js/07_dados_atividades.js"></script>
+<script src="js/08_eventos_base_a.js"></script>
+<script src="js/09_eventos_base_b.js"></script>
+<script src="js/10_eventos_base_c.js"></script>
+<script src="js/11_eventos_temas_oficio.js"></script>
+<script src="js/12_eventos_contextos.js"></script>
+<script src="js/12b_eventos_explorador.js"></script>
+<script src="js/13_eventos_catalogo.js"></script>
+<script src="js/14_estado_storage.js"></script>
+<script src="js/15_utils.js"></script>
+<script src="js/16_criador.js"></script>
+<script src="js/17_engine_base.js"></script>
+<script src="js/18_engine_nobreza.js"></script>
+<script src="js/19_engine_oficios_consulta.js"></script>
+<script src="js/20_engine_ciclo_anual.js"></script>
+<script src="js/21_engine_eventos.js"></script>
+<script src="js/22_engine_nascimento.js"></script>
+<script src="js/23_engine_provacao_inicio.js"></script>
+<script src="js/24_engine_provacao_acoes.js"></script>
+<script src="js/25_engine_atividades.js"></script>
+<script src="js/26_engine_mudar_oficio.js"></script>
+<script src="js/27_engine_realeza.js"></script>
+<script src="js/27b_engine_explorador.js"></script>
+<script src="js/27c_engine_viagens.js"></script>
+<script src="js/28_engine_economia_morte.js"></script>
+<script src="js/29_rel_npcs.js"></script>
+<script src="js/30_rel_apresentacoes.js"></script>
+<script src="js/31_rel_interacao.js"></script>
+<script src="js/32_rel_sucessao.js"></script>
+<script src="js/33_ui_nucleo.js"></script>
+<script src="js/34_ui_modais.js"></script>
+<script src="js/35_ui_render_all.js"></script>
+<script src="js/35b_ui_hud.js"></script>
+<script src="js/36_inicializacao.js"></script>
+</body>
+</html>

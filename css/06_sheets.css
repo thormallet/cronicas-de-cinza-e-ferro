@@ -1,0 +1,125 @@
+/* ============================================================================
+   v3.3 — BOTTOM SHEETS, CHIPS, ATIVIDADES AGRUPADAS, CONFIGURAÇÕES, MOVIMENTO
+   ============================================================================ */
+.sheet-backdrop {
+  position: absolute; inset: 0; z-index: 20;
+  background: rgba(6,4,2,0.62);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+body.sheet-open .sheet-backdrop { opacity: 1; pointer-events: auto; }
+
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 21;
+  top: calc(env(safe-area-inset-top) + 2.6rem);
+  display: flex; flex-direction: column;
+  background: var(--bg);
+  border-top: 3px solid var(--border-gold);
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
+  transform: translateY(105%); visibility: hidden;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.28s;
+}
+.sheet.sheet-small { top: auto; max-height: 85%; }
+.sheet.active {
+  transform: none; visibility: visible;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+}
+.sheet-head {
+  position: relative; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+  padding: 0.85rem 0.9rem 0.5rem 1rem;
+  background: linear-gradient(180deg, var(--panel), var(--bg));
+  border-bottom: 1px solid var(--border-gold);
+  border-radius: 16px 16px 0 0;
+}
+.sheet-head::before {
+  content: ""; position: absolute; top: 5px; left: 50%;
+  width: 42px; height: 4px; margin-left: -21px;
+  border-radius: 2px; background: var(--border); opacity: 0.6;
+}
+.sheet-head h3 { flex: 1; min-width: 0; margin: 0; padding: 0; border: none; font-size: 1rem; }
+.sheet-sub { font-size: 0.74rem; font-weight: normal; text-transform: none; letter-spacing: 0; color: var(--text-muted); }
+.sheet-close { width: 44px; height: 44px; padding: 0; flex-shrink: 0; border-radius: 50%; font-size: 1.1rem; }
+.sheet-body {
+  flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  padding: 0.7rem 0.85rem calc(env(safe-area-inset-bottom) + 1rem);
+  display: flex; flex-direction: column; gap: 0.75rem;
+}
+.sheet-body > * { flex-shrink: 0; }
+.sheet-hint { font-size: 0.84rem; color: var(--text-muted); margin: 0; }
+.sheet-body .card { margin-bottom: 0; }
+.sheet-body h4 { margin-bottom: 0.1rem; }
+.stack-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.history-list { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.9rem; }
+
+/* CHIPS (SUB-ABAS DE RELAÇÕES E OFÍCIOS) */
+.chips {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none;
+  margin: -0.7rem -0.85rem 0; padding: 0.7rem 0.85rem 0.45rem;
+  background: var(--bg);
+}
+.chips::-webkit-scrollbar { display: none; }
+.chips .tab-btn {
+  flex-shrink: 0; white-space: nowrap; min-height: 44px; padding: 0.35rem 0.9rem;
+  border-radius: 999px; font-size: 0.82rem; font-weight: bold;
+  background: var(--panel-inner); color: var(--text);
+  border: 1.5px solid var(--border); outline: none; box-shadow: none; text-shadow: none;
+}
+.chips .tab-btn:hover:not(:disabled) { background: var(--bg-alt); color: var(--text); transform: none; box-shadow: none; }
+.chips .tab-btn.active, .chips .tab-btn.active:hover:not(:disabled) {
+  background: linear-gradient(180deg, var(--accent-hover), var(--accent));
+  color: #ffefc7; border-color: var(--gold-bright);
+}
+.rel-actions { display: flex; flex-direction: column; gap: 0.45rem; }
+.rel-actions button, .market-actions button { min-height: 46px; text-align: left; border-radius: 12px; }
+.market-actions { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 0.8rem; }
+
+/* PAINEL DE DESEMPENHO, FEUDO, FICHA */
+.perf-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+.perf-head h3 { margin: 0; border: none; }
+.perf-bar-box { margin: 0.75rem 0; }
+.perf-bar-row { display: flex; justify-content: space-between; font-size: 0.86rem; font-weight: bold; }
+.fief-stats-box { background: var(--panel-inner); padding: 0.8rem; border-radius: 12px; border: 1px solid var(--border); grid-template-columns: 1fr; }
+.stat-pill.span-2 { grid-column: span 2; }
+.stat-pill.stat-city { flex-direction: row; justify-content: space-between; align-items: center; gap: 0.4rem; }
+.attrs-list { display: flex; flex-direction: column; gap: 0.4rem; }
+.attr-line-head { display: flex; justify-content: space-between; font-size: 0.82rem; font-weight: bold; }
+
+/* ATIVIDADES AGRUPADAS POR CATEGORIA */
+.act-groups { display: flex; flex-direction: column; gap: 1.1rem; }
+.act-group-title {
+  display: flex; align-items: center; gap: 0.4rem; margin: 0 0 0.45rem 0.1rem;
+  font-size: 0.78rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--accent);
+}
+[data-theme="dark"] .act-group-title { color: var(--gold-bright); }
+.act-group-title::after { content: ""; flex: 1; height: 1px; background: var(--border-gold); opacity: 0.6; }
+.act-empty { color: var(--text-muted); font-size: 0.9rem; }
+.cost-row { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.35rem; }
+.cost-chip {
+  display: inline-flex; align-items: center; gap: 0.2rem;
+  padding: 0.1rem 0.55rem; border-radius: 999px;
+  font-size: 0.72rem; font-weight: bold; font-style: normal;
+  background: rgba(0,0,0,0.22); color: inherit;
+}
+.cost-chip.vigor { background: rgba(27,77,110,0.85); color: #d9efff; }
+.cost-chip.gold { background: rgba(140,96,5,0.9); color: #fff1c4; }
+.cost-chip.gain { background: rgba(33,79,28,0.9); color: #d8f5d2; }
+.cost-chip.bad { background: var(--bad); color: #fff; }
+
+/* CONFIGURAÇÕES */
+.cfg-list { display: flex; flex-direction: column; gap: 0.55rem; }
+.cfg-list button { width: 100%; min-height: 50px; padding: 0.6rem 1rem; text-align: left; font-size: 1rem; border-radius: 12px; }
+.cfg-version { text-align: center; font-size: 0.78rem; color: var(--text-muted); }
+
+/* ACESSIBILIDADE: REDUZIR MOVIMENTO */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

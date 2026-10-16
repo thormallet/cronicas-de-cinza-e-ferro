@@ -1,0 +1,209 @@
+:root {
+  --bg-deep: #0b0705;
+  --bg: #d8c39e;
+  --bg-alt: #c5ab7f;
+  --panel: #e9d9b8;
+  --panel-inner: #dcc69c;
+  --leather: #281911;
+  --leather-light: #3e271b;
+  --wood: #321f14;
+  --text: #1e130b;
+  --text-muted: #57402c;
+  --border: #7a5832;
+  --border-gold: #c59632;
+  --border-dark: #2c1b0e;
+  --accent: #6e1217;
+  --accent-hover: #91181f;
+  --royal-purple: #3b1331;
+  --gold: #8c6005;
+  --gold-bright: #e8b93a;
+  --good: #214f1c;
+  --bad: #7d1515;
+  --love: #8c1a47;
+  --shadow: rgba(10, 6, 3, 0.52);
+  --font-serif: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+}
+[data-theme="dark"] {
+  --bg-deep: #050302;
+  --bg: #130e0a;
+  --bg-alt: #1c1510;
+  --panel: #19130e;
+  --panel-inner: #241b14;
+  --leather: #0f0a07;
+  --leather-light: #1e150f;
+  --wood: #17100b;
+  --text: #e6d6bc;
+  --text-muted: #9e8a6f;
+  --border: #594126;
+  --border-gold: #b0852b;
+  --border-dark: #876539;
+  --accent: #8f1b20;
+  --accent-hover: #b5242a;
+  --royal-purple: #521c46;
+  --gold: #dfa935;
+  --gold-bright: #ffd25e;
+  --good: #43823b;
+  --bad: #c93b3b;
+  --love: #cc4176;
+  --shadow: rgba(0, 0, 0, 0.85);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.22); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--border-gold), var(--border)); border-radius: 4px; border: 1px solid var(--border-dark); }
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+body {
+  background-color: var(--leather);
+  color: var(--text);
+  font-family: var(--font-serif);
+  line-height: 1.45;
+  display: flex;
+  justify-content: center;
+  /* FUNDO AMBIENTADO: MADEIRA E COURO ESCURO */
+  background-image:
+    radial-gradient(ellipse at 50% 35%, rgba(197, 150, 50, 0.16), transparent 70%),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.22) 0px, rgba(0, 0, 0, 0.22) 2px, transparent 2px, transparent 54px),
+    repeating-linear-gradient(0deg, rgba(255, 220, 160, 0.035) 0px, rgba(255, 220, 160, 0.035) 1px, transparent 1px, transparent 7px);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.92) translateY(8px); }
+  75% { transform: scale(1.01) translateY(0); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 185, 58, 0.45), 0 3px 8px var(--shadow); }
+  50% { box-shadow: 0 0 14px 4px rgba(232, 185, 58, 0.78), 0 5px 14px var(--shadow); }
+}
+@keyframes floatSubtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+@keyframes eyeBlink {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.08); }
+}
+@keyframes fxFlash {
+  0% { opacity: 0; transform: scale(0.85); }
+  30% { opacity: 1; transform: scale(1.03); }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+
+.portrait-eyes-blink {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: eyeBlink 5.5s infinite;
+}
+
+/* BOTÕES ESTILO MADEIRA E METAL FORJADO */
+button, select, input {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  color: #f3e5c8;
+  background: linear-gradient(180deg, #422b1d 0%, #26170e 100%);
+  border: 1.5px solid var(--border-gold);
+  outline: 1px solid #120a05;
+  padding: 0.42rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,230,170,0.22);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+}
+select, input {
+  color: var(--text);
+  background: var(--panel);
+  text-shadow: none;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.25);
+}
+button:hover:not(:disabled) {
+  background: linear-gradient(180deg, var(--accent-hover) 0%, var(--accent) 100%);
+  color: #fff;
+  border-color: var(--gold-bright);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.65), 0 0 8px rgba(232,185,58,0.35);
+}
+button:active:not(:disabled) { transform: translateY(1px) scale(0.98); }
+button:disabled { opacity: 0.42; cursor: not-allowed; box-shadow: none; filter: grayscale(0.5); }
+button.primary {
+  background: linear-gradient(135deg, #8f191f 0%, #5c0e13 55%, #38112e 100%);
+  color: #ffefc7;
+  font-weight: bold;
+  border: 1.5px solid var(--gold-bright);
+  letter-spacing: 0.5px;
+}
+button.primary:hover:not(:disabled) {
+  filter: brightness(1.14);
+  animation: pulseGold 2.2s infinite;
+}
+
+
+input, select { user-select: text; }
+
+/* CABEÇALHO GLOBAL (MENU / CRIAÇÃO / MORTE) — NO JOGO O HUD ASSUME (body.in-game) */
+#app-header {
+  background: linear-gradient(180deg, #2b1b12 0%, #170e09 100%);
+  border-bottom: 2px solid var(--border-gold);
+  padding: calc(env(safe-area-inset-top) + 0.4rem) 0.85rem 0.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.6);
+  z-index: 6;
+  flex-shrink: 0;
+}
+body.in-game #app-header { display: none; }
+.brand-box { display: flex; align-items: center; gap: 0.65rem; min-width: 0; }
+.brand-crest {
+  width: 34px; height: 34px; flex-shrink: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-hover), var(--royal-purple));
+  border: 2px solid var(--gold-bright);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.05rem;
+  box-shadow: 0 2px 8px #000;
+  animation: floatSubtle 3.5s ease-in-out infinite;
+}
+#app-header h1 {
+  font-size: 0.98rem;
+  letter-spacing: 1px;
+  color: var(--gold-bright);
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px #000;
+  line-height: 1.1;
+}
+.royal-subtitle {
+  display: inline-block;
+  font-size: 0.62rem;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #f7e6c4;
+  background: linear-gradient(90deg, var(--royal-purple), var(--accent), var(--gold));
+  padding: 0.05rem 0.45rem;
+  border-radius: 3px;
+  border: 1px solid var(--border-gold);
+  font-weight: bold;
+}
+
+/* BOTÕES REDONDOS DE ÍCONE E CHIPS DISCRETOS (≥44px de toque nos ícones) */
+.icon-btn {
+  width: 44px; height: 44px; padding: 0; flex-shrink: 0;
+  display: inline-grid; place-items: center;
+  font-size: 1.25rem; border-radius: 50%;
+}
+.chip-btn {
+  padding: 0.28rem 0.75rem; min-height: 34px;
+  font-size: 0.78rem; border-radius: 999px; white-space: nowrap;
+}
