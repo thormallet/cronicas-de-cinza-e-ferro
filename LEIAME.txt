@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 3.5 (Edição Quick-Time Events, Moralidade & Dilemas Feudais)
+Crônicas de Cinza e Ferro — Versão 3.5.1 (Patch de Rigor Medieval, Atrofia & Desgaste Vital)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,26 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 3.5.1 — PATCH DE RIGOR MEDIEVAL, ATROFIA DE ATRIBUTOS E DECAIMENTO DE HONRA/RECONHECIMENTO:
+1. Curva Rigorosa de Retornos Decrescentes e Fim da Honra Gratuita:
+   - Ganhos de atributos extremamente desafiadores (<35: +1~2; <55: 70% de chance de +1; <75: 40% de chance de +1; <90: 18% de chance de +1; 90+: apenas 6% de chance de +1; teto em 100).
+   - Eliminação da honra automática como prêmio de consolação: treinar atributos físicos ou mentais não infla mais a Honra feudal do protagonista.
+   - Fadiga severa por repetição de atividades no mesmo ano.
+2. Decaimento Orgânico Anual de Honra e Reputação (Fama Fugaz e Inércia Moral):
+   - Alta Reputação (>2 e >6) sofre erosão anual natural se o personagem não renovar seus feitos perante o reino (o tempo e a corte esquecem antigos favoritos).
+   - Alta Honra (>65 e >85) sofre perda anual se não for mantida com atos contínuos de bravura, justiça e retidão cristã.
+3. Atrofia por Desuso e Desgaste Vital Realista:
+   - Atributos elevados (>= 75) não praticados durante o ano sofrem risco de atrofia física e intelectual (-1 ponto).
+   - Desgaste por envelhecimento antecipado: início do declínio aos 38 anos (meia-idade), agravado aos 48, 60 e 72+ anos.
+   - Invernos rigorosos e geadas provocam perda sazonal de Saúde e risco de febre/enfraquecimento em classes vulneráveis.
+4. Severidade Aumentada em Falhas e Dilemas Morais:
+   - Fracassos em atividades marciais causam lesões musculares com maior frequência e perda de honra por fiasco na arena.
+   - Falhas sociais acarretam vexame público (-1 Carisma, -2 Honra e -1 Reputação); falhas religiosas geram crises de fé.
+   - Rebalanceadas as escolhas covardes e corruptas de todos os eventos para perdas severas de Honra (-6 a -16) e Reputação (-1 a -3).
+5. Refinamento Visual de Desonra e Versão:
+   - Alertas visuais e sonoros aprimorados para Honra degradada (< 30) e Reputação negativa (< 0) tanto no HUD quanto na Ficha, com registros em destaque carmesim no feed de crônicas.
 ======================================================================
 
 PRINCIPAIS NOVIDADES NA VERSÃO 3.5 (EDIÇÃO QUICK-TIME EVENTS, MORALIDADE & DILEMAS FEUDAIS):

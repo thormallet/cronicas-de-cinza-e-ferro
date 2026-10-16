@@ -7,7 +7,8 @@ O formato baseia-se nas diretrizes do [Keep a Changelog](https://keepachangelog.
 ---
 
 ## Sumário
-- [3.5.0 — Quick-Time Events, Moralidade & Dilemas Feudais](#350--2026-10-16) *(Destaque / Atual)*
+- [3.5.1 — Patch de Rigor Medieval, Atrofia & Desgaste Vital](#351--2026-10-16) *(Destaque / Atual)*
+- [3.5.0 — Quick-Time Events, Moralidade & Dilemas Feudais](#350--2026-10-16)
 - [3.4.1 — 2026-10-16](#341--2026-10-16)
 - [3.4.0 — Edição Explorador, Viagens & Carreiras Itinerantes](#340--edição-explorador-viagens--carreiras-itinerantes)
 - [3.3.0 — Novo HUD Estilo BitLife & Design System](#330--novo-hud-estilo-bitlife--design-system)
@@ -19,6 +20,55 @@ O formato baseia-se nas diretrizes do [Keep a Changelog](https://keepachangelog.
 - [3.0.0 — O Grande Salto Modular & Retratos Procedurais](#300--o-grande-salto-modular--retratos-procedurais)
 - [2.0.0 — Reinos Históricos & Dinastias](#200--reinos-históricos--dinastias)
 - [1.0.0 — Fundação de Cinza e Ferro](#100--fundação-de-cinza-e-ferro)
+
+---
+
+## [3.5.1] — 2026-10-16
+### Patch de Rigor Medieval, Atrofia de Atributos & Decaimento de Honra/Reconhecimento
+
+> **Destaque:** Este patch reformula drasticamente o balanceamento e a progressão de Crônicas de Cinza e Ferro, introduzindo uma curva rigorosa de retornos decrescentes com fim da honra concedida gratuitamente em treinos simples, atrofia biológica e intelectual de atributos mestres sem prática anual, decaimento orgânico contínuo de alta Honra e alta Reputação, desgaste por envelhecimento a partir dos 38 anos, invernos impiedosos e punições implacáveis para falhas e dilemas morais de covardia e corrupção.
+
+#### 1. Curva Rigorosa de Retornos Decrescentes e Fim da Honra Gratuita
+- **Taxas Severas de Evolução de Atributos:**
+  - `< 35 (Iniciante):` +1 a +2 pontos por treino bem-sucedido.
+  - `< 55 (Praticante):` 70% de probabilidade de ganho de +1 ponto.
+  - `< 75 (Veterano):` 40% de probabilidade de ganho de +1 ponto.
+  - `< 90 (Especialista):` apenas 18% de probabilidade de ganho de +1 ponto sob esforço exaustivo.
+  - `90+ (Mestre):` teto de maestria quase intransponível com apenas 6% de chance de +1 ponto (teto rígido absoluto em 100).
+- **Eliminação da Honra Automática:** Treinar atributos físicos, mentais ou de ofício não concede mais Honra automática como prêmio de consolação por dedicação trivial. Honra feudal agora exige feitos autênticos de bravura, justiça e devoção perante o reino.
+- **Fadiga Severa por Repetição Anual:** Repetições excessivas da mesma atividade no mesmo ano acumulam exaustão severa, reduzindo drasticamente as chances de sucesso.
+
+#### 2. Decaimento Orgânico Anual de Honra e Reputação (Fama Fugaz e Inércia Moral)
+- **Erosão Anual da Reputação Feudal:**
+  - Patamar `Reputação > 2`: Perda orgânica de -1 ponto por ano caso o personagem não renove seus feitos perante o reino (o tempo e a corte esquecem antigos favoritos).
+  - Patamar `Reputação > 6`: Alta celebridade sofre perda anual de -2 pontos caso não seja alimentada com grandes feitos ou patrocínios contínuos.
+- **Decaimento Orgânico de Alta Honra:**
+  - Patamar `Honra > 65`: Erosão natural de -1 ponto anual se a conduta não for reafirmada com atos contínuos de bravura e justiça cristã.
+  - Patamar `Honra > 85`: A aura de virtude cavalheiresca suprema sofre decaimento de -2 pontos anuais se não for mantida ativamente.
+
+#### 3. Atrofia por Desuso e Desgaste Vital Realista
+- **Atrofia Biológica e Intelectual por Desuso:**
+  - Atributos elevados (`>= 75`) não praticados ativamente durante o ano sofrem risco iminente de atrofia física e intelectual (-1 ponto).
+- **Desgaste por Envelhecimento Antecipado:**
+  - *Aos 38 anos (Meia-Idade):* Início precoce do declínio biológico com perda sutil de vitalidade física ou agilidade.
+  - *Aos 48 anos:* Agravamento do desgaste articular e físico.
+  - *Aos 60 anos e 72+ anos:* Queda acentuada e progressiva de Saúde, Força e Destreza com o peso implacável das décadas.
+- **Invernos Rigorosos e Geadas:**
+  - Invernos severos provocam perda sazonal de Saúde e aumentam o risco de febres e enfraquecimento geral, afetando duramente as classes mais vulneráveis.
+
+#### 4. Severidade Aumentada em Falhas e Dilemas Morais
+- **Fracassos Marciais Punitivos:** Fracassos em atividades marciais causam lesões musculares com maior frequência e perda de honra por fiasco na arena.
+- **Falhas Sociais e Religiosas com Consequências Reais:**
+  - Falhas sociais acarretam vexame público (**-1 Carisma**, **-2 Honra** e **-1 Reputação**).
+  - Falhas religiosas geram crises de fé e espírito (**-1 Fé** e abalo moral).
+- **Rebalanceamento Punitivo de Escolhas Covardes e Corruptas:**
+  - Todas as escolhas narrativas de covardia, suborno, perjúrio ou traição em eventos e provações foram rebalanceadas para perdas severas de Honra (**-6 a -16**) e Reputação (**-1 a -3**).
+
+#### 5. Refinamento Visual de Desonra e Versão
+- **Alertas Visuais e Sonoros de Infâmia:**
+  - Alertas visuais e sonoros aprimorados para Honra degradada (`< 30`) e Reputação negativa (`< 0`) tanto no HUD quanto na Ficha de Personagem.
+  - Registros em destaque carmesim no feed de crônicas para expor publicamente a desonra e a má fama do protagonista.
+- **Identificação da Versão 3.5.1:** Atualizada a versão no cabeçalho e metadados do projeto.
 
 ---
 

@@ -1,5 +1,5 @@
 /* ============================================================================
-   [UI · NÚCLEO v3.5] — efeitos, avisos, diálogos, navegação de telas e painéis (sheets), tema, menu e feed
+   [UI · NÚCLEO v3.5.1] — efeitos, avisos, diálogos, navegação de telas e painéis (sheets), tema, menu e feed
    ============================================================================ */
 const UI = {
   triggerStageFX(symbol = "✨") {

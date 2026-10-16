@@ -17,6 +17,7 @@ Object.assign(Engine, {
     STATE.age++;
     STATE.year++;
     STATE.healthCareUsedThisYear = false;
+    const pastYearActs = Object.keys(STATE.activityYearCount || {});
     STATE.activityYearCount = {};
 
     const seasons = [
@@ -49,37 +50,102 @@ Object.assign(Engine, {
       }
     }
 
-    // Degradação Natural por Envelhecimento
-    if (STATE.age >= 48 && STATE.age < 60) {
-      if (Math.random() < 0.30) {
+    // Erosão Orgânica da Glória & Fama (A Memória do Povo é Curta)
+    const hasNobleRank = STATE.socialClass === "nobre" && (STATE.nobleTitleLevel || 0) >= 1;
+    const didRecentFeat = pastYearActs.some(a => ["patrocinar_torneio", "disputar_torneio", "marchar_guerra", "liderar_cerco"].includes(a));
+    if (STATE.reputation > 6) {
+      if (Math.random() < 0.50) {
+        STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
+        this.addLog("A corte é volúvel e esquece com facilidade os antigos favoritos: -1 Reputação.", "bad");
+      }
+    } else if (STATE.reputation > 2 && !hasNobleRank && !didRecentFeat) {
+      if (Math.random() < 0.35) {
+        STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
+        this.addLog("O tempo esmaece sua fama entre as praças e tavernas: -1 Reputação.", "bad");
+      }
+    }
+
+    // Erosão da Alta Honra (A Inércia Moral Cobra seu Preço)
+    const didHonorableActs = pastYearActs.some(a => ["fazer_caridade", "doar_dizimo_extraordinario", "patrocinar_torneio", "peregrinacao", "ingressar_ordem", "marchar_guerra", "liderar_cerco"].includes(a));
+    if (STATE.honor > 85) {
+      if (Math.random() < 0.55) {
+        STATE.honor = Utils.clamp(STATE.honor - 2, 0, 100);
+        this.addLog("Manter honra lendária exige dedicação ativa constante; a inércia moral cobra seu preço (-2 Honra).", "bad");
+      }
+    } else if (STATE.honor > 65 && !didHonorableActs) {
+      if (Math.random() < 0.35) {
+        const hDecay = Utils.rand(1, 2);
+        STATE.honor = Utils.clamp(STATE.honor - hDecay, 0, 100);
+        this.addLog(`Sem novos atos de cavalheirismo e retidão, o brilho da sua honra arrefece perante os pares (-${hDecay} Honra).`, "bad");
+      }
+    }
+
+    // Atrofia por Desuso de Atributos Altos (>= 75)
+    const highAttrs = ["forca", "destreza", "intelecto", "carisma", "fe"];
+    const attrActsMap = {
+      forca: ["treinar_armas", "disputar_torneio", "desafiar_duelo", "marchar_guerra", "liderar_cerco", "cacar_lobos", "trabalhar_duro", "duelo_clandestino"],
+      destreza: ["treinar_arco", "cacar_floresta", "caca_furtiva", "furtar_bolsas", "jogos_dados_viciados"],
+      intelecto: ["ler_livro", "estudar_academia", "conspirar_golpe", "caravana_comercial"],
+      carisma: ["socializar_taverna", "festejo_desregrado", "patrocinar_torneio", "banho_perfumado", "cortejar_romance"],
+      fe: ["orar_jejuar", "peregrinacao", "fazer_caridade", "penitencia_flagelo", "doar_dizimo_extraordinario", "ingressar_ordem"]
+    };
+    const attrLabels = { forca: "Força", destreza: "Destreza", intelecto: "Intelecto", carisma: "Carisma", fe: "Fé" };
+    highAttrs.forEach(stat => {
+      if ((STATE.attrs[stat] || 0) >= 75) {
+        const relevantActs = attrActsMap[stat] || [];
+        const practiced = pastYearActs.some(a => relevantActs.includes(a));
+        if (!practiced && Math.random() < 0.30) {
+          STATE.attrs[stat] -= 1;
+          this.addLog(`Sem exercícios regulares, seu domínio outrora supremo em ${attrLabels[stat]} sofreu atrofia (-1).`, "bad");
+        }
+      }
+    });
+
+    // Desgaste por Envelhecimento Progressivo e Realista
+    if (STATE.age >= 38 && STATE.age < 48) {
+      if (Math.random() < 0.25) {
         const pool = ["forca", "destreza", "beleza"].filter(k => (STATE.attrs[k] || 0) > 15);
         if (pool.length > 0) {
           const target = Utils.pick(pool);
           STATE.attrs[target] -= 1;
           const targetName = target === "forca" ? "Força" : (target === "destreza" ? "Destreza" : "Beleza");
-          this.addLog(`O peso dos anos começa a se fazer sentir (-1 ${targetName}).`, "bad");
+          this.addLog(`Com a chegada da meia-idade, o vigor juvenil dá os primeiros sinais de declínio (-1 ${targetName}).`, "bad");
         }
       }
-    } else if (STATE.age >= 60 && STATE.age < 72) {
-      if (Math.random() < 0.55) {
-        const pool = ["forca", "destreza", "saude", "beleza"].filter(k => (STATE.attrs[k] || 0) > 15);
+    } else if (STATE.age >= 48 && STATE.age < 60) {
+      if (Math.random() < 0.45) {
+        const pool = ["forca", "destreza", "beleza"].filter(k => (STATE.attrs[k] || 0) > 15);
         if (pool.length > 0) {
           const target = Utils.pick(pool);
           STATE.attrs[target] -= 1;
-          if (target === "saude") {
-            STATE.maxHp = Math.max(10, this.getEffectiveAttr("saude"));
-            STATE.hp = Math.min(STATE.hp, STATE.maxHp);
+          const targetName = target === "forca" ? "Força" : (target === "destreza" ? "Destreza" : "Beleza");
+          this.addLog(`O peso dos anos se faz sentir com rigor sobre sua compleição (-1 ${targetName}).`, "bad");
+        }
+      }
+    } else if (STATE.age >= 60 && STATE.age < 72) {
+      if (Math.random() < 0.65) {
+        const pool = ["forca", "destreza", "saude", "beleza"].filter(k => (STATE.attrs[k] || 0) > 12);
+        if (pool.length > 0) {
+          const target = Utils.pick(pool);
+          const loss = Utils.rand(1, 2);
+          const actualLoss = Math.min(loss, (STATE.attrs[target] || 12) - 10);
+          if (actualLoss > 0) {
+            STATE.attrs[target] -= actualLoss;
+            if (target === "saude") {
+              STATE.maxHp = Math.max(10, this.getEffectiveAttr("saude"));
+              STATE.hp = Math.min(STATE.hp, STATE.maxHp);
+            }
+            const targetName = target === "forca" ? "Força" : (target === "destreza" ? "Destreza" : (target === "saude" ? "Saúde" : "Beleza"));
+            this.addLog(`A velhice cobra seu tributo sobre as juntas e a vitalidade (-${actualLoss} ${targetName}).`, "bad");
           }
-          const targetName = target === "forca" ? "Força" : (target === "destreza" ? "Destreza" : (target === "saude" ? "Saúde" : "Beleza"));
-          this.addLog(`A velhice cobra seu tributo sobre as juntas e a vitalidade (-1 ${targetName}).`, "bad");
         }
       }
     } else if (STATE.age >= 72) {
-      if (Math.random() < 0.75) {
-        const loss = Utils.rand(1, 2);
+      if (Math.random() < 0.85) {
         const pool = ["forca", "destreza", "saude", "beleza"].filter(k => (STATE.attrs[k] || 0) > 10);
         if (pool.length > 0) {
           const target = Utils.pick(pool);
+          const loss = Utils.rand(2, 3);
           const actualLoss = Math.min(loss, (STATE.attrs[target] || 10) - 10);
           if (actualLoss > 0) {
             STATE.attrs[target] -= actualLoss;
@@ -91,6 +157,21 @@ Object.assign(Engine, {
             this.addLog(`A idade avançada debilita inexoravelmente o vigor do corpo (-${actualLoss} ${targetName}).`, "bad");
           }
         }
+      }
+    }
+
+    // Inverno Rigoroso e Enfermidades Sazonais
+    if (Math.random() < 0.20) {
+      const hasShelter = STATE.properties && STATE.properties.length > 0 && STATE.socialClass !== "plebeu";
+      if (!hasShelter) {
+        const frostHp = Utils.rand(4, 8);
+        STATE.hp = Math.max(1, STATE.hp - frostHp);
+        let frostStr = false;
+        if (Math.random() < 0.25 && (STATE.attrs.forca || 0) > 12) {
+          STATE.attrs.forca -= 1;
+          frostStr = true;
+        }
+        this.addLog(`O inverno impiedoso castigou seu corpo desprovido de luxos (-${frostHp} Saúde${frostStr ? ", -1 Força" : ""}).`, "bad");
       }
     }
 

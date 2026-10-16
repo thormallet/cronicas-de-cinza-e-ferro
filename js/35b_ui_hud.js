@@ -1,5 +1,5 @@
 /* ============================================================================
-   [UI · HUD v3.5] — HUD compacto, barras de status críticas, atividades em cartões e atalhos
+   [UI · HUD v3.5.1] — HUD compacto, barras de status críticas, atividades em cartões e atalhos
    ============================================================================ */
 Object.assign(UI, {
   ACTIVITY_GROUPS: [
@@ -32,6 +32,9 @@ Object.assign(UI, {
       const el = document.querySelector(`.sbar[data-stat="${stat}"]`);
       if (!el) return;
       if (stat === "rep" && STATE.reputation < 0) {
+        el.classList.add("crit");
+        el.classList.remove("warn");
+      } else if (stat === "honor" && STATE.honor < 30) {
         el.classList.add("crit");
         el.classList.remove("warn");
       } else {

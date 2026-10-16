@@ -1,5 +1,5 @@
 /* ============================================================================
-   [UI · RENDERIZAÇÃO GERAL v3.5] — renderAll — redesenha HUD, painéis, abas e listas
+   [UI · RENDERIZAÇÃO GERAL v3.5.1] — renderAll — redesenha HUD, painéis, abas e listas
    ============================================================================ */
 Object.assign(UI, {
   renderAll() {
@@ -78,6 +78,44 @@ Object.assign(UI, {
     else if (STATE.reputation <= -4) dishonorLabel = "Desprezado";
     else if (STATE.reputation <= -1) dishonorLabel = "Malvisto";
 
+    let honorDegradedLabel = "";
+    if (STATE.honor <= 15) honorDegradedLabel = "Desonrado / Vil";
+    else if (STATE.honor < 30) honorDegradedLabel = "Manchada";
+    else if (STATE.honor < 45) honorDegradedLabel = "Duvidosa";
+
+    const honorEl = document.getElementById("st-honor");
+    const honorBar = document.getElementById("st-honor-bar");
+    const honorSbar = document.querySelector('.sbar[data-stat="honor"]');
+
+    if (STATE.honor < 30) {
+      if (honorEl) {
+        honorEl.className = "aff-bad";
+        honorEl.style.color = "#ef4444";
+        honorEl.innerHTML = `${STATE.honor} <span class="rep-dishonor-badge" style="color:#ef4444;font-size:0.72rem" title="${honorDegradedLabel}">(${honorDegradedLabel})</span>`;
+      }
+      if (honorBar) {
+        honorBar.className = "stat-fill honor aff-bad";
+        honorBar.style.background = "linear-gradient(90deg, #8a0f0f, #e0392f)";
+      }
+      if (honorSbar) {
+        honorSbar.classList.add("crit");
+        honorSbar.title = `Honra da Casa: ${STATE.honor}/100 — ${honorDegradedLabel}`;
+      }
+    } else {
+      if (honorEl) {
+        honorEl.className = "";
+        honorEl.style.color = "";
+        honorEl.textContent = STATE.honor;
+      }
+      if (honorBar) {
+        honorBar.className = "stat-fill honor";
+        honorBar.style.background = "";
+      }
+      if (honorSbar) {
+        honorSbar.title = `Honra da Casa: ${STATE.honor}/100${honorDegradedLabel ? ` — ${honorDegradedLabel}` : ""}`;
+      }
+    }
+
     const repEl = document.getElementById("st-rep");
     const repBar = document.getElementById("st-rep-bar");
     const repSbar = document.querySelector('.sbar[data-stat="rep"]');
@@ -112,7 +150,32 @@ Object.assign(UI, {
     }
 
     const sheetHonorEl = document.getElementById("st-sheet-honor");
-    if (sheetHonorEl) sheetHonorEl.textContent = STATE.honor;
+    if (sheetHonorEl) {
+      if (STATE.honor < 30) {
+        sheetHonorEl.className = "aff-bad";
+        sheetHonorEl.style.color = "#ef4444";
+        sheetHonorEl.textContent = STATE.honor;
+        if (sheetHonorEl.parentElement) {
+          let badgeSpan = sheetHonorEl.parentElement.querySelector(".honor-degraded-badge");
+          if (!badgeSpan) {
+            badgeSpan = document.createElement("span");
+            badgeSpan.className = "badge bad honor-degraded-badge";
+            badgeSpan.style.fontSize = "0.75rem";
+            badgeSpan.style.marginLeft = "0.25rem";
+            sheetHonorEl.parentElement.appendChild(badgeSpan);
+          }
+          badgeSpan.textContent = honorDegradedLabel;
+        }
+      } else {
+        sheetHonorEl.className = "";
+        sheetHonorEl.style.color = "";
+        sheetHonorEl.textContent = STATE.honor;
+        if (sheetHonorEl.parentElement) {
+          const badgeSpan = sheetHonorEl.parentElement.querySelector(".honor-degraded-badge");
+          if (badgeSpan) badgeSpan.remove();
+        }
+      }
+    }
 
     const sheetRepEl = document.getElementById("st-sheet-rep");
     if (sheetRepEl) {
@@ -134,7 +197,6 @@ Object.assign(UI, {
     document.getElementById("st-vigor-val").textContent = `${STATE.vigor}/${STATE.maxVigor}`;
     document.getElementById("st-vigor-bar").style.width = `${Utils.clamp(Math.round((STATE.vigor / STATE.maxVigor) * 100), 0, 100)}%`;
 
-    const honorBar = document.getElementById("st-honor-bar");
     if (honorBar) honorBar.style.width = `${Utils.clamp(STATE.honor, 0, 100)}%`;
     if (repBar) repBar.style.width = `${Utils.clamp((STATE.reputation + 10) * 5, 0, 100)}%`;
 

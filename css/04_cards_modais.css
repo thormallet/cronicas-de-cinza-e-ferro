@@ -56,7 +56,7 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 .badge.good { background: var(--good); }
-.badge.bad { background: var(--bad); }
+.badge.bad { background: var(--bad); border: 1px solid rgba(239, 68, 68, 0.45); font-weight: 600; }
 .badge.gold { background: linear-gradient(135deg, #b38010, #7d5705); border: 1px solid var(--gold-bright); }
 .badge.love { background: var(--love); }
 .badge.royal { background: linear-gradient(135deg, var(--royal-purple), var(--accent)); border: 1px solid var(--gold-bright); }
@@ -257,7 +257,7 @@
 }
 
 /* ============================================================================
-   ESTILOS DE EVENTOS QTE (QUICK-TIME EVENTS) — V3.5
+   ESTILOS DE EVENTOS QTE (QUICK-TIME EVENTS) — V3.5.1
    ============================================================================ */
 #event-popup.qte-active,
 #event-popup.qte-active .modal-content,
