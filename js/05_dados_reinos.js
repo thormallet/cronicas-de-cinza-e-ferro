@@ -121,5 +121,23 @@ Object.assign(DATA, {
       { id: "amaldicoado", name: "Marca do Azar", mods: { sorte: -15 } },
       { id: "cruel", name: "Sangue Frio", mods: { carisma: -10, fe: -10 } }
     ]
+  },
+
+  /* REGRAS DE PROGRESSÃO E REVOGAÇÃO NOBILIÁRQUICA */
+  nobilityRules: {
+    progression: {
+      1: { title: "Fidalgo", minHonor: 65, minRep: 3, minOrder: 50, minEconomy: 50, minWealth: 600, minProperties: 1 },
+      2: { title: "Barão", minHonor: 70, minRep: 5, minOrder: 55, minEconomy: 55, minWealth: 1200, minProperties: 2 },
+      3: { title: "Visconde", minHonor: 75, minRep: 6, minOrder: 60, minEconomy: 60, minWealth: 2500, minProperties: 3 },
+      4: { title: "Conde", minHonor: 80, minRep: 7, minOrder: 65, minEconomy: 65, minWealth: 5000, minProperties: 4 },
+      5: { title: "Duque", minHonor: 85, minRep: 8, minOrder: 70, minEconomy: 70, minWealth: 10000, minProperties: 5 }
+    },
+    revocation: {
+      minHonor: 20,
+      minRep: -5,
+      consecutiveYears: 3,
+      lesaMajestade: true,
+      desc: "Perda e revogação de privilégios nobiliárquicos ocorrem após 3 anos consecutivos com Honra < 20 ou Reputação < -5, ou imediatamente sob crime de lesa-majestade."
+    }
   }
 });

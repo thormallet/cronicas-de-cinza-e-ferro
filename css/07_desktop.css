@@ -1,16 +1,19 @@
 /* ============================================================================
-   v3.4.1 — LAYOUT DESKTOP (≥1200px) — ACABAMENTO ETAPA 4
+   [CCF v4.2] — 07_desktop.css
+   Layout Desktop (≥1200px): Molduras Nobres, Colunas e Ergonomia Avançada
    ============================================================================ */
 
 @media (min-width: 1200px) {
-  /* 1. Shell centralizado max-width 1360px */
+  /* 1. SHELL CENTRALIZADO MAX-WIDTH 1360px */
   #app-shell,
   body.in-game #app-shell {
     max-width: 1360px;
     margin: 0 auto;
+    border-left: 3px solid var(--border-gold);
+    border-right: 3px solid var(--border-gold);
   }
 
-  /* Telas fora do jogo: max-width 920px centralizado */
+  /* Telas fora do jogo: centralizadas em 920px */
   #screen-menu .menu-container,
   #screen-create .card,
   #screen-death .menu-container {
@@ -26,8 +29,12 @@
     gap: 1.25rem;
   }
 
-  /* Slots de save e galeria de dinastias em 2 colunas */
-  #menu-slots, #dynasty-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  /* Slots de save e galeria em 2 colunas */
+  #menu-slots, #dynasty-gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
   #menu-slots .slot-item, #dynasty-gallery .slot-item { margin-bottom: 0; }
   #menu-slots .slot-item button { width: auto; flex: 1; }
 
@@ -47,11 +54,11 @@
     z-index: 10;
     transition: none;
   }
-  body.in-game #sheet-ficha .sheet-close {
-    display: none;
-  }
+  body.in-game #sheet-ficha .sheet-close,
+  body.in-game #sheet-ficha .sheet-head::before { display: none; }
   body.in-game #sheet-ficha .sheet-body {
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     padding: 0.75rem 0.9rem 1.2rem;
   }
@@ -61,18 +68,11 @@
     padding: 0.75rem 0.5rem;
     gap: 0.5rem;
   }
-  body.in-game #sheet-ficha .avatar-portrait.lg {
-    width: 92px;
-    height: 92px;
-  }
-  body.in-game #sheet-ficha #st-attrs {
-    gap: 0.45rem;
-  }
-  body.in-game #sheet-ficha .attr-line-head {
-    font-size: 0.85rem;
-  }
+  body.in-game #sheet-ficha .avatar-portrait.lg { width: 92px; height: 92px; }
+  body.in-game #sheet-ficha #st-attrs { gap: 0.45rem; }
+  body.in-game #sheet-ficha .attr-line-head { font-size: 0.85rem; }
 
-  /* 3. COLUNA DIREITA: sheets docados (440px) */
+  /* 3. COLUNA DIREITA: SHEETS DOCADOS (440px) */
   body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) {
     top: 0;
     bottom: 0;
@@ -95,17 +95,12 @@
     opacity: 1;
     pointer-events: auto;
   }
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .sheet-close {
-    display: none;
-  }
-  body.in-game .sheet:not(#sheet-config) .sheet-head {
-    border-radius: 0;
-  }
-  body.in-game .sheet:not(#sheet-config) .sheet-head::before {
-    display: none;
-  }
+  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .sheet-close,
+  body.in-game .sheet:not(#sheet-config) .sheet-head::before { display: none; }
+  body.in-game .sheet:not(#sheet-config) .sheet-head { border-radius: 0; }
   body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .sheet-body {
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
   }
   body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .people-grid {
@@ -117,11 +112,9 @@
   body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .card,
   body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .person-card,
   body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .npc-card,
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .item-card {
-    width: 100%;
-  }
+  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .item-card { width: 100%; }
 
-  /* 4. CENTRO: HUD, Feed e Dock com margens adaptáveis à abertura de sheets */
+  /* 4. CENTRO: HUD, FEED E DOCK COM MARGENS INTELIGENTES */
   body.in-game .hud,
   body.in-game .feed-wrap,
   body.in-game .dock {
@@ -131,16 +124,12 @@
   }
   body.in-game.sheet-open .hud,
   body.in-game.sheet-open .feed-wrap,
-  body.in-game.sheet-open .dock {
-    margin-right: 440px;
-  }
+  body.in-game.sheet-open .dock { margin-right: 440px; }
   body.in-game:not(.sheet-open) .hud,
   body.in-game:not(.sheet-open) .feed-wrap,
-  body.in-game:not(.sheet-open) .dock {
-    margin-right: 0;
-  }
+  body.in-game:not(.sheet-open) .dock { margin-right: 0; }
 
-  /* Grade de viagens em 2 colunas no desktop */
+  /* Viagens em grade de 2 colunas no desktop */
   .travel-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -157,17 +146,14 @@
     line-height: 1.6;
     padding: 0.75rem 1rem;
   }
-  body.in-game .log-year {
-    gap: 0.6rem;
-    margin-bottom: 0.45rem;
-  }
+  body.in-game .log-year { gap: 0.6rem; margin-bottom: 0.45rem; }
   body.in-game .log-year-head {
     margin-bottom: 0.4rem;
     padding: 0.32rem 1.1rem;
     font-size: 0.84rem;
   }
 
-  /* 5. MODAIS: centralizados, largura 560px, hover em escolhas */
+  /* 5. MODAIS CENTRALIZADOS (560px) */
   .custom-dialog-backdrop .custom-dialog {
     max-width: 560px;
     width: 560px;
@@ -182,7 +168,7 @@
     cursor: pointer;
   }
 
-  /* Configurações centralizado de 440px */
+  /* Modal de Configurações centralizado no desktop */
   body.in-game #sheet-config {
     top: 50%;
     left: 50%;
@@ -207,7 +193,6 @@
     pointer-events: auto;
   }
 
-  /* BACKDROP: aparece com body.config-open */
   body.in-game .sheet-backdrop {
     opacity: 0;
     pointer-events: none;
@@ -219,11 +204,8 @@
     z-index: 30;
   }
 
-  /* 6. HOVER/FOCUS VISÍVEL NA NAVBAR E NO SELO; CURSOR: POINTER */
-  .nav-btn,
-  .seal-btn {
-    cursor: pointer;
-  }
+  /* 6. HOVER / FOCUS NA NAVBAR E NO SELO */
+  .nav-btn, .seal-btn { cursor: pointer; }
   .nav-btn:hover:not(:disabled),
   .nav-btn:focus-visible {
     background: rgba(232, 185, 58, 0.22);

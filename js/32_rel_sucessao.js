@@ -46,12 +46,12 @@ Object.assign(Engine, {
   succeedWithHeir(childId) {
     const heir = STATE.npcs.find(n => n.id === childId);
     if (!heir) return;
-    SoundFX.play("bells");
+    SoundFX.play("cathedral_bells");
 
     const k = this.getKingdom();
     const lawKey = STATE.successionLaw || "primogenitura";
     const lawObj = (DATA.successionLaws && DATA.successionLaws[lawKey]) || { splitPercent: 0.85, claimCost: 30 };
-    const livingLegitSiblings = STATE.npcs.filter(n => n.role === "Filho" && n.alive && !n.abandoned && (!n.isBastard || n.legitimacy === "legitimo"));
+    const livingLegitSiblings = STATE.npcs.filter(n => (n.role === "Filho" || n.role === "Filha") && n.alive && !n.abandoned && (!n.isBastard || n.legitimacy === "legitimo"));
 
     let inheritedGold = STATE.gold;
     if (lawKey === "partilha") {
@@ -69,15 +69,23 @@ Object.assign(Engine, {
     const inheritedRep = Math.round((STATE.reputation || 0) * 0.5);
     const prevName = STATE.name;
 
+    const isNoble = STATE.socialClass === "nobre";
     const inheritedNpcs = STATE.npcs
       .filter(n => n.alive && n.id !== heir.id)
+      .filter(n => {
+        // Manter APENAS laços de sangue (mãe, pai viúvo, irmãos) e membros da Corte (se nobre)
+        if (n.role === "Filho" || n.role === "Filha") return true;
+        if (n.role === "Cônjuge") return true;
+        if (isNoble && n.role === "Corte") return true;
+        return false;
+      })
       .map(n => {
-        const isChildOfPrev = n.role === "Filho";
+        const isChildOfPrev = (n.role === "Filho" || n.role === "Filha");
         const newRole = isChildOfPrev
           ? "Irmão/Irmã"
           : (n.role === "Cônjuge"
               ? (n.sex === "F" ? "Mãe" : "Pai")
-              : (["Corte", "Rival", "Mentor", "Amigo"].includes(n.role) ? n.role : "Conhecido"));
+              : n.role);
         let aff = n.affinity || 0;
         if (isChildOfPrev && lawKey === "partilha") {
           aff = Utils.clamp(aff + 25, -100, 100);
@@ -87,9 +95,42 @@ Object.assign(Engine, {
           role: newRole,
           affinity: aff,
           maritalStatus: n.role === "Cônjuge" ? "Viúvo(a)" : n.maritalStatus,
-          memory: `Lembra-se do seu predecessor, ${prevName}.`
+          memory: `Lembra-se com reverência do seu predecessor, ${prevName}.`
         };
       });
+
+    // Gerar proceduralmente novos NPCs próprios para o herdeiro
+    if (heir.age < 16) {
+      const friendCount = Utils.rand(1, 2);
+      for (let i = 0; i < friendCount; i++) {
+        const friendAge = Utils.clamp(heir.age + Utils.rand(-1, 2), 2, 15);
+        const friendSex = Math.random() < 0.5 ? "M" : "F";
+        const friend = Utils.genNPC("Amigo", friendAge, friendSex, null, STATE.socialClass, null, null, STATE.kingdom);
+        friend.cityId = heir.cityId || STATE.currentCityId;
+        friend.affinity = Utils.rand(35, 65);
+        friend.memory = `Amigo(a) leal dos folguedos e brincadeiras de infância de ${heir.name}.`;
+        inheritedNpcs.push(friend);
+      }
+    } else {
+      const oppSex = heir.sex === "M" ? "F" : "M";
+      const suitorAge = Utils.clamp(heir.age + Utils.rand(-2, 3), 16, 45);
+      const suitor = Utils.genNPC("Pretendente", suitorAge, oppSex, null, STATE.socialClass, null, null, STATE.kingdom);
+      suitor.cityId = heir.cityId || STATE.currentCityId;
+      suitor.affinity = Utils.rand(30, 55);
+      suitor.memory = `Atraído(a) pela linhagem e virtudes da Casa ${heir.surname || STATE.surname}.`;
+      inheritedNpcs.push(suitor);
+
+      const friendCount = Utils.rand(1, 2);
+      for (let i = 0; i < friendCount; i++) {
+        const friendAge = Utils.clamp(heir.age + Utils.rand(-3, 3), 16, 50);
+        const friendSex = Math.random() < 0.5 ? "M" : "F";
+        const friend = Utils.genNPC("Amigo", friendAge, friendSex, null, STATE.socialClass, null, null, STATE.kingdom);
+        friend.cityId = heir.cityId || STATE.currentCityId;
+        friend.affinity = Utils.rand(40, 70);
+        friend.memory = `Companheiro(a) de convívio leal de ${heir.name}.`;
+        inheritedNpcs.push(friend);
+      }
+    }
 
     let heirJob = "crianca";
     let heirJobRank = 0;
@@ -153,7 +194,8 @@ Object.assign(Engine, {
       completedGuilds: [],
       expelledEcclesiastical: false,
       careerChanges: 0,
-      nobleTitleLevel: STATE.socialClass === "nobre" ? Math.max(1, STATE.nobleTitleLevel || 1) : 0,
+      nobleTitleLevel: (STATE.socialClass === "nobre" && heir.age >= 16) ? Math.max(1, STATE.nobleTitleLevel || 1) : 0,
+      nobleDemeritTurns: 0,
       fief: STATE.fief ? { ...STATE.fief } : { prosperity: 55, loyalty: 60, defense: 50, influence: 50, peasantry: 60 },
       visibleJobIds: [],
       visibleGuildIds: [],

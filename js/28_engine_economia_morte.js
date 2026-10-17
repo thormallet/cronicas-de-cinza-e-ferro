@@ -85,7 +85,8 @@ Object.assign(Engine, {
       kingdom: STATE.kingdom,
       cityId: STATE.currentCityId,
       buyPrice: finalPrice,
-      mortgaged: false
+      mortgaged: false,
+      ruinedYears: 0
     });
     if (it.type === "propriedade") {
       STATE.propertyMeta.push({ id: it.id, kingdom: STATE.kingdom, cityId: STATE.currentCityId });
@@ -200,6 +201,19 @@ Object.assign(Engine, {
       if (window.UI && window.UI.notify) UI.notify("Bem Arruinado", "Este bem está arruinado! Restaure-o antes de utilizá-lo.", "fail");
       return;
     }
+
+    const isProperty = it.category === "propriedade" || it.type === "propriedade";
+    const isDistant = isProperty && ((inst.kingdom && inst.kingdom !== STATE.kingdom) || (inst.cityId && inst.cityId !== STATE.currentCityId));
+    if (isDistant) {
+      const courierFee = 15;
+      if (STATE.gold < courierFee) {
+        UI.notify("Taxa de Feitor Insuficiente", `Explorar imóvel situado em outra comarca exige o pagamento de ${courierFee} Ouro a feitores e correios régios.`);
+        return;
+      }
+      STATE.gold -= courierFee;
+      this.addLog(`📬 SOBRETAXA DE DISTÂNCIA: Você pagou ${courierFee} Ouro a correios e feitores para administrar seu imóvel à distância em outra comarca.`, "bad");
+    }
+
     if (!Array.isArray(STATE.usedItemUidsThisYear)) STATE.usedItemUidsThisYear = [];
     if (STATE.usedItemUidsThisYear.includes(inst.uid)) {
       const waitMsg = `⏳ Você já realizou a ação anual de **${it.name}** neste ano.`;
@@ -417,33 +431,78 @@ Object.assign(Engine, {
       UI.notify("Estado Impecável", "Este bem já se encontra em perfeito estado de conservação.");
       return;
     }
-    const repairCost = Math.max(2, Math.round(it.price * 0.20));
+    const isProperty = it.category === "propriedade" || it.type === "propriedade";
+    const isDistant = isProperty && ((inst.kingdom && inst.kingdom !== STATE.kingdom) || (inst.cityId && inst.cityId !== STATE.currentCityId));
+    let repairCost = Math.max(2, Math.round(it.price * 0.20));
+    if (isDistant) {
+      repairCost = Math.round(repairCost * 1.50);
+    }
+
     if (STATE.gold < repairCost) {
-      UI.notify("Ouro Insuficiente", `Você precisa de ${repairCost} Ouro para restaurar este bem.`);
+      UI.notify("Ouro Insuficiente", `Você precisa de ${repairCost} Ouro para restaurar este bem${isDistant ? " (inclui taxa extra de 50% de fiscalização à distância)" : ""}.`);
       return;
     }
     STATE.gold -= repairCost;
+    inst.ruinedYears = 0;
     const nextState = inst.state === "arruinado" ? "desgastado" : (inst.state === "desgastado" ? "bom" : "novo");
     const oldState = inst.state;
     inst.state = nextState;
     SoundFX.play("coin");
-    this.addLog(`🛠️ RESTAURAÇÃO: Você investiu ${repairCost} Ouro na reforma de **${it.name}**, elevando seu estado de [${oldState}] para [${nextState}].`, "good");
+    this.addLog(`🛠️ RESTAURAÇÃO: Você investiu ${repairCost} Ouro na reforma de **${it.name}**${isDistant ? " (com sobretaxa de fiscalização à distância)" : ""}, elevando seu estado de [${oldState}] para [${nextState}].`, "good");
     Storage.saveToSlot(CONFIG.activeSlot);
     UI.renderAll();
   },
 
   degradeItemsAnnually() {
     if (!STATE || !Array.isArray(STATE.itemInstances)) return;
+    const toRemoveUids = [];
+
     STATE.itemInstances.forEach(inst => {
       const it = DATA.items.find(x => x.id === inst.id);
-      if (!it || inst.state === "arruinado") return;
+      if (!it) return;
+      if (inst.ruinedYears === undefined) inst.ruinedYears = 0;
+
+      if (inst.state === "arruinado") {
+        inst.ruinedYears++;
+        if (inst.ruinedYears >= 3) {
+          toRemoveUids.push(inst.uid);
+          SoundFX.play("death");
+          const ruinMsg = `🏚️💥 DESMORONAMENTO E CONFISCO: Abandonado em ruínas por 3 anos consecutivos, seu bem **${it.name}** desmoronou irremediavelmente e os escombros foram confiscados pela comarca!`;
+          this.addLog(ruinMsg, "bad");
+          if (window.UI && window.UI.notify) UI.notify("💥 Colapso e Confisco de Bem!", ruinMsg, "fail");
+        } else {
+          this.addLog(`⚠️ RUÍNA CRÍTICA: Seu bem **${it.name}** está arruinado há ${inst.ruinedYears} ano(s). Se atingir 3 anos sem restauro, desmoronará e será confiscado!`, "bad");
+        }
+        return;
+      }
+
       const decayRate = (DATA.itemStates[inst.state] && DATA.itemStates[inst.state].decayRate) || 0.08;
       if (Math.random() < decayRate) {
         const oldState = inst.state;
         inst.state = inst.state === "novo" ? "bom" : (inst.state === "bom" ? "desgastado" : "arruinado");
+        if (inst.state === "arruinado") inst.ruinedYears = 0;
         this.addLog(`🏚️ DESGASTE DE BEM: A ação do tempo e intempéries desgastou **${it.name}** de [${oldState}] para [${inst.state}].`, "bad");
       }
     });
+
+    if (toRemoveUids.length > 0) {
+      toRemoveUids.forEach(uid => {
+        const idx = STATE.itemInstances.findIndex(x => x.uid === uid);
+        if (idx !== -1) {
+          const removed = STATE.itemInstances.splice(idx, 1)[0];
+          const invIdx = STATE.inventory.indexOf(removed.id);
+          if (invIdx !== -1) STATE.inventory.splice(invIdx, 1);
+          if (Array.isArray(STATE.propertyMeta)) {
+            const pmIdx = STATE.propertyMeta.findIndex(p => p.id === removed.id);
+            if (pmIdx !== -1) STATE.propertyMeta.splice(pmIdx, 1);
+          }
+          if (Array.isArray(STATE.usedItemUidsThisYear)) {
+            STATE.usedItemUidsThisYear = STATE.usedItemUidsThisYear.filter(u => u !== uid);
+          }
+        }
+      });
+      this.recalculateSocialClassByWealth();
+    }
   },
 
   takeLoan(amount) {

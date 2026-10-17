@@ -1,56 +1,88 @@
-/* CRÔNICA: FEED EM LINHA DO TEMPO VERTICAL (ANO → ENTRADAS) E CARTÕES DE AÇÃO */
+/* ============================================================================
+   [CCF v4.2] — 03_abas_cronica.css
+   Feed Central: Linha do Tempo da Crônica & Cartões de Ação Ergonômicos
+   ============================================================================ */
+
+/* FEED CENTRAL EM LINHA DO TEMPO */
 .log-box {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  padding: 0.7rem 0.8rem 1rem;
+  padding: 0.85rem 0.95rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.15rem;
   background:
-    radial-gradient(circle at 50% 0%, rgba(255,245,215,0.22), transparent 60%),
+    radial-gradient(ellipse at 50% 0%, rgba(201, 156, 51, 0.08) 0%, transparent 60%),
     var(--bg);
 }
+
+/* GRUPO DE ANO */
 .log-year {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
-  padding-left: 0.85rem;
+  gap: 0.55rem;
+  padding-left: 0.95rem;
   border-left: 2px solid var(--border-gold);
-  margin-left: 0.35rem;
+  margin-left: 0.45rem;
   animation: fadeSlideUp 0.22s ease;
 }
+
+/* CABEÇALHO DO ANO COMO MEDALHÃO / SELO RÉGIO */
 .log-year-head {
   position: sticky;
-  top: 0.1rem;
-  z-index: 1;
+  top: 0.2rem;
+  z-index: 2;
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  margin-left: -1.5rem;
-  padding: 0.22rem 0.85rem 0.22rem 0.7rem;
+  gap: 0.5rem;
+  margin-left: -1.75rem;
+  padding: 0.28rem 0.95rem 0.28rem 0.8rem;
   border-radius: 999px;
-  background: linear-gradient(180deg, var(--accent-hover), var(--accent));
-  color: #ffefc7;
+  background: linear-gradient(135deg, #7a1f24 0%, #461215 100%);
+  color: #fff4db;
   border: 1.5px solid var(--gold-bright);
-  font-size: 0.78rem;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  box-shadow: 0 2px 6px var(--shadow);
+  font-family: var(--font-serif);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 235, 175, 0.35);
 }
-.log-year-head .log-dot { opacity: 0.6; }
+
+.log-year-head .log-dot {
+  opacity: 0.7;
+  color: var(--gold-radiant);
+}
+
+/* ENTRADAS DA CRÔNICA */
 .log-entry {
-  padding: 0.6rem 0.8rem;
-  background: var(--panel);
+  padding: 0.75rem 0.95rem;
+  background: linear-gradient(180deg, var(--panel-card) 0%, var(--panel-inner) 100%);
   border: 1px solid var(--border);
   border-left: 4px solid var(--border-gold);
-  border-radius: 10px;
-  font-size: 0.95rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--text);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
   animation: fadeSlideUp 0.22s ease;
+  transition: border-color 0.15s ease;
 }
+
+.log-entry:hover {
+  border-color: var(--border-gold);
+}
+
+.log-entry strong {
+  font-family: var(--font-serif);
+  color: var(--gold-bright);
+  font-weight: 700;
+}
+
 .log-entry.year-header {
   background: transparent;
   border: none;
@@ -58,53 +90,140 @@
   border-radius: 0;
   box-shadow: none;
   font-style: italic;
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
-  padding: 0.1rem 0.6rem;
+  padding: 0.15rem 0.65rem;
 }
-.log-entry.good { color: var(--good); border-left-color: var(--good); background: rgba(40, 89, 34, 0.12); }
-.log-entry.bad { color: var(--bad); border-left-color: var(--bad); background: rgba(143, 29, 29, 0.1); }
-.log-entry.epoch { color: var(--gold); font-weight: bold; border-left-color: var(--gold-bright); background: rgba(201, 156, 51, 0.16); }
-[data-theme="dark"] .log-entry.year-header { color: var(--text-muted); }
 
-/* CARTÕES DE AÇÃO (ATIVIDADES, DESEMPENHO DE OFÍCIO, DECRETOS DO FEUDO) */
+/* CATEGORIAS ESPECÍFICAS DE ENTRADA */
+.log-entry.good {
+  color: #dcfce7;
+  border-left-color: var(--good-bright);
+  background: linear-gradient(90deg, rgba(40, 110, 66, 0.2) 0%, rgba(23, 18, 13, 0.85) 100%);
+  border-color: rgba(62, 160, 107, 0.3);
+}
+
+.log-entry.good strong {
+  color: #86efac;
+}
+
+.log-entry.bad {
+  color: #fee2e2;
+  border-left-color: var(--bad-bright);
+  background: linear-gradient(90deg, rgba(150, 34, 34, 0.22) 0%, rgba(23, 18, 13, 0.85) 100%);
+  border-color: rgba(217, 56, 56, 0.35);
+}
+
+.log-entry.bad strong {
+  color: #fca5a5;
+}
+
+.log-entry.epoch {
+  color: #fff7ed;
+  font-weight: 600;
+  border-left-color: var(--gold-radiant);
+  background: linear-gradient(90deg, rgba(201, 156, 51, 0.25) 0%, rgba(35, 25, 17, 0.9) 100%);
+  border-color: rgba(229, 183, 70, 0.45);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7), 0 0 12px rgba(201, 156, 51, 0.2);
+}
+
+.log-entry.epoch strong {
+  color: var(--gold-radiant);
+  text-shadow: 0 0 8px rgba(255, 213, 107, 0.4);
+}
+
+/* ============================================================================
+   CARTÕES DE AÇÃO ERGONÔMICOS (ATIVIDADES, OFÍCIOS, FEUDO)
+   ============================================================================ */
 .actions-panel {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 0.65rem;
 }
+
 .action-btn {
-  display: flex; align-items: center; gap: 0.8rem; text-align: left;
-  width: 100%; min-height: 64px; padding: 0.7rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-align: left;
+  width: 100%;
+  min-height: 64px;
+  padding: 0.75rem 0.95rem;
   border-radius: 12px;
   border: 1.5px solid var(--border-gold);
   border-left: 5px solid var(--gold-bright);
-  background: var(--panel);
+  background: linear-gradient(180deg, var(--panel-card) 0%, var(--panel-inner) 100%);
   color: var(--text);
   text-shadow: none;
-  box-shadow: 0 2px 6px var(--shadow);
-  font-size: 0.95rem;
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-body);
+  font-size: 0.96rem;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  box-sizing: border-box;
 }
-.action-btn > div { flex: 1; min-width: 0; }
-.action-btn br { display: none; }
-.action-btn small { display: block; margin-top: 0.15rem; font-size: 0.78rem; opacity: 0.85; }
+
+.action-btn > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.action-btn strong {
+  font-family: var(--font-serif);
+  font-size: 0.94rem;
+  letter-spacing: 0.3px;
+  color: #fff3d6;
+  display: block;
+}
+
+.action-btn small {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
 .action-btn:hover:not(:disabled) {
-  background: var(--panel-inner);
-  color: var(--text);
+  background: linear-gradient(180deg, var(--panel-highlight) 0%, var(--panel-card) 100%);
+  color: #ffffff;
   border-color: var(--gold-bright);
-  transform: none;
-  box-shadow: 0 3px 10px var(--shadow);
+  border-left-color: var(--gold-radiant);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.8), 0 0 12px rgba(201, 156, 51, 0.25);
 }
+
+.action-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
 .action-btn.primary {
-  background: linear-gradient(135deg, #8f191f 0%, #5c0e13 60%, #38112e 100%);
-  color: #ffefc7;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  background: linear-gradient(135deg, #7a1b20 0%, #4b1014 60%, #2e0921 100%);
+  border-color: var(--gold-bright);
+  border-left-color: var(--gold-radiant);
+  color: #fff4d6;
 }
-.action-btn.primary:hover:not(:disabled) { filter: brightness(1.15); animation: none; color: #fff; }
-.action-btn:active:not(:disabled) { transform: scale(0.985); }
+
+.action-btn.primary strong {
+  color: #fff8e8;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.action-btn.primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #932228 0%, #5d1419 60%, #3a0d2a 100%);
+  border-color: var(--gold-radiant);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.85), 0 0 14px rgba(229, 183, 70, 0.4);
+}
+
 .act-icon {
-  font-size: 1.8rem; line-height: 1; min-width: 38px; text-align: center;
-  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
-  transition: transform 0.2s ease;
+  font-size: 1.85rem;
+  line-height: 1;
+  min-width: 42px;
+  text-align: center;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  flex-shrink: 0;
 }
-.action-btn:hover:not(:disabled) .act-icon { transform: scale(1.12) rotate(-5deg); }
+
+.action-btn:hover:not(:disabled) .act-icon {
+  transform: scale(1.15) rotate(-4deg);
+}

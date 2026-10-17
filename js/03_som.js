@@ -93,6 +93,14 @@ const SoundFX = {
   },
 
   play(effect) {
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      try {
+        if (effect === "click") navigator.vibrate(8);
+        else if (effect === "year") navigator.vibrate([15, 30, 25]);
+        else if (effect === "coin") navigator.vibrate(12);
+        else if (effect === "death" || effect === "fail") navigator.vibrate([40, 50, 30]);
+      } catch (e) {}
+    }
     if (!this.enabled) return;
     switch (effect) {
       case "click":
@@ -144,6 +152,39 @@ const SoundFX = {
         this.tone(146.83, "sawtooth", 1.2, 0.00, 0.085);
         this.tone(220.00, "sine", 1.0, 0.02, 0.060);
         this.tone(110.00, "triangle", 1.6, 0.35, 0.095);
+        break;
+      case "fanfare":
+        this.tone(293.66, "triangle", 0.18, 0.00, 0.075);
+        this.tone(369.99, "triangle", 0.18, 0.10, 0.075);
+        this.tone(440.00, "triangle", 0.22, 0.20, 0.080);
+        this.tone(587.33, "sawtooth", 0.55, 0.30, 0.085);
+        this.tone(880.00, "sine", 0.65, 0.32, 0.050);
+        break;
+      case "cathedral_bells":
+        this.tone(130.81, "triangle", 2.2, 0.00, 0.085);
+        this.tone(196.00, "sine", 1.9, 0.05, 0.070);
+        this.tone(261.63, "triangle", 1.8, 0.12, 0.075);
+        this.tone(329.63, "sine", 1.6, 0.25, 0.060);
+        this.tone(523.25, "sine", 1.4, 0.40, 0.050);
+        break;
+      case "swords_clash":
+        this.noiseBurst(0.18, 0.00, 0.075, 2000);
+        this.tone(1850, "sawtooth", 0.12, 0.01, 0.070, 25);
+        this.tone(2420, "triangle", 0.18, 0.02, 0.065, -30);
+        this.tone(980, "sawtooth", 0.25, 0.03, 0.060);
+        break;
+      case "wax_seal":
+        this.noiseBurst(0.06, 0.00, 0.040, 800);
+        this.tone(110, "triangle", 0.15, 0.01, 0.080);
+        this.tone(73.42, "sine", 0.22, 0.02, 0.095);
+        break;
+      case "heavy_coins":
+        this.noiseBurst(0.08, 0.00, 0.045, 2800);
+        this.tone(987.77, "sine", 0.14, 0.00, 0.060);
+        this.tone(1318.51, "sine", 0.16, 0.04, 0.065);
+        this.tone(1760.00, "triangle", 0.22, 0.08, 0.070);
+        this.tone(2093.00, "sine", 0.28, 0.14, 0.060);
+        this.noiseBurst(0.06, 0.09, 0.035, 3000);
         break;
     }
   }

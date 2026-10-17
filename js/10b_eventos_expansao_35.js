@@ -412,6 +412,146 @@ function buildEventsExpansao35() {
           fail: { honor: -16, rep: -3, gold: -40, hp: -10, msg: "Amotinados cercaram sua carruagem na fuga, saquearam seus cofres e o desonraram em praça pública." }
         }
       ]
+    },
+
+    /* ========================================================================
+       EVENTOS NARRATIVOS EXPANSÃO v4.2 — Ruínas, Família e Nobreza
+       ======================================================================== */
+    {
+      id: "ev_bens_arruinados_confisco",
+      icon: "🏚️",
+      phase: ["Juventude", "Adulto", "Velhice"],
+      classes: ["any"],
+      title: "Edital de Ruína e Ameaça de Confisco",
+      desc: "Os meirinhos da comarca afixam um selo com cera vermelha nas vigas podres de uma de suas propriedades abandonadas há mais de três anos em {city}. Pelo estatuto urbano, se o risco de desabamento sobre os transeuntes não for sanado de imediato, o imóvel será demolido e o terreno confiscado em benefício do erário real!",
+      choices: [
+        {
+          label: "Contratar em regime de urgência mestres de obras e pedreiros para escorar as paredes e refazer o telhado",
+          attr: "intelecto", diff: 54,
+          ok: { gold: -30, rep: 1, honor: 6, msg: "A reconstrução rápida salvou a estrutura! O alvará de ruína foi revogado e a vizinhança elogiou a segurança restaurada." },
+          fail: { gold: -45, rep: -1, msg: "Materiais caros e mão de obra de última hora esvaziaram seus cofres para obter apenas um escoramento provisório." }
+        },
+        {
+          label: "Comparecer à audiência do magistrado e pleitear prorrogação formal com oratória jurídica e certidões",
+          attr: "carisma", diff: 58,
+          ok: { honor: 4, rep: 1, msg: "Sua sustentação legal convenceu o juiz a conceder moratória graciosa de dois anos sem multas fiscais." },
+          fail: { gold: -20, honor: -4, rep: -1, msg: "O magistrado considerou o pedido protelatório e aplicou-lhe pesada multa por desídia urbana." }
+        },
+        {
+          label: "Subornar discretamente o meirinho e os peritos da câmara para engavetarem o processo de demolição",
+          attr: "destreza", diff: 56,
+          ok: { gold: -15, honor: -6, msg: "As moedas tilintaram no bolso do oficial e o auto de vistoria sumiu misteriosamente dos arquivos." },
+          fail: { gold: -30, honor: -12, rep: -2, msg: "A tentativa de peita foi denunciada em plenário; você sofreu humilhação pública e multa agravada." }
+        },
+        {
+          label: "Renunciar formalmente ao imóvel em ruínas e ceder o alódio à coroa para livrar-se dos encargos",
+          attr: "sorte", diff: 45,
+          ok: { honor: -4, rep: -1, msg: "Você abriu mão da posse arruinada; o fisco encerrou a cobrança, mas o patrimônio familiar foi diminuído." },
+          fail: { gold: -15, honor: -8, rep: -2, msg: "Mesmo com o abandono formal, as custas de demolição compulsória foram cobradas do seu patrimônio pessoal." }
+        }
+      ]
+    },
+    {
+      id: "ev_despesas_criacao_filhos",
+      icon: "👶",
+      phase: ["Adulto", "Velhice"],
+      classes: ["any"],
+      title: "O Fardo Doce: Sustento dos Herdeiros Menores",
+      desc: "O rigor das estações e o crescimento dos filhos menores de dezesseis anos demandam pesadas provisões em {city}. Agasalhos de lã grossa, boticas contra as febres infantis, mestres de primeiras letras e alimentos nutritivos pesam de forma implacável sobre o orçamento do lar.",
+      choices: [
+        {
+          label: "Contratar mestres particulares de gramática e pagar boticas refinadas para garantir o florescer pleno da prole",
+          attr: "intelecto", diff: 52,
+          ok: { gold: -25, honor: 8, rep: 1, msg: "Seu investimento diligente rendeu frutos radiantes: as crianças gozam de robusta saúde e admiração dos vizinhos." },
+          fail: { gold: -35, msg: "Os tutores e boticários cobraram preços exorbitantes e a despesa sobrecarregou duramente suas reservas." }
+        },
+        {
+          label: "Ensinar pessoalmente os ofícios práticos e impor disciplina espartana de economia doméstica",
+          attr: "forca", diff: 50,
+          ok: { honor: 5, attr: ["destreza", 2], msg: "Com firmeza exemplar, você moldou o caráter dos pequenos para o trabalho duro sem esbanjar ouro." },
+          fail: { hp: -6, honor: -3, msg: "O excesso de rigidez e fadiga sobrecarregou sua saúde e gerou choro e ressentimento nas noites frias." }
+        },
+        {
+          label: "Buscar o patrocínio de padrinhos abastados e da irmandade paroquial para custear as despesas dos infantes",
+          attr: "carisma", diff: 55,
+          ok: { gold: 15, honor: 4, rep: 1, msg: "Parentes e benfeitores apadrinharam os menores com generosas bolsas de estudo e vestimentas finas." },
+          fail: { honor: -6, rep: -1, msg: "Os pedidos de auxílio foram vistos como sinal de decadência e mesquinharia perante a comunidade." }
+        },
+        {
+          label: "Apertar o cinto ao extremo, cortando refeições e combustível de aquecimento para poupar cada moeda",
+          attr: "saude", diff: 48,
+          ok: { gold: 10, honor: -4, hp: -8, msg: "Você economizou algumas moedas de prata, mas o inverno rigoroso castigou o vigor de todos na moradia." },
+          fail: { hp: -14, honor: -8, msg: "O frio e a privação extrema causaram febres agudas nas crianças e desgosto irremediável na família." }
+        }
+      ]
+    },
+    {
+      id: "ev_nobre_audiencia_elevacao_socorro",
+      icon: "👑",
+      phase: ["Juventude", "Adulto", "Velhice"],
+      classes: ["nobre"],
+      title: "Audiência Régia: O Socorro Patriótico da Coroa",
+      desc: "Convocado à câmara solene do palácio diante do soberano e dos altos prelados de {kingdom}, o Alto Chanceler declara que a defesa do trono exige um socorro patriótico compulsório. Para sustentar a fidalguia de sua linhagem e abrir portas para futuras mercês e elevações nobiliárquicas, exigem-se donativos vultosos em ouro e carretas de grãos dos celeiros senhoriais!",
+      choices: [
+        {
+          label: "Doar faustosos cofres de ouro e abrir os celeiros em demonstração incontestável de fidelidade ao trono",
+          attr: "carisma", diff: 56,
+          ok: { gold: -60, honor: 16, rep: 3, msg: "O monarca ergueu sua taça em louvor à sua lealdade inabalável! Sua linhagem foi proclamada baluarte do reino perante a corte reunida." },
+          fail: { gold: -80, honor: 8, rep: 1, msg: "A contribuição foi absorvida pelos intendentes da corte com frieza, demandando sacrifício patrimonial ainda mais pesado." }
+        },
+        {
+          label: "Argumentar com brilhantismo contábil que suas próprias fortificações e homens em armas já suportam o encargo bélico",
+          attr: "intelecto", diff: 62,
+          ok: { honor: 8, rep: 2, gold: 15, msg: "Sua demonstração de forças e contas impecáveis convenceu os conselheiros a isentá-lo da cobrança extraordinária!" },
+          fail: { honor: -8, rep: -2, gold: -30, msg: "Sua argumentação soou como evasiva mesquinha aos ouvidos do soberano, atraindo frieza régia e tributação forçada." }
+        },
+        {
+          label: "Apresentar uma proposta de empréstimo de guerra com juros lastreados nas futuras rendas da alfândega",
+          attr: "carisma", diff: 64,
+          ok: { gold: 35, rep: 2, honor: 6, msg: "Os tesoureiros aceitaram o plano! Você financiou a coroa como patrício credor sob garantia de lucrativas rendas alfandegárias." },
+          fail: { honor: -10, rep: -2, msg: "O conselho repudiou a proposta mercantil em hora de sacrifício, acusando-o de avareza indigna de um nobre." }
+        },
+        {
+          label: "Recusar a contribuição alegando secas e quebra de colheitas em seus senhorios rurais",
+          attr: "sorte", diff: 50,
+          ok: { honor: -12, rep: -2, msg: "Você salvou suas arcas intactas, mas o desdém evidente do rei esfriou o prestígio da sua casa em todas as audiências da corte." },
+          fail: { gold: -50, honor: -18, rep: -3, msg: "Os meirinhos régios realizaram requisição compulsória de suas colheitas e o soberano rotulou sua postura de deslealdade vassálica." }
+        }
+      ]
+    },
+    {
+      id: "ev_inf_nobre_treino_pagem",
+      icon: "🛡️",
+      phase: ["Infância"],
+      classes: ["nobre"],
+      title: "Infância Nobre: O Treino do Jovem Pajem",
+      desc: "Enviado como pajem ao solar de um fidalgo aliado para aprender os deveres da casta, você passa os dias no pátio de armas, escovando montarias, servindo vinho nas mesas solenes e empunhando espadas de madeira. A etiqueta impõe que menores não governem feudos, mas sim forjem corpo e alma na subserviência antes do comando!",
+      choices: [
+        {
+          label: "Dedicar-se com ardor exaustivo aos exercícios de combate com espada de freixo e escudos pesados",
+          attr: "forca", diff: 44,
+          ok: { honor: 8, attr: ["forca", 3], rep: 1, msg: "Os mestres d'armas elogiaram sua tenacidade marcial! Seu porte físico desenvolveu-se com vigor impressionante." },
+          fail: { hp: -6, attr: ["forca", 1], msg: "Golpes de madeira deixaram dolorosos hematomas nas suas canelas e braços, mas temperaram sua coragem." }
+        },
+        {
+          label: "Aprender com devoção as sutilezas da heráldica, latim e etiqueta cortês junto ao capelão do solar",
+          attr: "intelecto", diff: 42,
+          ok: { honor: 6, attr: ["intelecto", 3], rep: 1, msg: "Sua mente refinada decorou todos os brasões dos reinos e sua reverência impecável encantou a senhora do solar." },
+          fail: { honor: -2, hp: -2, msg: "A palmatória do capelão estalou em seus dedos após deslizes na recitação das orações latinas." }
+        },
+        {
+          label: "Servir à mesa fidalga com graça e conquistar a simpatia dos cavaleiros veteranos com cortesias",
+          attr: "carisma", diff: 42,
+          ok: { honor: 6, attr: ["carisma", 3], gold: 6, msg: "Sua graça e cortesia conquistaram o carinho dos fidalgos, que lhe presentearam com doces e pequenas moedas." },
+          fail: { honor: -4, msg: "Um tropeço desastrado derramou vinho sobre o manto do anfitrião, rendendo-lhe severas repreensões e risos no salão." }
+        },
+        {
+          label: "Aproveitar as folgas dos treinos para cavalgar secretamente pelos bosques ao redor da fortaleza",
+          attr: "destreza", diff: 40,
+          ok: { attr: ["destreza", 3], hp: 4, msg: "Galopar livremente pelo vento da floresta aguçou seu equilíbrio e espírito de bravura juvenil!" },
+          fail: { hp: -4, honor: -3, msg: "O pônei empinou num atoleiro e você retornou ao solar coberto de lama sob o olhar severo do senescal." }
+        }
+      ]
     }
   ];
 }

@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#170e09">
-<title>Crônicas de Cinza e Ferro — Edição Mercador v4.1</title>
+<meta name="theme-color" content="#120c08">
+<title>Crônicas de Cinza e Ferro — v4.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Eczar:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/01_base.css">
 <link rel="stylesheet" href="css/02_layout.css">
 <link rel="stylesheet" href="css/03_abas_cronica.css">
@@ -178,7 +181,7 @@
     <div class="brand-crest">👑</div>
     <div>
       <h1>Crônicas de Cinza e Ferro</h1>
-      <span class="royal-subtitle">👑 Edição Mercador • v4.1 ⚖️</span>
+      <span class="royal-subtitle">👑 Edição Feudos &amp; Dinastias • v4.2 ⚖️</span>
     </div>
   </div>
   <div style="display:flex;gap:0.35rem;align-items:center">
@@ -193,8 +196,8 @@
     <div class="card">
       <div class="royal-hero-banner">
         <h2>👑 Crônicas de Cinza e Ferro</h2>
-        <div style="margin-bottom:0.5rem"><span class="royal-subtitle">Edição Mercador — Feudos, Empréstimos &amp; Negócios</span></div>
-        <p style="font-size:0.9rem;opacity:0.92">
+        <div style="margin-bottom:0.5rem"><span class="royal-subtitle">Edição Feudos &amp; Dinastias — Tronos, Comarcas &amp; Linhagens</span></div>
+        <p style="font-size:0.92rem;opacity:0.95">
           Nasça do barro ou da púrpura real. Ingresse em corporações de ofício, negocie em grandes mercados, tome e conceda empréstimos bancários, governe feudos e forje sua dinastia.
         </p>
       </div>
@@ -508,8 +511,12 @@
     <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
   </div>
   <div class="sheet-body">
-    <span id="fief-title-badge" class="badge gold" style="align-self:flex-start">Fidalgo</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem">
+      <span id="fief-title-badge" class="badge gold">Fidalgo</span>
+      <span id="fief-stability-badge" class="badge good">Estabilidade do Reino: 60%</span>
+    </div>
     <p id="fief-panel-desc" class="sheet-hint"></p>
+    <div id="noble-patent-progression-box"></div>
     <div id="fief-stats" class="stat-grid fief-stats-box"></div>
     <h4>Decretos e Ações de Governação (De acordo com seu Grau de Nobreza)</h4>
     <div id="fief-actions" class="actions-panel"></div>
@@ -647,7 +654,7 @@
       <input type="file" id="import-input" style="display:none" accept=".json" onchange="window.Storage.importSave(event)">
       <button type="button" onclick="window.UI.showScreen('screen-menu')">🏰 Menu</button>
     </div>
-    <p class="cfg-version">Crônicas de Cinza e Ferro — Edição Mercador<br>v4.1 · Bens, Usura, Amantes &amp; Conquistas</p>
+    <p class="cfg-version">Crônicas de Cinza e Ferro — Edição Feudos &amp; Dinastias<br>v4.2 · Tronos, Bens, Comarcas &amp; Conquistas</p>
   </div>
 </div>
 

@@ -194,7 +194,8 @@ Object.assign(Engine, {
               kingdom: STATE.kingdom,
               cityId: STATE.currentCityId,
               buyPrice: bLoan.principal,
-              mortgaged: false
+              mortgaged: false,
+              ruinedYears: 0
             });
             SoundFX.play("bells");
             this.addLog(`⚔️ EXECUÇÃO DE CAUÇÃO: **${bLoan.clientName}** deu calote no contrato! Você acionou os meirinhos e tomou posse definitiva de **${this.getItemName(collatId)}**!`, "good");

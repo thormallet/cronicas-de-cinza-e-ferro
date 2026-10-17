@@ -7,6 +7,11 @@ Object.assign(Engine, {
     const act = DATA.activities.find(a => a.id === actId);
     if (!act) return;
 
+    if (["cobrar_feudo", "julgar_pleitos", "auditar_guilda"].includes(actId) && STATE.age < 16) {
+      UI.notify("Incapacidade Civil", "Menores de 16 anos não possuem capacidade civil ou autoridade jurídica para exercer atos de jurisdição, auditoria ou administração feudal.");
+      return;
+    }
+
     if (act.id === "cuidar_saude" && STATE.healthCareUsedThisYear) {
       UI.notify("Tratamento Já Realizado", "Você já recebeu infusões e repouso médico este ano. O corpo precisa de tempo para absorver o tratamento até o próximo ano.");
       return;

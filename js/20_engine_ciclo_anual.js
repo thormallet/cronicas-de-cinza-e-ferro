@@ -16,7 +16,7 @@ Object.assign(Engine, {
       return;
     }
 
-    SoundFX.play("year");
+    SoundFX.play("wax_seal");
     this.ensureVigorFields();
     STATE.usedItemUidsThisYear = [];
     STATE.age++;
@@ -46,7 +46,8 @@ Object.assign(Engine, {
     }
 
     if (STATE.age === 16) {
-      this.addLog(`🧭 MAIORIDADE E ESTRADAS ABERTAS: Aos 16 anos, você alcançou autonomia plena para viajar entre comarcas e liderar expedições pelo botão **🧭 Viajar**!`, "epoch");
+      SoundFX.play("fanfare");
+      this.addLog(`🧭 MAIORIDADE CIVIL E ADMINISTRATIVA: Aos 16 anos, você alcançou a maioridade civil perante os costumes e as leis do Reino! Está plenamente apto(a) a assumir a gestão direta do patrimônio e feudo, exercer ofícios de corte e viajar entre comarcas pelo botão **🧭 Viajar**!`, "epoch");
       if (!STATE.npcs.some(n => n.role === "Pretendente" && n.alive)) {
         const oppSex = STATE.sex === "M" ? "F" : "M";
         const firstSuitor = Utils.genNPC("Pretendente", Utils.rand(16, 20), oppSex, null, STATE.socialClass);
@@ -272,7 +273,12 @@ Object.assign(Engine, {
       STATE.gold += fin.net;
       if (STATE.debt > 0) STATE.debt += fin.debtInterest;
       const sign = fin.net >= 0 ? "+" : "";
-      this.addLog(`Balanço Anual (${this.getOccupationLabel()}): Bruto ${fin.gross}, Custos/Impostos ${fin.upkeep + fin.taxes} => ${sign}${fin.net} Ouro.`);
+      let finDetail = `Balanço Anual (${this.getOccupationLabel()}): Bruto ${fin.gross}, Custos/Impostos ${fin.upkeep + fin.taxes}`;
+      if (fin.childUpkeep > 0) {
+        finDetail += ` (inclui ${fin.childUpkeep} Ouro de sustento de ${fin.minorChildrenCount} filho(s) menor(es))`;
+      }
+      finDetail += ` => ${sign}${fin.net} Ouro.`;
+      this.addLog(finDetail);
       if (STATE.gold < 0) {
         STATE.debt += Math.abs(STATE.gold) + 5;
         STATE.gold = 0;
@@ -364,7 +370,7 @@ Object.assign(Engine, {
       }
     }
 
-    if (STATE.socialClass === "nobre" && STATE.age >= 18) {
+    if (STATE.socialClass === "nobre" && STATE.age >= 16) {
       this.checkNobleTitleConferral();
     }
 

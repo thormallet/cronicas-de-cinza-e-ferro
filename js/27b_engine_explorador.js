@@ -211,6 +211,10 @@ Object.assign(Engine, {
 
   dispatchNobleOrder(actionId) {
     this.ensureVigorFields();
+    if (STATE.age < 16) {
+      UI.notify("Menoridade Feudal", "Menores de 16 anos não possuem autoridade de chancelaria para expedir ordens ou ofícios senhoriais.");
+      return;
+    }
     const meta = this.getNobleActionMeta(actionId);
     if (!meta || (STATE.nobleTitleLevel || 0) < meta.reqLvl) return;
     if (!Array.isArray(STATE.pendingFiefOrders)) STATE.pendingFiefOrders = [];

@@ -4,6 +4,10 @@
 Object.assign(Engine, {
   performNobleRealmAction(actionId, fromOrder = false) {
     this.ensureVigorFields();
+    if (STATE.age < 16) {
+      UI.notify("Menoridade Feudal", "Você ainda não possui a maioridade (16 anos) para emitir decretos ou governar o feudo diretamente.");
+      return;
+    }
     if (!STATE.nobleTitleLevel || STATE.nobleTitleLevel < 1) return;
     if (!fromOrder && this.isInUrbanCenter && !this.isInUrbanCenter()) {
       this.dispatchNobleOrder(actionId);

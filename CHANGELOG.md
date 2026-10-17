@@ -7,7 +7,8 @@ O formato baseia-se nas diretrizes do [Keep a Changelog](https://keepachangelog.
 ---
 
 ## Sumário
-- [3.5.1 — Patch de Rigor Medieval, Atrofia & Desgaste Vital](#351--2026-10-16) *(Destaque / Atual)*
+- [4.2.0 — Edição Feudos & Dinastias](#420--2026-10-17) *(Destaque / Atual)*
+- [3.5.1 — Patch de Rigor Medieval, Atrofia & Desgaste Vital](#351--2026-10-16)
 - [3.5.0 — Quick-Time Events, Moralidade & Dilemas Feudais](#350--2026-10-16)
 - [3.4.1 — 2026-10-16](#341--2026-10-16)
 - [3.4.0 — Edição Explorador, Viagens & Carreiras Itinerantes](#340--edição-explorador-viagens--carreiras-itinerantes)
@@ -20,6 +21,72 @@ O formato baseia-se nas diretrizes do [Keep a Changelog](https://keepachangelog.
 - [3.0.0 — O Grande Salto Modular & Retratos Procedurais](#300--o-grande-salto-modular--retratos-procedurais)
 - [2.0.0 — Reinos Históricos & Dinastias](#200--reinos-históricos--dinastias)
 - [1.0.0 — Fundação de Cinza e Ferro](#100--fundação-de-cinza-e-ferro)
+
+---
+
+## [4.2.0] — 2026-10-17
+### Edição Feudos & Dinastias (Simulação Social, Nobreza & Design Premium)
+
+> **Destaque:** Esta grande atualização traz uma revolução na simulação dinástica e aristocrática medieval de Crônicas de Cinza e Ferro. Implementa a ausência de funções administrativas e de títulos pessoais para crianças nobres, progressão social balanceada em três gerações, rigor institucional de honra e reputação com regra assimétrica de revogação, sucessão dinástica com renovação social e preservação consanguínea estrita, custos anuais de sustento de filhos menores escalonados por estamento, vinculação de concessões nobiliárquicas à saúde do reino, degradação patrimonial com confisco por abandono e sobretaxa para imóveis remotos. Na camada visual e sonora, estreia o novo design system 'Dark Medieval BitLife Premium' (obsidiana, veludo e ouro polido), ergonomia mobile-first 100% calibrada (toque >= 48px), bottom sheets deslizantes de 85vh, HUD heráldico renovado e sintetizador sonoro Web Audio API expandido com feedback háptico.
+
+#### Bloco A: Conteúdo & Simulação Social e Nobiliárquica
+- **Nobres Crianças sem Funções Administrativas (< 16 anos sob Tutoria Pedagógica):**
+  - Crianças aristocráticas com idade inferior a 16 anos não podem exercer cargos de regência, ditar éditos ou administrar feudos.
+  - Permanecem em regime de tutoria pedagógica e estudos cortesãos (heráldica, latim, equitação e manejo de armas).
+  - Bloqueio completo do painel de administração senhorial até a maioridade civil.
+- **Crianças Nobres sem Título Nobiliárquico Pessoal ao Nascer:**
+  - Nascituros de linhagens nobres herdam a casta social fidalga e o sangue dinástico, mas não ostentam títulos no berço.
+  - As dignidades nobiliárquicas (Barão, Visconde, Conde, Marquês, Duque) exigem sucessão testamentária formal ou investidura régia ao atingir 16 anos.
+- **Ascensão Social Balanceada em Três Gerações (~3 Gerações):**
+  - Fim da ascensão meteórica e artificial de plebeu a grão-duque em uma única vida:
+    - *1ª Geração:* Consolidação comercial burguesa e patrícia (comércio, guildas, oficinas, alódios e acúmulo de capital).
+    - *2ª Geração:* Fidalguia de toga ou militar (erudição, solares senhoriais, magistratura ou cavalaria a serviço da Coroa).
+    - *3ª Geração:* Nobreza titular senhorial plena (posse de castelo, feudo hereditário e carta de mercê outorgada pelo Soberano).
+- **Requisitos Rigorosos de Honra e Reputação Régia com Revogação Assimétrica:**
+  - Exigência de altos índices de Honra (65 a 85 pontos) e Reputação Régia positiva para concessão de títulos.
+  - *Regra Assimétrica de Revogação:* Para garantir estabilidade e percurso narrativo justo, o título só é revogado se a Honra cair abaixo de 20 pontos por 3 anos consecutivos, evitando perdas intempestivas por flutuações temporárias.
+- **Sucessão Dinástica com Renovação Social Inteligente:**
+  - Preservação estrita dos laços consanguíneos diretos (pais, irmãos, filhos, avós e colaterais legítimos) e da corte do Soberano na transição testamentária.
+  - Purga automática de vínculos obsoletos de terceiros (amigos idosos do pai, pretendentes caducos e desafetos arcaicos).
+  - Geração autônoma de um círculo social novo e vibrante para o herdeiro (companheiros de idade similar, colegas de armas e novos pretendentes).
+- **Custo Anual de Sustento de Filhos Menores por Classe Social:**
+  - Despesas anuais automáticas de sustento e guarda para cada filho menor de 16 anos:
+    - *Plebeu:* 4 moedas de ouro por filho menor.
+    - *Burguês / Patrício:* 15 moedas de ouro por filho menor.
+    - *Nobre:* 45 moedas de ouro por filho menor (tutores, comitiva, librés e manutenção senhorial).
+- **Progressão Nobiliárquica Vinculada aos Indicadores do Reino:**
+  - A Coroa audita os índices de Estabilidade, Ordem e Saúde Econômica do Reino antes de homologar cartas de nobreza.
+  - Em períodos de crise ou guerra, a concessão exige generoso socorro financeiro e empréstimos à Coroa.
+- **Degradação de Bens, Rendimento Zero em Ruína e Confisco Compulsório:**
+  - Imóveis sem manutenção regular deterioram-se até o estado "Arruinado".
+  - Imóveis arruinados geram exatamente 0 moedas de ouro em rendimento passivo.
+  - Caso permaneçam arruinados por 3 anos consecutivos sem reparos, a Coroa decreta Confisco Compulsório por abandono e perigo público.
+- **Imóveis em Comarcas Remotas com Manutenção Dobrada e Sobretaxa:**
+  - Bens imóveis fora da comarca de residência sofrem acréscimo de +100% no custo de manutenção anual (manutenção dobrada).
+  - Sobretaxa destinada a honorários de feitores locais, correios e prestação de contas comarcais.
+
+#### Bloco B: Design, UI/HUD Premium & Áudio Expandido
+- **Reformulação Visual Total 'Dark Medieval BitLife Premium':**
+  - Paleta nobre e imersiva: fundo em obsidiana pura (#0c0d10), veludo heráldico profundo, pergaminho antigo e detalhes em ouro polido (#d4af37 / #e6ca65).
+  - Tipografia clássica de alto contraste com Cinzel (cabeçalhos, heráldica e marcos solenes) e Eczar (leitura contínua da crônica e descrições).
+- **Ergonomia Mobile-First de Alta Fidelidade:**
+  - Alvos de toque otimizados com dimensão mínima estrita de 48px por 48px em todos os elementos interativos.
+  - Bottom Bar fixa e cômoda para operação com o polegar em qualquer orientação.
+  - Conformidade estrita com safe-areas de tela em dispositivos modernos, sem cortes em telas compactas (360px a 430px).
+- **Bottom Sheets Deslizantes de 85vh:**
+  - Painéis modais retráteis no padrão Bottom Sheet com ocupação vertical máxima de 85vh em dispositivos móveis.
+  - Puxador tátil (drag handle), cabeçalho fixo com fechamento rápido e rolagem interna independente com física suave.
+- **HUD Superior Heráldico e Barras de Status BitLife Polidas:**
+  - Brasão dinâmico da linhagem, insígnia régia, datação de ciclo e patrimônio líquido em destaque.
+  - Barras de status (Saúde, Vigor, Honra, Reputação, Fé/Felicidade) no formato esmaltado BitLife, com preenchimentos gradientes e valores percentuais nítidos.
+- **Sintetizador de Áudio Expandido (Web Audio API) & Feedback Háptico:**
+  - Áudio 100% sintetizado via Web Audio API com latência zero e fidelidade acústica:
+    - `fanfare`: Fanfarra de trombetas e cornetas régias para ascensão aristocrática, coroações e vitórias.
+    - `cathedral_bells`: Harmonias profundas de sinos de bronze para matrimônios, missas e vigílias solenes.
+    - `swords_clash`: Impacto metálico e reverberação de lâminas de aço em duelos e provações.
+    - `wax_seal`: Estalo térmico e compressão de sinete sobre cera quente para selamento de documentos e decretos.
+    - `heavy_coins`: Tilintar encorpado de moedas pesadas de ouro maciço em transações e tributos.
+  - Feedback tátil com vibrações hápticas (`navigator.vibrate`) em ações transcendentais e avanço de ciclos.
 
 ---
 

@@ -217,6 +217,7 @@ Object.assign(Engine, {
 
   isJobAccessibleForPlayer(job, ignoreCityTier = false) {
     if (!job || job.id === "crianca" || job.titular) return false;
+    if (STATE && STATE.age < 16 && (job.administrative || job.category === "nobreza" || job.titular)) return false;
     if (job.exclusiveKingdom && job.exclusiveKingdom !== STATE.kingdom) return false;
     const tiers = job.tiers || ["plebeu", "media", "nobre"];
     if (!tiers.includes(STATE.socialClass)) return false;

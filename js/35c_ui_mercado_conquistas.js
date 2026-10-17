@@ -39,6 +39,7 @@ Object.assign(UI, {
   },
 
   renderPlayerPossessions() {
+    if (!STATE) return;
     const listEl = document.getElementById("inventory-list");
     if (!listEl) return;
 
@@ -85,15 +86,27 @@ Object.assign(UI, {
       if (!it) return "";
       const stateObj = (DATA.itemStates && DATA.itemStates[inst.state]) || { label: inst.state || "Bom" };
       const stateClass = stateColors[inst.state] || "gold";
+      const isRuined = inst.state === "arruinado";
+      const ruinedBadge = isRuined
+        ? `<span class="badge bad" style="animation:critPulse 1s infinite alternate;border:1.5px solid #ef4444" title="Se completar 3 anos arruinado, desmorona e é confiscado!">⚠️ Ruína: ${inst.ruinedYears || 0}/3 anos para confisco!</span>`
+        : `<span class="badge ${stateClass}">${stateObj.label}</span>`;
+
+      const isProperty = it.category === "propriedade" || it.type === "propriedade";
+      const isDistant = isProperty && ((inst.kingdom && inst.kingdom !== STATE.kingdom) || (inst.cityId && inst.cityId !== STATE.currentCityId));
+      const remoteBadge = isDistant
+        ? `<span class="badge bad" title="Imóvel situado em outra comarca; sofre sobretaxa de manutenção de correios e feitores">📍 Comarca Remota (+100% manutenção)</span>`
+        : "";
+
       const mortgagedBadge = inst.mortgaged ? `<span class="badge bad">🔒 Hipotecado</span>` : "";
       const incomeBadge = (it.income && it.income > 0) ? `<span class="badge good">+${it.income} 🪙/ano</span>` : "";
-      const upkeepBadge = (it.upkeep && it.upkeep > 0) ? `<span class="badge" style="background:#5c3a21">-${it.upkeep} 🪙/ano manuten.</span>` : "";
+      const upkeepVal = isDistant ? ((it.upkeep || 0) * 2) : (it.upkeep || 0);
+      const upkeepBadge = (upkeepVal > 0) ? `<span class="badge" style="background:#5c3a21">-${upkeepVal} 🪙/ano manuten.</span>` : "";
       const regPrice = Engine.getItemRegionalPrice ? Engine.getItemRegionalPrice(inst.id, inst.kingdom || STATE.kingdom, inst.state || "bom") : it.price;
       const estSaleVal = Math.round(regPrice * 0.80);
       const repairCost = Math.max(2, Math.round(it.price * 0.20));
 
       const usedThisYear = Array.isArray(STATE.usedItemUidsThisYear) && STATE.usedItemUidsThisYear.includes(inst.uid);
-      const canUse = !inst.mortgaged && inst.state !== "arruinado" && !usedThisYear;
+      const canUse = !inst.mortgaged && !isRuined && !usedThisYear;
       const useBtn = `<button type="button" class="btn btn-sm gold chip-btn" style="min-height:36px;padding:0.3rem 0.6rem" onclick="window.Engine.useItemInstance('${inst.uid}')" ${!canUse ? 'disabled' : ''}>⚡ ${usedThisYear ? 'Já Utilizado no Ano' : (it.useLabel || 'Usar Bem')} (-8⚡)</button>`;
 
       const repairBtn = (inst.state !== "novo" && !inst.mortgaged)
@@ -109,16 +122,17 @@ Object.assign(UI, {
         : "";
 
       return `
-        <div class="item-card" style="margin-bottom:0.6rem">
+        <div class="item-card ${isRuined ? 'card-ruined' : ''}" style="margin-bottom:0.6rem;${isRuined ? 'border:1.5px solid #ef4444;box-shadow:0 0 10px rgba(239,68,68,0.3)' : ''}">
           <div style="flex:1;min-width:200px">
             <div style="display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap">
               <strong>${it.name}</strong>
-              <span class="badge ${stateClass}">${stateObj.label}</span>
+              ${ruinedBadge}
+              ${remoteBadge}
               ${mortgagedBadge}
               ${incomeBadge}
               ${upkeepBadge}
             </div>
-            <div class="card-desc" style="font-size:0.75rem;margin-top:0.2rem;margin-bottom:6px;color:var(--text-muted)">${it.desc}</div>
+            <div class="card-desc" style="font-size:0.78rem;margin-top:0.25rem;margin-bottom:6px;color:var(--text-muted)">${it.desc}</div>
           </div>
           <div style="display:flex;gap:0.35rem;flex-wrap:wrap;align-items:center">
             ${useBtn}

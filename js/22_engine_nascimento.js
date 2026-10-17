@@ -121,6 +121,8 @@ Object.assign(Engine, {
       for (let i = 0; i < babyCount; i++) {
         const childSex = Math.random() < 0.5 ? "M" : "F";
         const child = Utils.genNPC("Filho", 0, childSex, STATE.surname, STATE.socialClass);
+        child.nobleTitleLevel = 0;
+        child.nobleTitle = "";
         child.appearance = inheritChildAppearance(STATE, partner || STATE, childSex, child.id);
 
         if (partner && partner.attrs) {
@@ -162,7 +164,7 @@ Object.assign(Engine, {
 
     if (STATE.pendingBirthQueue.length > 0) {
       STATE.pendingChild = STATE.pendingBirthQueue.shift();
-      SoundFX.play("bells");
+      SoundFX.play(STATE.socialClass === "nobre" ? "cathedral_bells" : "bells");
       this.ensureLegitimacyUI();
       UI.openChildNameModal();
     }
@@ -227,7 +229,7 @@ Object.assign(Engine, {
 
     const bdrop = document.getElementById("child-name-backdrop");
     if (bdrop) bdrop.classList.remove("active");
-    SoundFX.play("bells");
+    SoundFX.play(STATE.socialClass === "nobre" ? "cathedral_bells" : "bells");
     if (window.UI && window.UI.triggerStageFX) window.UI.triggerStageFX("👶");
     const heirBadge = child.nobleTitle ? ` como **${child.nobleTitle}**` : "";
     const birthActor = STATE.sex === "F" ? "você deu à luz" : (partnerName === "um romance furtivo" ? "sua amante deu à luz" : `${partnerName} deu à luz`);

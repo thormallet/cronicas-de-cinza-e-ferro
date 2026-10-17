@@ -41,16 +41,18 @@ Object.assign(DATA, {
     { id: "inquisidor", name: "Inquisidor Eclesiástico", gender: "M", tiers: ["media", "nobre"], transitionTo: "nobre", minAge: 21, income: 58, risk: 0.05, req: { fe: 75, intelecto: 65, honor: 60 }, cost: 190, ecclesiastical: true, guildYears: 2, guildName: "Tribunal do Santo Ofício", ranks: ["Frade Investigador", "Qualificador de Doutrina", "Promotor Fiscal da Fé", "Juiz de Heresia", "Inquisidor Apostólico", "Grão-Inquisidor Geral"], desc: "Sob voto perpétuo de castidade, investiga heresias e julga almas." },
     { id: "espiao", name: "Mestre dos Sussurros", gender: "any", tiers: ["media", "nobre"], transitionTo: "nobre", minAge: 18, income: 48, risk: 0.08, req: { destreza: 68, intelecto: 60, carisma: 55 }, cost: 150, guildYears: 2, guildName: "Círculo Silencioso dos Informantes", ranks: ["Informante de Beco", "Decifrador de Selos", "Agente de Cifras", "Olho Invisível da Corte", "Mestre de Rede Secreta", "Grão-Mestre dos Sussurros"], desc: "Tece redes de informantes, chantagens e assassinatos silenciosos." },
     { id: "mercador", name: "Mercador de Grande Guilda", gender: "any", tiers: ["media", "nobre"], transitionTo: "nobre", minAge: 18, income: 54, risk: 0.03, req: { carisma: 62, intelecto: 60, rep: 2 }, cost: 180, guildYears: 2, guildName: "Grande Guilda Mercantil Hansa", ranks: ["Caixeiro de Caravana", "Fator de Entreposto", "Mercador de Grosso Trato", "Armador de Frota", "Síndico da Liga", "Cônsul da Bolsa Mercantil"], desc: "Negocia especiarias, sal, vinho e lã entre reinos." },
-    { id: "juiz", name: "Magistrado / Juiz Real", gender: "any", tiers: ["media", "nobre"], transitionTo: "nobre", minAge: 22, income: 66, risk: 0.02, req: { intelecto: 78, carisma: 58, rep: 4, honor: 60 }, cost: 260, guildYears: 3, guildName: "Colégio Real de Legistas e Magistrados", ranks: ["Almotacé do Burgo", "Juiz de Fora", "Ouvidor da Comarca", "Desembargador da Suplicação", "Corregedor da Corte", "Chanceler-Mor de Justiça"], desc: "Julga crimes, disputas de terras e aplica a lei do soberano." },
+    { id: "meirinho", name: "Meirinho e Oficial de Justiça", gender: "any", tiers: ["plebeu", "media"], transitionTo: "media", minAge: 16, income: 30, risk: 0.04, req: { intelecto: 45, forca: 35, honor: 45 }, cost: 45, guildYears: 1, guildName: "Tribunal e Chancelaria da Comarca", administrative: true, ranks: ["Oficial de Diligência", "Meirinho de Burgo", "Meirinho da Comarca", "Meirinho-Mor", "Grão-Oficial de Execuções"], desc: "Executa mandados judiciais, penhoras, cobrança de foros e mantém a ordem jurídica do senhor." },
+    { id: "juiz", name: "Magistrado / Juiz Real", gender: "any", tiers: ["media", "nobre"], transitionTo: "nobre", minAge: 22, income: 66, risk: 0.02, req: { intelecto: 78, carisma: 58, rep: 4, honor: 60 }, cost: 260, guildYears: 3, guildName: "Colégio Real de Legistas e Magistrados", administrative: true, ranks: ["Almotacé do Burgo", "Juiz de Fora", "Ouvidor da Comarca", "Desembargador da Suplicação", "Corregedor da Corte", "Chanceler-Mor de Justiça"], desc: "Julga crimes, disputas de terras e aplica a lei do soberano." },
     { id: "cavaleiro", name: "Cavaleiro Juramentado", gender: "M", tiers: ["media", "nobre"], transitionTo: "nobre", minAge: 18, income: 60, risk: 0.08, req: { forca: 68, destreza: 58, honor: 65, rep: 3 }, cost: 250, guildYears: 2, guildName: "Ordem da Cavalaria e Pátio d'Armas", ranks: ["Cavaleiro de Espora Dourada", "Cavaleiro Andante", "Cavaleiro de Estandarte", "Comendador da Ordem", "Marechal de Campo", "Grão-Condestável do Reino"], desc: "Combatente blindado de elite, ligado pelo código de honra." },
     { id: "escudeiro", name: "Escudeiro Nobre", gender: "M", tiers: ["nobre"], minAge: 12, income: 15, risk: 0.035, req: { forca: 30, destreza: 30, honor: 45 }, cost: 40, ranks: ["Pajem de Câmara", "Moço de Fidalgos", "Escudeiro de Estribo", "Porta-Estandarte", "Primeiro Escudeiro d'Armas"], desc: "Cuida da armadura e do destriero de um cavaleiro ungido." },
     { id: "falcoeiro", name: "Falcoeiro e Mestre de Caça Real", gender: "any", tiers: ["nobre"], minAge: 16, income: 48, risk: 0.03, req: { destreza: 55, carisma: 45 }, cost: 140, guildYears: 1, guildName: "Falcoaria Real da Corte", ranks: ["Domador de Açores", "Falcoeiro Fidalgo", "Couteiro-Mor", "Mestre dos Gerifaltes", "Grão-Mestre da Coutada Real"], desc: "Cria falcões peregrinos e organiza as caçadas da alta nobreza." },
-    { id: "diplomata", name: "Embaixador / Arauto Real", gender: "any", tiers: ["nobre"], minAge: 19, income: 72, risk: 0.03, req: { carisma: 72, intelecto: 65, rep: 3 }, cost: 310, guildYears: 2, guildName: "Chancelaria Diplomática da Coroa", ranks: ["Arauto de Armas", "Rei de Armas", "Secretário de Legação", "Enviado Plenipotenciário", "Embaixador da Coroa", "Grão-Núncio de Estado"], desc: "Negocia tratados de paz, dotes reais e alianças entre tronos." },
+    { id: "diplomata", name: "Embaixador / Arauto Real", gender: "any", tiers: ["nobre"], minAge: 19, income: 72, risk: 0.03, req: { carisma: 72, intelecto: 65, rep: 3 }, cost: 310, guildYears: 2, guildName: "Chancelaria Diplomática da Coroa", administrative: true, ranks: ["Arauto de Armas", "Rei de Armas", "Secretário de Legação", "Enviado Plenipotenciário", "Embaixador da Coroa", "Grão-Núncio de Estado"], desc: "Negocia tratados de paz, dotes reais e alianças entre tronos." },
     { id: "bispo", name: "Bispo Diocesano", gender: "M", tiers: ["nobre"], minAge: 24, income: 95, risk: 0.02, req: { fe: 78, carisma: 68, rep: 5, honor: 65 }, cost: 520, ecclesiastical: true, guildYears: 2, guildName: "Cúria Capitular e Sínodo", ranks: ["Monsenhor Capitular", "Bispo Sufragâneo", "Bispo Diocesano", "Arcebispo Metropolitano", "Cardeal Legado", "Arcebispo Primaz"], desc: "Príncipe da Igreja sob voto perpétuo de castidade, governa dioceses." },
-    { id: "chanceler", name: "Alto Chanceler do Conselho", gender: "any", tiers: ["nobre"], minAge: 24, income: 155, risk: 0.05, req: { intelecto: 80, carisma: 75, rep: 7, honor: 65 }, cost: 1100, guildYears: 2, guildName: "Conselho Privado da Coroa", ranks: ["Conselheiro Régio", "Escrivão da Puridade", "Vedor da Fazenda Real", "Guardião do Selo Real", "Primeiro-Ministro da Coroa", "Grão-Chanceler do Reino"], desc: "Redige os decretos reais e administra a política suprema do Estado." },
+    { id: "regente_feudo", name: "Regente de Feudo / Senescal", gender: "any", tiers: ["media", "nobre"], transitionTo: "nobre", minAge: 20, income: 85, risk: 0.03, req: { intelecto: 70, carisma: 65, honor: 60, rep: 3 }, cost: 350, guildYears: 2, guildName: "Conselho dos Regentes e Senescais", administrative: true, ranks: ["Feitor de Domínio", "Bailio Feudal", "Senescal de Solar", "Regente de Castelo", "Grão-Regente Feudal"], desc: "Administra terras senhoriais, arrecadação de colheitas, justiça comarcana e guarnições vassálicas." },
+    { id: "chanceler", name: "Alto Chanceler do Conselho", gender: "any", tiers: ["nobre"], minAge: 24, income: 155, risk: 0.05, req: { intelecto: 80, carisma: 75, rep: 7, honor: 65 }, cost: 1100, guildYears: 2, guildName: "Conselho Privado da Coroa", administrative: true, ranks: ["Conselheiro Régio", "Escrivão da Puridade", "Vedor da Fazenda Real", "Guardião do Selo Real", "Primeiro-Ministro da Coroa", "Grão-Chanceler do Reino"], desc: "Redige os decretos reais e administra a política suprema do Estado." },
 
     /* 10 PROFISSÕES EXCLUSIVAS DE REGIÃO (v4.0) */
-    { id: "mandarim_imperial", name: "Mandarim Imperial Letrado", gender: "any", tiers: ["media", "nobre"], transitionTo: "nobre", minAge: 18, income: 62, risk: 0.02, req: { intelecto: 70, carisma: 55, rep: 2 }, cost: 180, guildYears: 2, guildName: "Academia Hanlin Imperial", ranks: ["Candidato ao Exame", "Erudito Jinshi", "Magistrado de Província", "Censor Imperial", "Grão-Preceptor do Trono"], desc: "Administra leis imperiais, tributos e canais sob o Mandato Celeste.", exclusiveKingdom: "tianxia" },
+    { id: "mandarim_imperial", name: "Mandarim Imperial Letrado", gender: "any", tiers: ["media", "nobre"], transitionTo: "nobre", minAge: 18, income: 62, risk: 0.02, req: { intelecto: 70, carisma: 55, rep: 2 }, cost: 180, guildYears: 2, guildName: "Academia Hanlin Imperial", administrative: true, ranks: ["Candidato ao Exame", "Erudito Jinshi", "Magistrado de Província", "Censor Imperial", "Grão-Preceptor do Trono"], desc: "Administra leis imperiais, tributos e canais sob o Mandato Celeste.", exclusiveKingdom: "tianxia" },
     { id: "forjador_katana", name: "Forjador de Katana e Armaduras", gender: "M", tiers: ["plebeu", "media"], transitionTo: "media", minAge: 16, income: 45, risk: 0.03, req: { forca: 60, destreza: 55 }, cost: 90, guildYears: 2, guildName: "Irmandade dos Mestres das Lâminas", ranks: ["Aprendiz de Dobra", "Ferreiro de Tamahagane", "Armeiro de Daimyô", "Mestre das Cinco Espadas", "Armeiro Sagrado do Xogunato"], desc: "Forja lâminas dobradas veneradas pelo fio lendário e pela alma do guerreiro buke.", exclusiveKingdom: "yamato" },
     { id: "mestre_especiarias", name: "Mestre Mercador de Especiarias", gender: "any", tiers: ["media", "nobre"], transitionTo: "nobre", minAge: 18, income: 58, risk: 0.04, req: { carisma: 64, intelecto: 55, rep: 2 }, cost: 160, guildYears: 2, guildName: "Guilda das Frotas de Pimenta e Canela", ranks: ["Avaliador de Cravo e Noz", "Fator de Entreposto Fluvial", "Capitão de Frota de Pimenta", "Grão-Patrão das Especiarias", "Magnata dos Mares do Sul"], desc: "Controla o comércio opulento de especiarias e tecidos finos entre rios e portos sagrados.", exclusiveKingdom: "suvarnabhumi" },
     { id: "mestre_caravanserai", name: "Mestre de Caravanserai", gender: "any", tiers: ["media", "nobre"], transitionTo: "nobre", minAge: 18, income: 55, risk: 0.03, req: { carisma: 60, intelecto: 58, rep: 2 }, cost: 150, guildYears: 2, guildName: "Liga dos Hospedeiros da Rota da Seda", ranks: ["Guardião de Fardos", "Intendente de Estalagem Real", "Mestre de Guias do Deserto", "Provedor-Mor de Caravanas", "Grão-Intendente das Rotas"], desc: "Comanda postos fortificados nas rotas do planalto, abrigando caravanas de três continentes.", exclusiveKingdom: "parsa" },
@@ -65,38 +67,53 @@ Object.assign(DATA, {
   nobleTitles: [
     {
       level: 1,
+      rankName: "Fidalgo",
       titleM: "Fidalgo de Solar", titleF: "Fidalga de Solar",
       consortM: "Fidalgo Consorte", consortF: "Fidalga Consorte",
       heirM: "Jovem Fidalgo Herdeiro", heirF: "Jovem Fidalga Herdeira",
-      bonusIncome: 30
+      bonusIncome: 30,
+      minHonor: 65, minRep: 3, minOrder: 50, minEconomy: 50, minWealth: 600, minProperties: 1,
+      reqDesc: "Grau 1 (Fidalgo): Honra 65+, Reputação 3+, Ordem 50, Economia 50, 600 Ouro e 1 propriedade."
     },
     {
       level: 2,
+      rankName: "Barão",
       titleM: "Barão Feudal", titleF: "Baronesa Feudal",
       consortM: "Barão Consorte", consortF: "Baronesa Consorte",
       heirM: "Barãozinho Herdeiro", heirF: "Baronesinha Herdeira",
-      bonusIncome: 65
+      bonusIncome: 65,
+      minHonor: 70, minRep: 5, minOrder: 55, minEconomy: 55, minWealth: 1200, minProperties: 2,
+      reqDesc: "Grau 2 (Barão): Honra 70+, Reputação 5+, Ordem 55, Economia 55, 1.200 Ouro e 2 propriedades."
     },
     {
       level: 3,
+      rankName: "Visconde",
       titleM: "Visconde da Comarca", titleF: "Viscondessa da Comarca",
       consortM: "Visconde Consorte", consortF: "Viscondessa Consorte",
       heirM: "Visconde Herdeiro", heirF: "Viscondessa Herdeira",
-      bonusIncome: 105
+      bonusIncome: 105,
+      minHonor: 75, minRep: 6, minOrder: 60, minEconomy: 60, minWealth: 2500, minProperties: 3,
+      reqDesc: "Grau 3 (Visconde): Honra 75+, Reputação 6+, Ordem 60, Economia 60, 2.500 Ouro e 3 propriedades."
     },
     {
       level: 4,
+      rankName: "Conde",
       titleM: "Conde Palatino", titleF: "Condessa Palatina",
       consortM: "Conde Consorte", consortF: "Condessa Consorte",
       heirM: "Conde Herdeiro", heirF: "Condessa Herdeira",
-      bonusIncome: 155
+      bonusIncome: 155,
+      minHonor: 80, minRep: 7, minOrder: 65, minEconomy: 65, minWealth: 5000, minProperties: 4,
+      reqDesc: "Grau 4 (Conde): Honra 80+, Reputação 7+, Ordem 65, Economia 65, 5.000 Ouro e 4 propriedades."
     },
     {
       level: 5,
+      rankName: "Duque",
       titleM: "Duque de Sangue Real", titleF: "Duquesa de Sangue Real",
       consortM: "Duque Consorte", consortF: "Duquesa Consorte",
       heirM: "Grão-Herdeiro Ducal", heirF: "Grã-Herdeira Ducal",
-      bonusIncome: 230
+      bonusIncome: 230,
+      minHonor: 85, minRep: 8, minOrder: 70, minEconomy: 70, minWealth: 10000, minProperties: 5,
+      reqDesc: "Grau 5 (Duque): Honra 85+, Reputação 8+, Ordem 70, Economia 70, 10.000 Ouro e 5 propriedades."
     }
   ]
 });

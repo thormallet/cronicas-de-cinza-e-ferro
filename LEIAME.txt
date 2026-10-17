@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 4.1 (Edição Mercador Integrada)
+Crônicas de Cinza e Ferro — Versão 4.2 (Edição Feudos & Dinastias)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,84 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 4.2 — EDIÇÃO FEUDOS & DINASTIAS (SIMULAÇÃO SOCIAL, NOBREZA & DESIGN PREMIUM):
+======================================================================
+BLOCO A — CONTEÚDO & SIMULAÇÃO SOCIAL E NOBILIÁRQUICA:
+1. Nobres Crianças sem Funções Administrativas (< 16 anos sob Tutoria Pedagógica):
+   - Crianças e herdeiros nobres menores de 16 anos não possuem capacidade cívica para governar, arrecadar impostos, ditar éditos ou administrar feudos.
+   - Ficam sob estrita tutela pedagógica de preceptores, estudando heráldica, latim, equitação e artes cavalheirescas até a maturidade legal.
+   - O painel administrativo senhorial e as decisões de estado permanecem rigorosamente bloqueados até a posse formal aos 16 anos.
+
+2. Crianças Nobres sem Título Nobiliárquico Pessoal ao Nascer:
+   - Rebentos nascidos em famílias aristocráticas herdam o sangue azul e a classe estamental nobre, mas não detêm títulos pessoais titularizados no berço.
+   - As patentes nobiliárquicas (Barão, Visconde, Conde, Marquês ou Duque) dependem de sucessão dinástica formal (por morte do patriarca) ou outorga de investidura régia deferida pela Coroa ao atingirem a maioridade.
+   - Extingue-se a anomalia de recém-nascidos acumularem senhorios autônomos sem herança legal consumada.
+
+3. Ascensão Social Balanceada em Três Gerações (~3 Gerações):
+   - Eliminação da transição instantânea e artificial de plebeu a senhor feudal no mesmo ciclo de vida.
+   - A escalada de estratos sociais obedece a um percurso histórico verossímil:
+     * 1ª Geração (Consolidação Comercial Burguesa / Patrícia): Enriquecimento através do comércio, produção artesanal, compra de oficinas, barcaças e acumulação de capital líquido.
+     * 2ª Geração (Fidalguia de Toga & Armas): Alfabetização e erudição dos herdeiros, aquisição de solares fortificados, postos de magistratura ou cavalaria militar a serviço do Soberano.
+     * 3ª Geração (Nobreza Titular Senhorial com Feudo): Reconhecimento aristocrático pleno, investidura com Carta de Nobreza régia, titulação formal e controle de castelos e vilas feudais.
+
+4. Requisitos Rigorosos de Honra e Reputação Régia, com Regra Assimétrica de Revogação:
+   - Para pleitear ou sustentar patentes nobiliárquicas perante a Corte Régia, o postulante deve manter padrões altíssimos de conduta cavalheiresca (Honra entre 65 e 85 pontos e Reputação Régia exemplar).
+   - Regra Assimétrica de Revogação: Para prevenir oscilações voláteis causadas por dilemas pontuais, o título senhorial não é revogado de imediato. A cassação oficial da dignidade nobiliárquica pela Coroa ocorre apenas se a Honra permanecer em estado crítico (< 20 pontos) por 3 anos consecutivos, formalizando infâmia imperdoável.
+
+5. Sucessão Dinástica com Renovação Social Inteligente:
+   - Ao assumir o controle do herdeiro dinástico, o sistema preserva de forma estrita os laços de sangue diretos (pais, irmãos, filhos, avós e colaterais legítimos) bem como o Soberano e a corte do reino.
+   - Aplica-se a purga e arquivamento de vínculos obsoletos de terceiros (amizades de infância e juventude do antigo progenitor, desafetos pessoais arcaicos e pretendentes caducos).
+   - Ocorre a geração autônoma e orgânica de um novo círculo de convívio para o novo herdeiro, incluindo novos companheiros da mesma faixa etária, colegas de treino e pretendentes à corte.
+
+6. Custo Anual de Sustento de Filhos Menores por Classe Social:
+   - Cada rebento menor de 16 anos gera despesas anuais automáticas de alimentação, vestuário e instrução na virada de ciclo:
+     * Plebeu: 4 moedas de ouro anuais por filho menor.
+     * Burguês / Patrício: 15 moedas de ouro anuais por filho menor (alimentação refinada, preceptores e alfaiataria de classe mercantil).
+     * Nobre: 45 moedas de ouro anuais por filho menor (mestres de armas, criadagem particular, montarias, librés e aposentos exclusivos).
+
+7. Progressão Nobiliárquica Vinculada aos Indicadores do Reino:
+   - A obtenção e confirmação de cartas de mercê e promoções nobiliárquicas dependem do estado geral do Reino governado pela Coroa.
+   - O Soberano audita a Estabilidade, a Ordem Pública e a Saúde Econômica do Reino antes de chancelar novas patentes.
+   - Em períodos de crise ou guerra, concessões régias exigem contribuições vultosas de socorro financeiro ao Erário Régio.
+
+8. Degradação de Bens, Rendimento Zero em Ruína e Confisco Compulsório após 3 Anos de Abandono:
+   - O desgaste contínuo sem manutenção degrada propriedades até o estado "Arruinado".
+   - Imóveis arruinados perdem 100% de sua produtividade (rendimento passivo cai a exatamente 0 moedas).
+   - Se uma propriedade arruinada permanecer por 3 anos consecutivos sem reparos ou reformas preventivas, o magistrado comarcano e a Coroa decretam o Confisco Compulsório por abandono e perigo público, com expropriação definitiva da posse.
+
+9. Imóveis em Comarcas Remotas com Manutenção Dobrada e Sobretaxa Administrativa:
+   - Propriedades mantidas fora da comarca atual de residência do protagonista incorrem em um acréscimo de +100% no custo anual de manutenção (manutenção dobrada).
+   - O acréscimo cobre os custos logísticos de feitores, procuradores comarcais e remessas seguras de correspondência e taxas fiscais inter-regionais.
+
+----------------------------------------------------------------------
+BLOCO B — DESIGN, UI/HUD PREMIUM & ÁUDIO EXPANDIDO:
+1. Reformulação Visual Total "Dark Medieval BitLife Premium":
+   - Nova paleta cromática nobre: fundo em obsidiana pura (#0c0d10), veludo heráldico escuro, tonalidades de pergaminho envelhecido e contrastes dourados em ouro polido (#d4af37 / #e6ca65).
+   - Tipografia clássica medieval e contemporânea: Cinzel para cabeçalhos, títulos heráldicos e divisores imperiais; Eczar e fontes legíveis para corpos de texto da Crônica e diálogos.
+
+2. Ergonomia Mobile-First de Alta Fidelidade:
+   - Áreas de toque confortáveis em botões, fichas e seletores com dimensão mínima estrita de 48px por 48px.
+   - Bottom Bar fixa e ergonômica, facilitando comandos de navegação rápidos com o polegar.
+   - Respeito integral às safe-areas de tela em dispositivos modernos, prevenindo cortes em telas estreitas (360px a 430px) e eliminando empilhamentos indesejados.
+
+3. Bottom Sheets Deslizantes de 85vh:
+   - Modais modernizados no padrão Bottom Sheet com ocupação vertical de até 85vh em dispositivos móveis.
+   - Drag handle superior visual, animação de entrada com curvas bézier suaves, cabeçalho sticky com botão de fechamento acessível e área de rolagem interna com rolagem inercial independente.
+
+4. HUD Superior Heráldico e Barras de Status BitLife Polidas:
+   - Painel superior com brasão dinâmico da dinastia, idade, ano de reinado, saldo de ouro e patrimônio líquido consolidados.
+   - Barras de atributos com design esmaltado estilo BitLife (Saúde, Vigor, Honra, Reputação, Fé/Felicidade), transições suaves de preenchimento, percentuais legíveis e ícones com relevo metálico.
+
+5. Sintetizador de Áudio Expandido (Web Audio API) & Feedback Háptico:
+   - Efeitos de áudio sintetizados proceduralmente em tempo real sem arquivos externos:
+     * fanfare: cornetas e trombetas nobres em acordes régios para elevações sociais, casamentos e vitórias.
+     * cathedral_bells: harmônicos graves de sinos de bronze de catedral para nascimentos, devoção e luto solene.
+     * swords_clash: tinido cortante e ressonância metálica de aço laminado para provações, torneios e embates.
+     * wax_seal: estalo quente e prensagem seca de sinete sobre cera quente para éditos, decretos e contratos.
+     * heavy_coins: choque e tilintar de moedas de ouro maciço para transações, tributos e barganhas comerciais.
+   - Integração com motor háptico de vibração táctil (navigator.vibrate) em momentos-chave de decisão e avanço de ano.
 ======================================================================
 
 VERSÃO 4.1 — EDIÇÃO MERCADOR INTEGRADA (REFINAMENTO & COESÃO PRÁTICA):

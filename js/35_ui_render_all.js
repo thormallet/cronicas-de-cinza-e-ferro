@@ -355,6 +355,52 @@ Object.assign(UI, {
       const tObj = Engine.getNobleTitleObj(lvl);
       document.getElementById("fief-panel-title").textContent = `🏰 Governação de ${playerNobleTitle} — Casa ${STATE.surname}`;
       document.getElementById("fief-title-badge").textContent = `${playerNobleTitle} (Grau ${lvl}/5 • +${tObj ? tObj.bonusIncome : 0} Ouro/ano)`;
+
+      const realmStab = Engine.getRealmStability ? Engine.getRealmStability() : 50;
+      const stabBadge = document.getElementById("fief-stability-badge");
+      if (stabBadge) {
+        stabBadge.className = `badge ${realmStab >= 60 ? "good" : (realmStab >= 40 ? "gold" : "bad")}`;
+        stabBadge.textContent = `🛡️ Estabilidade do Reino: ${realmStab}%`;
+      }
+
+      const nextLvl = (STATE.nobleTitleLevel || 0) + 1;
+      const nextTObj = Engine.getNobleTitleObj ? Engine.getNobleTitleObj(nextLvl) : null;
+      const patentBox = document.getElementById("noble-patent-progression-box");
+      if (patentBox) {
+        if (nextLvl > 5 || !nextTObj) {
+          patentBox.innerHTML = `
+            <div class="card" style="margin-bottom:0.75rem;background:var(--panel-inner);border:1.5px solid var(--border-gold)">
+              <h4 style="margin:0;border:none">👑 Ápice Nobiliárquico</h4>
+              <small style="color:var(--text-muted)">Você atingiu o grau máximo de titularidade fidalga no Reino de ${Engine.getKingdom().name}.</small>
+            </div>`;
+        } else {
+          const nextTitleName = STATE.sex === "F" ? nextTObj.titleF : nextTObj.titleM;
+          const reqHonor = 60 + nextLvl * 5;
+          const reqRep = 2 + nextLvl;
+          const reqStab = 50 + nextLvl * 5;
+          const hasPoss = Engine.hasRequiredNoblePossessions ? Engine.hasRequiredNoblePossessions(nextLvl) : true;
+          const honorOk = STATE.honor >= reqHonor;
+          const repOk = STATE.reputation >= reqRep;
+          const stabOk = realmStab >= reqStab;
+
+          patentBox.innerHTML = `
+            <div class="card" style="margin-bottom:0.75rem;background:var(--panel-inner);border:1.5px solid var(--border-gold)">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.35rem">
+                <h4 style="margin:0;border:none;padding:0;font-size:0.9rem">📜 Próxima Patente: ${nextTitleName} (Grau ${nextLvl})</h4>
+                <span class="badge ${honorOk && repOk && stabOk && hasPoss ? 'good' : 'gold'}">${honorOk && repOk && stabOk && hasPoss ? 'Elegível para Outorga' : 'Em Progresso'}</span>
+              </div>
+              <p class="sheet-hint" style="font-size:0.8rem;margin-bottom:0.4rem">Requisitos régios para o chanceler outorgar seu novo título:</p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.35rem;font-size:0.78rem">
+                <div>Honra: <strong style="color:${honorOk ? 'var(--good-bright)' : '#ef4444'}">${STATE.honor}/${reqHonor}</strong> ${honorOk ? '✓' : '✗'}</div>
+                <div>Reputação: <strong style="color:${repOk ? 'var(--good-bright)' : '#ef4444'}">${STATE.reputation}/${reqRep}</strong> ${repOk ? '✓' : '✗'}</div>
+                <div>Estabilidade: <strong style="color:${stabOk ? 'var(--good-bright)' : '#ef4444'}">${realmStab}%/${reqStab}%</strong> ${stabOk ? '✓' : '✗'}</div>
+                <div>Posses Nobres: <strong style="color:${hasPoss ? 'var(--good-bright)' : '#ef4444'}">${hasPoss ? 'Atestadas' : 'Insuficientes'}</strong> ${hasPoss ? '✓' : '✗'}</div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
       const curCityFief = Engine.getCityObj ? Engine.getCityObj(STATE.currentCityId, STATE.kingdom) : { name: "", tier: "capital" };
       const inUrban = Engine.isInUrbanCenter ? Engine.isInUrbanCenter() : true;
       document.getElementById("fief-panel-desc").innerHTML = inUrban

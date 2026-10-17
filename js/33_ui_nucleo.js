@@ -350,6 +350,7 @@ const UI = {
     }
   }
 };
+if (typeof window !== "undefined") window.UI = UI;
 
 /* RESPONSIVIDADE DESKTOP / MOBILE */
 if (typeof window !== "undefined") {
