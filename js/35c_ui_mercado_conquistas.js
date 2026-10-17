@@ -42,8 +42,34 @@ Object.assign(UI, {
     const listEl = document.getElementById("inventory-list");
     if (!listEl) return;
 
+    const nw = Engine.getNetWorth ? Engine.getNetWorth() : (STATE.gold || 0);
+    const hasProp = Array.isArray(STATE.itemInstances) && STATE.itemInstances.some(x => {
+      const it = DATA.items.find(i => i.id === x.id);
+      return it && (it.category === "propriedade" || it.category === "transporte");
+    });
+    const canPleitearCharter = STATE.socialClass !== "nobre" && nw >= 600;
+    const readyCharter = nw >= 1200 && hasProp && STATE.gold >= 400;
+    const charterHtml = canPleitearCharter ? `
+      <div class="item-card" style="margin-bottom:0.75rem;border-left:3px solid var(--gold-bright);background:var(--panel-inner)">
+        <div style="flex:1;min-width:200px">
+          <div style="display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap">
+            <strong>⚜️ Pleitear Carta de Nobreza na Chancelaria Régia</strong>
+            <span class="badge gold">Taxa: 400 🪙</span>
+          </div>
+          <div class="card-desc" style="font-size:0.75rem;margin-top:4px;margin-bottom:4px;color:var(--text-muted)">
+            Adquira fidalguia hereditária para a Casa ${STATE.surname}. Requisitos: Patrimônio &#8805; 1.200 🪙 (Atual: ${nw} 🪙), ao menos 1 propriedade/frota e 400 Ouro em mãos.
+          </div>
+        </div>
+        <div style="display:flex;gap:0.35rem;align-items:center">
+          <button type="button" class="btn btn-sm gold primary" onclick="window.Engine.buyNobilityCharter()" ${!readyCharter ? 'disabled' : ''}>
+            👑 Pleitear Carta de Nobreza (400 🪙)
+          </button>
+        </div>
+      </div>
+    ` : "";
+
     if (!Array.isArray(STATE.itemInstances) || STATE.itemInstances.length === 0) {
-      listEl.innerHTML = `<p style="color:var(--text-muted)">Você não possui bens, imóveis ou frotas registradas em seu nome.</p>`;
+      listEl.innerHTML = charterHtml + `<p style="color:var(--text-muted)">Você não possui bens, imóveis ou frotas registradas em seu nome.</p>`;
       return;
     }
 
@@ -54,7 +80,7 @@ Object.assign(UI, {
       arruinado: "bad"
     };
 
-    listEl.innerHTML = STATE.itemInstances.map(inst => {
+    listEl.innerHTML = charterHtml + STATE.itemInstances.map(inst => {
       const it = DATA.items.find(x => x.id === inst.id);
       if (!it) return "";
       const stateObj = (DATA.itemStates && DATA.itemStates[inst.state]) || { label: inst.state || "Bom" };
@@ -65,6 +91,10 @@ Object.assign(UI, {
       const regPrice = Engine.getItemRegionalPrice ? Engine.getItemRegionalPrice(inst.id, inst.kingdom || STATE.kingdom, inst.state || "bom") : it.price;
       const estSaleVal = Math.round(regPrice * 0.80);
       const repairCost = Math.max(2, Math.round(it.price * 0.20));
+
+      const usedThisYear = Array.isArray(STATE.usedItemUidsThisYear) && STATE.usedItemUidsThisYear.includes(inst.uid);
+      const canUse = !inst.mortgaged && inst.state !== "arruinado" && !usedThisYear;
+      const useBtn = `<button type="button" class="btn btn-sm gold chip-btn" style="min-height:36px;padding:0.3rem 0.6rem" onclick="window.Engine.useItemInstance('${inst.uid}')" ${!canUse ? 'disabled' : ''}>⚡ ${usedThisYear ? 'Já Utilizado no Ano' : (it.useLabel || 'Usar Bem')} (-8⚡)</button>`;
 
       const repairBtn = (inst.state !== "novo" && !inst.mortgaged)
         ? `<button type="button" class="chip-btn" style="min-height:36px;padding:0.3rem 0.6rem" onclick="window.Engine.repairItemInstance('${inst.uid}')">🛠️ Reparar (${repairCost} 🪙)</button>`
@@ -88,9 +118,10 @@ Object.assign(UI, {
               ${incomeBadge}
               ${upkeepBadge}
             </div>
-            <small style="color:var(--text-muted);display:block;margin-top:0.2rem">${it.desc}</small>
+            <div class="card-desc" style="font-size:0.75rem;margin-top:0.2rem;margin-bottom:6px;color:var(--text-muted)">${it.desc}</div>
           </div>
           <div style="display:flex;gap:0.35rem;flex-wrap:wrap;align-items:center">
+            ${useBtn}
             ${repairBtn}
             ${sellBtn}
             ${bargainBtn}
@@ -161,7 +192,9 @@ Object.assign(UI, {
         activeLoansEl.innerHTML = `<p style="color:var(--text-muted)">Nenhuma dívida bancária ativa. Suas finanças estão livres de juros e cobranças.</p>`;
       } else {
         activeLoansEl.innerHTML = STATE.activeLoans.map(loan => {
-          const collatBadge = loan.collateralItemId ? `<span class="badge bad">Garantia: ${loan.collateralItemId}</span>` : "";
+          const colIt = (DATA.items || []).find(i => i.id === loan.collateralItemId);
+          const colName = colIt ? colIt.name : loan.collateralItemId;
+          const collatBadge = loan.collateralItemId ? `<span class="badge bad">Hipoteca: ${colName}</span>` : "";
           const jurosPct = Math.round((loan.interestRate || 0.15) * 100);
           return `
             <div class="item-card" style="margin-bottom:0.55rem">

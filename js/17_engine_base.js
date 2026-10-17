@@ -111,6 +111,7 @@ const Engine = {
     if (STATE.duelsWon === undefined) STATE.duelsWon = 0;
     if (STATE.bargainsWon === undefined) STATE.bargainsWon = 0;
     if (STATE.bankerProfits === undefined) STATE.bankerProfits = 0;
+    if (!Array.isArray(STATE.usedItemUidsThisYear)) STATE.usedItemUidsThisYear = [];
 
     /* Sincronização retrocompatível de inventário e instâncias de bens */
     if (Array.isArray(STATE.inventory)) {
@@ -171,6 +172,83 @@ const Engine = {
     if (STATE.pregnancies.length > 0 && !STATE.pregnancy) {
       STATE.pregnancy = STATE.pregnancies[0];
     }
+  },
+
+  consumeVigor(amount, label = "Ação") {
+    this.ensureVigorFields();
+    if ((STATE.vigor || 0) < amount) {
+      if (window.UI && window.UI.notify) {
+        UI.notify("Vigor Insuficiente", `Você precisa de ${amount} de Vigor para "${label}" (Vigor atual: ${STATE.vigor}/${STATE.maxVigor}).`);
+      }
+      return false;
+    }
+    STATE.vigor = Math.max(0, STATE.vigor - amount);
+    return true;
+  },
+
+  getItemDef(itemId) {
+    return (DATA.items || []).find(i => i.id === itemId) || null;
+  },
+
+  getItemName(itemId) {
+    const it = this.getItemDef(itemId);
+    return it ? it.name : itemId;
+  },
+
+  hasActiveItem(itemId) {
+    if (!STATE) return false;
+    if (Array.isArray(STATE.itemInstances) && STATE.itemInstances.length > 0) {
+      return STATE.itemInstances.some(inst => inst.id === itemId && !inst.mortgaged && inst.state !== "arruinado");
+    }
+    return Array.isArray(STATE.inventory) && STATE.inventory.includes(itemId);
+  },
+
+  hasAnyActiveItem(itemIdsArray) {
+    if (!Array.isArray(itemIdsArray)) return false;
+    return itemIdsArray.some(id => this.hasActiveItem(id));
+  },
+
+  getBestWeaponBonus() {
+    const table = [
+      { id: "lamina_damasco", mult: 0.25 },
+      { id: "espada_longa", mult: 0.18 },
+      { id: "arco_composto", mult: 0.15 },
+      { id: "adaga_ferro", mult: 0.10 }
+    ];
+    for (const w of table) {
+      if (this.hasActiveItem(w.id)) {
+        return { mult: w.mult, name: this.getItemName(w.id) };
+      }
+    }
+    return { mult: 0, name: null };
+  },
+
+  getBestArmorReduction() {
+    const table = [
+      { id: "armadura_placas", reduction: 0.60 },
+      { id: "cota_malha", reduction: 0.40 },
+      { id: "gibao_couro", reduction: 0.20 }
+    ];
+    for (const a of table) {
+      if (this.hasActiveItem(a.id)) {
+        return { reduction: a.reduction, name: this.getItemName(a.id), blocksScars: this.hasActiveItem("armadura_placas") };
+      }
+    }
+    return { reduction: 0, name: null, blocksScars: false };
+  },
+
+  getBestInstrumentBonus() {
+    const table = [
+      { id: "harpa_dourada", bonus: 18 },
+      { id: "alaude_nobre", bonus: 12 },
+      { id: "flauta_osso", bonus: 6 }
+    ];
+    for (const inst of table) {
+      if (this.hasActiveItem(inst.id)) {
+        return { affinityBonus: inst.bonus, goldBonus: inst.bonus, name: this.getItemName(inst.id) };
+      }
+    }
+    return { affinityBonus: 0, goldBonus: 0, name: null };
   },
 
   rollCheck(attrId, difficulty) {

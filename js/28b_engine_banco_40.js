@@ -50,7 +50,7 @@ Object.assign(Engine, {
 
     STATE.debt = STATE.activeLoans.reduce((sum, l) => sum + (l.balance || 0), 0);
     SoundFX.play("coin");
-    const collatMsg = collatInst ? ` (Garantia penhorada: ${collatInst.id})` : " (Sem garantia)";
+    const collatMsg = collatInst ? ` (Garantia penhorada: ${this.getItemName(collatInst.id)})` : " (Sem garantia)";
     this.addLog(`📜 CONTRATO DE CRÉDITO: Você tomou ${amount} Ouro com **${cred.name}** a ${(cred.interestRate * 100)}% ao ano${collatMsg}.`, "bad");
     Storage.saveToSlot(CONFIG.activeSlot);
     UI.renderAll();
@@ -76,6 +76,8 @@ Object.assign(Engine, {
       }
       STATE.activeLoans = STATE.activeLoans.filter(l => l.uid !== loanUid);
       this.addLog(`🪙 DÍVIDA QUITADA: Você liquidou totalmente o empréstimo com **${loan.creditorName}**, liberando todas as garantias penhoradas!`, "good");
+      Storage.unlockAchievement("ach_livre_dividas");
+      this.checkAchievements();
     } else {
       this.addLog(`🪙 AMORTIZAÇÃO: Você pagou ${amountToPay} Ouro a **${loan.creditorName}** (Saldo devedor: ${loan.balance} Ouro).`, "good");
     }
@@ -100,6 +102,7 @@ Object.assign(Engine, {
       barao_endividado: "terra_aravel",
       coroa_real: "coroa_colecionador"
     };
+    const collatItemId = collatMap[clientId] || "casa_urbana";
 
     STATE.bankerLoans.push({
       uid: "b_loan_" + Math.random().toString(36).slice(2, 9),
@@ -110,12 +113,12 @@ Object.assign(Engine, {
       interestRate: client.returnRate,
       defaultRisk: client.defaultRisk,
       yearsLeft: 3,
-      collateralItemId: collatMap[clientId] || "casa_urbana"
+      collateralItemId: collatItemId
     });
 
     SoundFX.play("bells");
     Storage.unlockAchievement("ach_banqueiro_reinos");
-    this.addLog(`🏛️ FINANCIAMENTO BANCÁRIO: Você concedeu crédito de ${client.loanAmount} Ouro para **${client.name}** a ${(client.returnRate * 100)}%/ano (Retorno previsto: ${totalReturn} Ouro em 3 anos).`, "epoch");
+    this.addLog(`🏛️ FINANCIAMENTO BANCÁRIO: Você concedeu crédito de ${client.loanAmount} Ouro para **${client.name}** a ${(client.returnRate * 100)}%/ano (Retorno previsto: ${totalReturn} Ouro em 3 anos | Caução: **${this.getItemName(collatItemId)}**).`, "epoch");
     Storage.saveToSlot(CONFIG.activeSlot);
     UI.renderAll();
   },
@@ -153,7 +156,7 @@ Object.assign(Engine, {
                   STATE.itemInstances.splice(cIdx, 1);
                   const invIdx = STATE.inventory.indexOf(inst.id);
                   if (invIdx !== -1) STATE.inventory.splice(invIdx, 1);
-                  this.addLog(`⚖️ PENHORA EXECUTADA: Oficiais de justiça tomaram sua posse **${inst.id}** para liquidar o calote com ${loan.creditorName}!`, "bad");
+                  this.addLog(`⚖️ PENHORA EXECUTADA: Oficiais de justiça tomaram sua posse **${this.getItemName(inst.id)}** para liquidar o calote com ${loan.creditorName}!`, "bad");
                   seized = true;
                 }
               }
@@ -194,7 +197,7 @@ Object.assign(Engine, {
               mortgaged: false
             });
             SoundFX.play("bells");
-            this.addLog(`⚔️ EXECUÇÃO DE CAUÇÃO: **${bLoan.clientName}** deu calote no contrato! Você acionou os meirinhos e tomou posse definitiva de **${collatId}**!`, "good");
+            this.addLog(`⚔️ EXECUÇÃO DE CAUÇÃO: **${bLoan.clientName}** deu calote no contrato! Você acionou os meirinhos e tomou posse definitiva de **${this.getItemName(collatId)}**!`, "good");
           }
         }
       });
@@ -209,27 +212,45 @@ Object.assign(Engine, {
       const it = DATA.items.find(i => i.id === x.id);
       return it && it.category === "propriedade";
     }).length : 0;
+    const totalPossessions = Array.isArray(STATE.itemInstances) ? STATE.itemInstances.length : (Array.isArray(STATE.inventory) ? STATE.inventory.length : 0);
+    const netWorth = this.getNetWorth ? this.getNetWorth() : (STATE.gold || 0);
+    const lovers = Array.isArray(STATE.npcs) ? STATE.npcs.filter(n => n.alive && (n.role === "Amor" || n.role === "Amante")).length : 0;
+    const livingChildren = Array.isArray(STATE.npcs) ? STATE.npcs.filter(n => n.alive && n.role === "Filho" && !n.abandoned).length : 0;
+    const curJob = this.getJob ? this.getJob() : null;
+    const maxJobRank = (curJob && curJob.ranks ? curJob.ranks.length : 5) - 1;
 
     DATA.achievements.forEach(ach => {
       if (unlocked.includes(ach.id)) return;
       let ok = false;
-      if (ach.id === "ach_primeira_moeda" && STATE.gold >= 50) ok = true;
-      else if (ach.id === "ach_mestre_oficio" && (STATE.jobRank || 0) >= 4) ok = true;
-      else if (ach.id === "ach_sangue_nobre" && STATE.socialClass === "nobre") ok = true;
-      else if (ach.id === "ach_duque_coroa" && (STATE.nobleTitleLevel || 0) >= 5) ok = true;
-      else if (ach.id === "ach_fortuna_ouro" && STATE.gold >= 2000) ok = true;
-      else if (ach.id === "ach_senhor_castelo" && STATE.inventory.includes("castelo_feudal")) ok = true;
-      else if (ach.id === "ach_grande_armador" && STATE.inventory.includes("navio_mercante")) ok = true;
-      else if (ach.id === "ach_longevidade_veneravel" && STATE.age >= 70) ok = true;
+      if (ach.id === "ach_primeira_moeda" && ((STATE.bargainsWon || 0) >= 1 || STATE.gold >= 50)) ok = true;
+      else if (ach.id === "ach_primeiro_negocio" && (STATE.bargainsWon || 0) >= 3) ok = true;
+      else if ((ach.id === "ach_milionario_ouro" || ach.id === "ach_fortuna_ouro") && STATE.gold >= 1000) ok = true;
+      else if (ach.id === "ach_magnata_patrimonio" && netWorth >= 5000) ok = true;
+      else if (ach.id === "ach_colecionador_supremo" && totalPossessions >= 10) ok = true;
+      else if (ach.id === "ach_banqueiro_reinos" && ((STATE.bankerLoans && STATE.bankerLoans.length > 0) || (STATE.bankerProfits || 0) > 0)) ok = true;
+      else if (ach.id === "ach_ascensao_burguesa" && (STATE.socialClass === "media" || STATE.socialClass === "nobre")) ok = true;
+      else if ((ach.id === "ach_novo_nobre" || ach.id === "ach_sangue_nobre") && STATE.socialClass === "nobre") ok = true;
+      else if ((ach.id === "ach_duque_soberano" || ach.id === "ach_duque_coroa") && (STATE.nobleTitleLevel || 0) >= 5) ok = true;
+      else if (ach.id === "ach_senhor_castelo" && this.hasAnyActiveItem(["castelo_feudal", "palacio_real"])) ok = true;
+      else if (ach.id === "ach_grande_armador" && this.hasActiveItem("navio_mercante")) ok = true;
+      else if (ach.id === "ach_patriarca_matriarca" && livingChildren >= 5) ok = true;
+      else if (ach.id === "ach_amante_secreta" && lovers >= 2) ok = true;
+      else if (ach.id === "ach_grande_sedutor" && lovers >= 3) ok = true;
+      else if (ach.id === "ach_coracao_pedra" && (STATE.abandonedChildrenCount || 0) >= 1) ok = true;
+      else if ((ach.id === "ach_dinastia_eterna" || ach.id === "ach_dinastia_cinco") && (STATE.generation || 1) >= 5) ok = true;
+      else if ((ach.id === "ach_mestre_corporacao" || ach.id === "ach_mestre_oficio") && STATE.job !== "crianca" && (STATE.jobRank || 0) >= maxJobRank) ok = true;
+      else if (ach.id === "ach_oficio_regional" && curJob && !!curJob.exclusiveKingdom) ok = true;
+      else if ((ach.id === "ach_explorador_mundi" || ach.id === "ach_viajante_mundo") && Array.isArray(STATE.visitedKingdoms) && STATE.visitedKingdoms.length >= 5) ok = true;
+      else if (ach.id === "ach_cidadao_mundo" && Array.isArray(STATE.visitedKingdoms) && STATE.visitedKingdoms.length >= 10) ok = true;
+      else if (ach.id === "ach_campeao_torneio" && (STATE.duelsWon || 0) >= 3) ok = true;
+      else if (ach.id === "ach_mao_ferro" && STATE.fief && (STATE.fief.loyalty >= 80 || STATE.fief.influence >= 80)) ok = true;
+      else if (ach.id === "ach_santo_vivo" && this.getEffectiveAttr("fe") >= 95 && STATE.honor >= 90) ok = true;
+      else if ((ach.id === "ach_sobrevivente_epoca" || ach.id === "ach_longevidade_veneravel") && STATE.age >= 70) ok = true;
       else if (ach.id === "ach_honra_imaculada" && STATE.honor >= 90) ok = true;
       else if (ach.id === "ach_infamia_sombria" && (STATE.reputation <= -5 || STATE.honor <= 15)) ok = true;
       else if (ach.id === "ach_devoto_santo" && this.getEffectiveAttr("fe") >= 90) ok = true;
       else if (ach.id === "ach_erudito_astros" && this.getEffectiveAttr("intelecto") >= 90) ok = true;
-      else if (ach.id === "ach_campeao_torneio" && (STATE.duelsWon || 0) >= 3) ok = true;
-      else if (ach.id === "ach_banqueiro_reinos" && ((STATE.bankerLoans && STATE.bankerLoans.length > 0) || (STATE.bankerProfits || 0) > 0)) ok = true;
-      else if (ach.id === "ach_dinastia_cinco" && (STATE.generation || 1) >= 5) ok = true;
       else if (ach.id === "ach_casamento_ouro" && STATE.npcs.some(n => n.role === "Cônjuge" && n.socialClass === "nobre")) ok = true;
-      else if (ach.id === "ach_viajante_mundo" && (STATE.visitedKingdoms && STATE.visitedKingdoms.length >= 3)) ok = true;
       else if (ach.id === "ach_soberano_feudo" && propsCount >= 5) ok = true;
       else if (ach.id === "ach_sobrevivente_peste" && STATE.flags.some(f => f.toLowerCase().includes("peste"))) ok = true;
       else if (ach.id === "ach_lenda_cinza_ferro" && unlocked.length >= 10) ok = true;

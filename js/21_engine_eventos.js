@@ -79,6 +79,14 @@ Object.assign(Engine, {
     UI.renderEventModal();
   },
 
+  generateInheritedAppearance(partner = null, childSex = null, childId = null) {
+    const sex = childSex || (Math.random() < 0.5 ? "M" : "F");
+    if (typeof inheritChildAppearance === "function") {
+      return inheritChildAppearance(STATE, partner || STATE, sex, childId || ("npc_" + Math.random().toString(36).slice(2, 8)));
+    }
+    return null;
+  },
+
   resolveEventChoice(choiceIdx) {
     this.cancelQTETimer();
     if (UI.cancelQTETimer) UI.cancelQTETimer();
@@ -120,6 +128,9 @@ Object.assign(Engine, {
     if (outcome.addChild) {
       const childSex = Math.random() < 0.5 ? "M" : "F";
       const child = Utils.genNPC("Filho", 0, childSex, STATE.surname, STATE.socialClass);
+      child.legitimacy = "bastardo_reconhecido";
+      child.isBastard = true;
+      child.appearance = this.generateInheritedAppearance(null, childSex, child.id) || child.appearance;
       const namePools = Utils.getCulturalNamePools(STATE.kingdom);
       const otherSurname = Utils.pick(namePools.surnames);
       STATE.pendingChild = {
@@ -127,8 +138,11 @@ Object.assign(Engine, {
         partnerName: "um romance furtivo",
         fatherSurname: STATE.sex === "M" ? STATE.surname : otherSurname,
         motherSurname: STATE.sex === "F" ? STATE.surname : otherSurname,
-        isBastard: true
+        isBastard: true,
+        legitimacy: "bastardo_reconhecido",
+        appearance: child.appearance
       };
+      if (this.ensureLegitimacyUI) this.ensureLegitimacyUI();
       UI.openChildNameModal();
     }
     if (outcome.boostHeirs) {

@@ -161,6 +161,9 @@ Object.assign(Engine, {
     }
     const saleVal = Math.max(1, Math.round(regPrice * mult));
     STATE.itemInstances.splice(instIdx, 1);
+    if (Array.isArray(STATE.usedItemUidsThisYear)) {
+      STATE.usedItemUidsThisYear = STATE.usedItemUidsThisYear.filter(u => u !== inst.uid);
+    }
     const invIdx = STATE.inventory.indexOf(inst.id);
     if (invIdx !== -1) STATE.inventory.splice(invIdx, 1);
     if (it.type === "propriedade" && Array.isArray(STATE.propertyMeta)) {
@@ -178,6 +181,230 @@ Object.assign(Engine, {
 
   sellProperty(itemId) {
     this.sellItemInstance(itemId, false);
+  },
+
+  useItemInstance(uid) {
+    this.ensureVigorFields();
+    const inst = (STATE.itemInstances || []).find(x => x.uid === uid);
+    if (!inst) return;
+    const it = DATA.items.find(x => x.id === inst.id);
+    if (!it) return;
+
+    if (inst.mortgaged) {
+      this.addLog("⚠️ Este bem está hipotecado e não pode ser explorado diretamente.", "bad");
+      if (window.UI && window.UI.notify) UI.notify("Bem Hipotecado", "Este bem está hipotecado e não pode ser explorado diretamente.", "fail");
+      return;
+    }
+    if (inst.state === "arruinado") {
+      this.addLog("⚠️ Este bem está arruinado! Restaure-o antes de utilizá-lo.", "bad");
+      if (window.UI && window.UI.notify) UI.notify("Bem Arruinado", "Este bem está arruinado! Restaure-o antes de utilizá-lo.", "fail");
+      return;
+    }
+    if (!Array.isArray(STATE.usedItemUidsThisYear)) STATE.usedItemUidsThisYear = [];
+    if (STATE.usedItemUidsThisYear.includes(inst.uid)) {
+      const waitMsg = `⏳ Você já realizou a ação anual de **${it.name}** neste ano.`;
+      this.addLog(waitMsg, "bad");
+      if (window.UI && window.UI.notify) UI.notify("Ação Anual Realizada", `Você já realizou a ação anual de ${it.name} neste ano.`, "fail");
+      return;
+    }
+
+    if (!this.consumeVigor(8, it.useLabel || "Usar Bem")) return;
+    STATE.usedItemUidsThisYear.push(inst.uid);
+
+    const addAttr = (attrKey, delta) => {
+      STATE.attrs[attrKey] = Utils.clamp((STATE.attrs[attrKey] || 20) + delta, 0, 100);
+      if (attrKey === "saude") {
+        STATE.maxHp = Math.max(10, this.getEffectiveAttr("saude"));
+      }
+    };
+    const healHp = (val) => {
+      STATE.maxHp = Math.max(10, this.getEffectiveAttr("saude"));
+      STATE.hp = Math.min(STATE.maxHp, STATE.hp + val);
+    };
+
+    let msg = "";
+    switch (inst.id) {
+      case "casebre_madeira":
+        healHp(3);
+        STATE.gold += 4;
+        msg = "🏚️ Você cuidou da horta e reforçou o telhado do Casebre (+3 Saúde, +4 Ouro).";
+        break;
+      case "casa_urbana":
+        STATE.gold += 10;
+        addAttr("carisma", 3);
+        msg = "🏠 Você recebeu mercadores e vizinhos influentes em sua Casa Urbana (+10 Ouro, +3 Carisma).";
+        break;
+      case "oficina_artesao":
+        STATE.gold += 18;
+        STATE.jobPerformance = Utils.clamp((STATE.jobPerformance || 50) + 5, 0, 100);
+        msg = "⚒️ Turno extra de encomendas na Oficina de Artesão (+18 Ouro, +5 Desempenho).";
+        break;
+      case "moinho_vento":
+        STATE.gold += 22;
+        msg = "🌾 Você cobrou os direitos de moagem da safra local no Moinho (+22 Ouro).";
+        break;
+      case "taverna_porto":
+        STATE.gold += 26;
+        STATE.reputation = Utils.clamp(STATE.reputation + 1, -10, 10);
+        msg = "🍺 Noite de música, dados e canecos cheios na sua Taverna do Porto (+26 Ouro, +1 Reputação).";
+        break;
+      case "terra_aravel":
+        STATE.gold += 30;
+        healHp(3);
+        msg = "🌱 Você supervisionou pessoalmente a colheita nas Terras Aráveis (+30 Ouro, +3 Saúde).";
+        break;
+      case "solar_nobre":
+        STATE.gold += 20;
+        STATE.honor = Utils.clamp(STATE.honor + 2, 0, 100);
+        addAttr("carisma", 2);
+        msg = "🏛️ Recepção fidalga nos salões do seu Solar Nobre (+20 Ouro, +2 Honra, +2 Carisma).";
+        break;
+      case "forte_fronteira":
+        STATE.gold += 35;
+        STATE.honor = Utils.clamp(STATE.honor + 3, 0, 100);
+        if (STATE.fief) STATE.fief.defense = Utils.clamp((STATE.fief.defense || 50) + 4, 0, 100);
+        msg = "🛡️ Você passou a guarnição em revista e cobrou pedágio militar no Forte (+35 Ouro, +3 Honra).";
+        break;
+      case "castelo_feudal":
+        STATE.gold += 45;
+        STATE.honor = Utils.clamp(STATE.honor + 4, 0, 100);
+        if (STATE.fief) {
+          STATE.fief.defense = Utils.clamp((STATE.fief.defense || 50) + 6, 0, 100);
+          STATE.fief.loyalty = Utils.clamp((STATE.fief.loyalty || 50) + 4, 0, 100);
+        }
+        msg = "🏰 Você presidiu a alta corte senhorial no Castelo Feudal (+45 Ouro, +4 Honra).";
+        break;
+      case "palacio_real":
+        STATE.gold += 65;
+        STATE.honor = Utils.clamp(STATE.honor + 5, 0, 100);
+        STATE.reputation = Utils.clamp(STATE.reputation + 1, -10, 10);
+        msg = "👑 Grande gala imperial nos jardins do Palácio Real (+65 Ouro, +5 Honra, +1 Reputação).";
+        break;
+      case "cavalo_carga":
+        STATE.gold += 10;
+        msg = "🐴 Você fretou seu Cavalo de Carga para entregas locais (+10 Ouro).";
+        break;
+      case "cavalo_guerra":
+        addAttr("forca", 3);
+        STATE.honor = Utils.clamp(STATE.honor + 2, 0, 100);
+        msg = "🐎 Você treinou cargas de lança com seu Destriero de Guerra (+3 Força, +2 Honra).";
+        break;
+      case "carruagem_luxo":
+        addAttr("carisma", 3);
+        STATE.honor = Utils.clamp(STATE.honor + 2, 0, 100);
+        msg = "🛞 Passeio triunfal de Carruagem Dourada pela cidade (+3 Carisma, +2 Honra).";
+        break;
+      case "barco_pesca":
+        STATE.gold += 16;
+        healHp(2);
+        msg = "🚣 Você lançou redes ao largo com sua Barcaça Costeira (+16 Ouro, +2 Saúde).";
+        break;
+      case "navio_mercante":
+        STATE.gold += 42;
+        msg = "⛵ Sua Nau Mercante concluiu um frete costeiro de especiarias (+42 Ouro).";
+        break;
+      case "adaga_ferro":
+        addAttr("destreza", 2);
+        STATE.gold += 5;
+        msg = "🗡️ Treino de reflexos e arremesso com a Adaga de Aço (+2 Destreza, +5 Ouro).";
+        break;
+      case "arco_composto":
+        STATE.gold += 12;
+        addAttr("destreza", 2);
+        msg = "🏹 Você abateu caça fina usando seu Arco Composto (+12 Ouro, +2 Destreza).";
+        break;
+      case "espada_longa":
+        addAttr("forca", 2);
+        STATE.honor = Utils.clamp(STATE.honor + 2, 0, 100);
+        msg = "⚔️ Sessão intensa de esgrima com a Espada Longa (+2 Força, +2 Honra).";
+        break;
+      case "lamina_damasco":
+        addAttr("forca", 3);
+        addAttr("destreza", 2);
+        STATE.honor = Utils.clamp(STATE.honor + 3, 0, 100);
+        msg = "🌙 Você poliu e exibiu a maestria da Lâmina de Damasco (+3 Força, +2 Destreza, +3 Honra).";
+        break;
+      case "gibao_couro":
+        healHp(3);
+        msg = "🦺 Você ajustou e reforçou seu Gibão de Couro (+3 Saúde).";
+        break;
+      case "cota_malha":
+        healHp(3);
+        addAttr("forca", 2);
+        msg = "⛓️ Marcha de resistência envergando a Cota de Malha (+3 Saúde, +2 Força).";
+        break;
+      case "armadura_placas":
+        STATE.honor = Utils.clamp(STATE.honor + 4, 0, 100);
+        healHp(3);
+        msg = "🛡️ Você desfilou em parada militar com sua Armadura de Placas (+4 Honra, +3 Saúde).";
+        break;
+      case "flauta_osso":
+        STATE.gold += 8;
+        addAttr("carisma", 2);
+        msg = "🪈 Você tocou melodias populares na praça com sua Flauta (+8 Ouro, +2 Carisma).";
+        break;
+      case "alaude_nobre":
+        STATE.gold += 14;
+        addAttr("carisma", 3);
+        msg = "🪕 Você apresentou uma serenata cortês no Alaúde Veneziano (+14 Ouro, +3 Carisma).";
+        break;
+      case "harpa_dourada":
+        STATE.gold += 22;
+        addAttr("carisma", 3);
+        STATE.honor = Utils.clamp(STATE.honor + 2, 0, 100);
+        msg = "🎶 Seu recital na Harpa Real encantou a nobreza local (+22 Ouro, +3 Carisma, +2 Honra).";
+        break;
+      case "ferramentas_mestre":
+        STATE.gold += 15;
+        addAttr("destreza", 2);
+        STATE.jobPerformance = Utils.clamp((STATE.jobPerformance || 50) + 4, 0, 100);
+        msg = "🔨 Você calibrou suas Ferramentas de Mestre e fez reparos de precisão (+15 Ouro, +2 Destreza).";
+        break;
+      case "astrolabio_bronze":
+        addAttr("intelecto", 3);
+        addAttr("sorte", 2);
+        msg = "🧭 Você traçou cartas celestes com o Astrolábio de Bronze (+3 Intelecto, +2 Sorte).";
+        break;
+      case "alambique_alquimia":
+        healHp(8);
+        STATE.gold += 14;
+        msg = "⚗️ Você destilou tônicos curativos e essências no Alambique (+8 Saúde, +14 Ouro).";
+        break;
+      case "espelho_veneziano":
+        addAttr("beleza", 3);
+        addAttr("carisma", 2);
+        msg = "🪞 Ritual de estética e unguentos diante do Espelho Veneziano (+3 Beleza, +2 Carisma).";
+        break;
+      case "grimorio_latim":
+        addAttr("intelecto", 3);
+        addAttr("fe", 2);
+        msg = "📕 Você decifrou tratados antigos no Grimório Iluminado (+3 Intelecto, +2 Fé).";
+        break;
+      case "reliquia_santa":
+        addAttr("fe", 3);
+        STATE.honor = Utils.clamp(STATE.honor + 3, 0, 100);
+        healHp(5);
+        msg = "⚱️ Vigília devota diante da Relíquia Sagrada (+3 Fé, +3 Honra, +5 Saúde).";
+        break;
+      case "coroa_colecionador":
+        STATE.honor = Utils.clamp(STATE.honor + 4, 0, 100);
+        STATE.reputation = Utils.clamp(STATE.reputation + 1, -10, 10);
+        if (STATE.fief) STATE.fief.influence = Utils.clamp((STATE.fief.influence || 50) + 3, 0, 100);
+        msg = "💎 Você exibiu a Coroa de Colecionador perante emissários (+4 Honra, +1 Reputação).";
+        break;
+      default:
+        STATE.gold += 10;
+        msg = `✨ Você utilizou **${it.name}** com proveito (+10 Ouro).`;
+        break;
+    }
+
+    SoundFX.play("coin");
+    this.addLog(msg, "good");
+    if (window.UI && window.UI.notify) UI.notify(it.useLabel || it.name, msg, "coin");
+    this.recalculateSocialClassByWealth();
+    if (this.checkAchievements) this.checkAchievements();
+    Storage.saveToSlot(STATE.activeSlot || CONFIG.activeSlot);
+    UI.renderAll();
   },
 
   repairItemInstance(uid) {

@@ -226,6 +226,7 @@ Object.assign(UI, {
     const availActs = DATA.activities.filter(a => {
       const ageOk = STATE.age >= a.minAge && STATE.age <= a.maxAge;
       if (!ageOk) return false;
+      if (a.exclusiveKingdom && a.exclusiveKingdom !== STATE.kingdom) return false;
       if (Engine.isActivityAllowedInCurrentCity && !Engine.isActivityAllowedInCurrentCity(a.id)) return false;
       if (a.jobPool) {
         return (STATE.visibleJobActivityIds || []).includes(a.id);

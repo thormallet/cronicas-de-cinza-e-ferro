@@ -151,12 +151,14 @@ Object.assign(Engine, {
         const beautyBonus = Math.floor((this.getEffectiveAttr("beleza") - 40) * 0.25);
         const check = this.rollCheck("carisma", Math.max(25, 48 - beautyBonus));
         if (check.success) {
-          const gain = 18 + Math.max(0, Math.floor(this.getEffectiveAttr("beleza") / 12));
+          const instBonus = this.getBestInstrumentBonus ? this.getBestInstrumentBonus() : { affinityBonus: 0 };
+          const estateBonus = (this.hasAnyActiveItem && this.hasAnyActiveItem(["solar_nobre", "castelo_feudal", "palacio_real"])) ? 8 : 0;
+          const gain = 18 + Math.max(0, Math.floor(this.getEffectiveAttr("beleza") / 12)) + (instBonus.affinityBonus || 0) + estateBonus;
           npc.affinity = Utils.clamp(npc.affinity + gain, -100, 100);
           if (npc.role === "Amigo" || npc.role === "Conhecido") npc.role = "Pretendente";
           npc.memory = `Suspirou com sua beleza, seus versos e galanteios apaixonados em ${STATE.year}.`;
           SoundFX.play("love");
-          this.addLog(`🌹 Seus galanteios e porte (-4 Vigor) encantaram ${npc.name} (Casa ${npc.surname})!`, "good");
+          this.addLog(`🌹 Seus galanteios e porte (-4 Vigor) encantaram ${npc.name} (Casa ${npc.surname}) (+${gain} Afinidade)!`, "good");
 
           if (spouse && spouse.id !== npc.id && Math.random() < 0.45) {
             spouse.affinity = Utils.clamp(spouse.affinity - 25, -100, 100);
@@ -181,10 +183,14 @@ Object.assign(Engine, {
         const check = this.rollCheck("carisma", Math.max(30, 58 - beautyBonus));
         if (check.success) {
           SoundFX.play("love");
-          npc.affinity = Utils.clamp(npc.affinity + 25, -100, 100);
+          const instBonus = this.getBestInstrumentBonus ? this.getBestInstrumentBonus() : { affinityBonus: 0 };
+          const estateBonus = (this.hasAnyActiveItem && this.hasAnyActiveItem(["solar_nobre", "castelo_feudal", "palacio_real"])) ? 8 : 0;
+          const gain = 25 + (instBonus.affinityBonus || 0) + estateBonus;
+          npc.affinity = Utils.clamp(npc.affinity + gain, -100, 100);
           if (!["Cônjuge", "Colega de Ofício"].includes(npc.role)) npc.role = "Amor";
           npc.memory = `Entregou-se a uma paixão secreta nos seus braços no ano ${STATE.year}.`;
-          this.addLog(`🔥 Sedução Furtiva: Entre sussurros à meia-luz (-6 Vigor), sua beleza e lábia seduziram **${npc.name}** e compartilharam o leito em segredo!`, "good");
+          this.addLog(`🔥 Sedução Furtiva: Entre sussurros à meia-luz (-6 Vigor), sua beleza e lábia seduziram **${npc.name}** e compartilharam o leito em segredo (+${gain} Afinidade)!`, "good");
+          if (this.checkAchievements) this.checkAchievements();
 
           if (this.isEcclesiasticalOccupation() && Math.random() < 0.65) {
             this.handleEcclesiasticalScandal(npc.name);
@@ -309,6 +315,7 @@ Object.assign(Engine, {
         SoundFX.play("bells");
         if (window.UI && window.UI.triggerStageFX) window.UI.triggerStageFX("💍");
         this.addLog(`💍 MATRIMÔNIO CELEBRADO: Os sinos dobraram pela sua união com **${npc.name}** (Casa ${npc.surname})! Dote integrado à arca: +${dowry} Ouro.${classNote}`, "epoch");
+        if (this.checkAchievements) this.checkAchievements();
         break;
       }
 
@@ -430,13 +437,18 @@ Object.assign(Engine, {
         }
         if (!requireVigor(10)) return;
         SoundFX.play("sword");
-        const check = this.rollCheck("forca", 64);
+        const wpn = this.getBestWeaponBonus ? this.getBestWeaponBonus() : { mult: 0 };
+        const arm = this.getBestArmorReduction ? this.getBestArmorReduction() : { reduction: 0, blocksScars: false };
+        const diffMod = Math.round((wpn.mult || 0) * 40);
+        const check = this.rollCheck("forca", Math.max(40, 64 - diffMod));
         if (check.success) {
           npc.alive = false;
           npc.memory = `Tombou pelo fio da sua lâmina em duelo de honra no ano ${STATE.year}.`;
+          STATE.duelsWon = (STATE.duelsWon || 0) + 1;
           STATE.honor = Utils.clamp(STATE.honor + 8, 0, 100);
           STATE.reputation = Utils.clamp(STATE.reputation + 2, -10, 10);
           this.addLog(`⚔️ DUELO DE SANGUE: Diante de padrinhos ao amanhecer (-10 Vigor), você atravessou o peito de **${npc.name}** (Casa ${npc.surname}) (+2 Rep, +8 Honra)!`, "epoch");
+          if (this.checkAchievements) this.checkAchievements();
 
           if (Math.random() < 0.65) {
             const avenger = Utils.genNPC("Rival", Utils.rand(18, 42), null, npc.surname, npc.socialClass);
@@ -447,11 +459,17 @@ Object.assign(Engine, {
           }
           UI.closeNPCModal();
         } else {
-          STATE.hp -= 24;
-          if (!STATE.scars) STATE.scars = [];
-          if (STATE.scars.length < 3) STATE.scars.push(STATE.scars.length + 1);
-          if (STATE.appearance) STATE.appearance.scars = STATE.scars;
-          this.addLog(`⚔️ A lâmina de **${npc.name}** abriu um talho profundo e deixou uma cicatriz perpétua em seu rosto durante o duelo (-10 Vigor, -24 Saúde)!`, "bad");
+          const dmg = arm.reduction > 0 ? Math.max(1, Math.round(24 * (1 - arm.reduction))) : 24;
+          STATE.hp -= dmg;
+          let scarMsg = " e deixou uma cicatriz perpétua em seu rosto";
+          if (!arm.blocksScars) {
+            if (!STATE.scars) STATE.scars = [];
+            if (STATE.scars.length < 3) STATE.scars.push(STATE.scars.length + 1);
+            if (STATE.appearance) STATE.appearance.scars = STATE.scars;
+          } else {
+            scarMsg = " (seu Arnês de Placas impediu cicatrizes no rosto)";
+          }
+          this.addLog(`⚔️ A lâmina de **${npc.name}** abriu um talho profundo${scarMsg} durante o duelo (-10 Vigor, -${dmg} Saúde)!`, "bad");
           if (STATE.hp <= 0) {
             this.die(`Tombou em duelo de honra pelo aço de ${npc.name}.`);
             return;
@@ -474,6 +492,7 @@ Object.assign(Engine, {
         npc.memory = `Tornou-se seu amante fixo sob juramentos secretos no ano ${STATE.year}.`;
         SoundFX.play("love");
         this.addLog(`🌹 PAIXÃO JURADA: Você e **${npc.name}** firmaram um pacto amoroso fixo (-4 Vigor). A chama arde nos encontros reservados!`, "good");
+        if (this.checkAchievements) this.checkAchievements();
         break;
       }
 
@@ -505,6 +524,7 @@ Object.assign(Engine, {
         npc.memory = `Legitimado plenamente como filho de direito da Casa ${STATE.surname} no ano ${STATE.year}.`;
         SoundFX.play("bells");
         Storage.unlockAchievement("ach_bastardo_legitimado");
+        if (this.checkAchievements) this.checkAchievements();
         this.syncFamilyNobleTitles();
         this.addLog(`📜 CARTA DE LEGITIMAÇÃO: Você investiu ${cost} Ouro e outorgou legitimidade plena a **${npc.name}** (-${honorCost} Honra). Agora é herdeiro legítimo do seu sangue e brasão!`, "epoch");
         break;
@@ -532,6 +552,7 @@ Object.assign(Engine, {
         npc.memory = `Entregue à roda dos expostos e apartado do convívio familiar no ano ${STATE.year}.`;
         SoundFX.play("fail");
         this.addLog(`🚪 RODA DOS EXPOSTOS: Você rompeu os laços paternos e entregou **${npc.name}** a um mosteiro (-12 Honra).`, "bad");
+        if (this.checkAchievements) this.checkAchievements();
         UI.closeNPCModal();
         break;
       }

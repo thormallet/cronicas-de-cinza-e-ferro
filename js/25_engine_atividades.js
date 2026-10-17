@@ -13,8 +13,15 @@ Object.assign(Engine, {
     }
 
     const vigorCost = act.id === "cuidar_saude" ? 0 : 12;
-    if (act.cost && STATE.gold < act.cost) {
-      UI.notify("Ouro Insuficiente", `Esta atividade exige ${act.cost} moedas de ouro.`);
+    let actualCost = act.cost || 0;
+    if (["socializar_taverna", "jogos_azar", "festejo_desregrado"].includes(act.id) && this.hasActiveItem("taverna_porto")) {
+      actualCost = 0;
+    } else if (["dar_banquete", "patrocinar_torneio"].includes(act.id) && this.hasAnyActiveItem(["solar_nobre", "castelo_feudal", "palacio_real"])) {
+      actualCost = Math.round(actualCost * 0.60);
+    }
+
+    if (actualCost > 0 && STATE.gold < actualCost) {
+      UI.notify("Ouro Insuficiente", `Esta atividade exige ${actualCost} moedas de ouro.`);
       return;
     }
     if (vigorCost > 0 && STATE.vigor < vigorCost) {
@@ -22,7 +29,7 @@ Object.assign(Engine, {
       return;
     }
 
-    if (act.cost) STATE.gold -= act.cost;
+    if (actualCost > 0) STATE.gold -= actualCost;
     if (vigorCost > 0) STATE.vigor = Math.max(0, STATE.vigor - vigorCost);
 
     if (act.id === "cortejar_romance") {
@@ -48,14 +55,16 @@ Object.assign(Engine, {
       if (act.id === "cuidar_saude") {
         sfx = "love";
         STATE.healthCareUsedThisYear = true;
-        const hpGain = Utils.rand(16, 20);
+        const extraAlambique = this.hasActiveItem("alambique_alquimia") ? 10 : 0;
+        const hpGain = Utils.rand(16, 20) + extraAlambique;
         STATE.hp = Math.min(STATE.maxHp, STATE.hp + hpGain);
         STATE.vigor = Math.min(STATE.maxVigor, STATE.vigor + 10);
         popMsg = `As infusões medicinais e o repouso restauraram sua Saúde Vital (+${hpGain} Saúde) e renovaram moderadamente suas energias (+10 Vigor, 1x no ano).`;
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
       } else if (act.id === "banho_perfumado") {
         sfx = "love";
-        const bGain = Utils.rand(5, 8);
+        const extraMirror = this.hasActiveItem("espelho_veneziano") ? 4 : 0;
+        const bGain = Utils.rand(5, 8) + extraMirror;
         STATE.attrs.beleza = Math.min(100, (STATE.attrs.beleza || 25) + bGain);
         STATE.attrs.carisma = Math.min(100, (STATE.attrs.carisma || 20) + 2);
         popMsg = `Os óleos aromáticos, unguentos reais e trajes alinhados realçaram notavelmente sua presença (+${bGain} Beleza, +2 Carisma)!`;
@@ -83,7 +92,9 @@ Object.assign(Engine, {
       } else if (act.id === "caravana_comercial") {
         const curCity = this.getCityObj ? this.getCityObj(STATE.currentCityId, STATE.kingdom) : { name: "", tier: "vila" };
         const tierBonus = curCity.tier === "capital" ? 28 : (curCity.tier === "cidade" ? 14 : 0);
-        const gain = Utils.rand(22, 44) + tierBonus;
+        const shipBonus = this.hasActiveItem("navio_mercante") ? 45 : 0;
+        const horseBonus = this.hasActiveItem("cavalo_carga") ? 18 : 0;
+        const gain = Utils.rand(22, 44) + tierBonus + shipBonus + horseBonus;
         STATE.gold += gain;
         if (curCity.tier !== "vila") STATE.reputation = Utils.clamp(STATE.reputation + 1, -10, 10);
         sfx = "coin";
@@ -93,15 +104,19 @@ Object.assign(Engine, {
         const curCity = this.getCityObj ? this.getCityObj(STATE.currentCityId, STATE.kingdom) : { name: "", tier: "vila" };
         const isCap = curCity.tier === "capital";
         const repGain = isCap && Math.random() < 0.5 ? 1 : 0;
-        STATE.hp = Math.min(STATE.maxHp, STATE.hp + 14);
+        const hasRelic = this.hasActiveItem("reliquia_santa");
+        const hpRestored = 14 + (hasRelic ? 8 : 0);
+        const honorGained = 4 + (hasRelic ? 5 : 0);
+        STATE.hp = Math.min(STATE.maxHp, STATE.hp + hpRestored);
         STATE.attrs.fe = Math.min(100, (STATE.attrs.fe || 20) + 3);
-        STATE.honor = Utils.clamp(STATE.honor + 4, 0, 100);
+        STATE.honor = Utils.clamp(STATE.honor + honorGained, 0, 100);
         if (repGain) STATE.reputation = Utils.clamp(STATE.reputation + 1, -10, 10);
         sfx = "bells";
-        popMsg = this.formatText(`Em peregrinação devota até {temple} de {city}, você renovou o corpo e a alma (+14 Saúde, +3 Fé, +4 Honra${repGain ? ", +1 Rep" : ""})!`);
+        popMsg = this.formatText(`Em peregrinação devota até {temple} de {city}, você renovou o corpo e a alma (+${hpRestored} Saúde, +3 Fé, +${honorGained} Honra${repGain ? ", +1 Rep" : ""})!`);
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
       } else if (act.id === "trabalhar_duro" || act.id === "saquear_navio") {
-        const gain = Utils.rand(18, 45);
+        const extraShip = (act.id === "saquear_navio" && this.hasActiveItem("navio_mercante")) ? 50 : 0;
+        const gain = Utils.rand(18, 45) + extraShip;
         STATE.gold += gain;
         sfx = "coin";
         popMsg = `Com suor e determinação (-${vigorCost} Vigor), você embolsou +${gain} Moedas de Ouro!`;
@@ -115,12 +130,15 @@ Object.assign(Engine, {
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
       } else if (act.id === "duelo_clandestino") {
         sfx = "sword";
-        const goldGain = Utils.rand(35, 70);
+        const hasMartialGear = this.hasAnyActiveItem(["cavalo_guerra", "espada_longa", "lamina_damasco"]);
+        const goldGain = Utils.rand(35, 70) + (hasMartialGear ? 15 : 0);
         const ronda = Math.random() < 0.30;
         STATE.gold += goldGain;
         STATE.attrs.forca = Math.min(100, (STATE.attrs.forca || 20) + 1);
+        if (hasMartialGear) STATE.honor = Utils.clamp(STATE.honor + 3, 0, 100);
         if (ronda) STATE.honor = Utils.clamp(STATE.honor - 2, 0, 100);
-        popMsg = `Vitória implacável no ringue clandestino (+${goldGain} Ouro, +1 Força${ronda ? ", mas a ronda da guarda dispersou o local: -2 Honra" : ""})!`;
+        STATE.duelsWon = (STATE.duelsWon || 0) + 1;
+        popMsg = `Vitória implacável no ringue clandestino (+${goldGain} Ouro, +1 Força${hasMartialGear ? ", +3 Honra" : ""}${ronda ? ", mas a ronda da guarda dispersou o local: -2 Honra" : ""})!`;
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, ronda ? "bad" : "good");
       } else if (act.id === "caca_furtiva") {
         sfx = "sword";
@@ -190,6 +208,49 @@ Object.assign(Engine, {
           sfx = "success";
         }
 
+        let itemBonusNotes = [];
+        if ((act.id === "cacar_floresta" || act.id === "cacar_lobos") && this.hasAnyActiveItem(["arco_composto", "cavalo_guerra"])) {
+          STATE.gold += 15;
+          STATE.attrs.destreza = Math.min(100, (STATE.attrs.destreza || 20) + 2);
+          itemBonusNotes.push("+15 Ouro, +2 Destreza");
+        }
+        if (act.id === "pescar_rio" && this.hasActiveItem("barco_pesca")) {
+          STATE.gold += 18;
+          itemBonusNotes.push("+18 Ouro");
+        }
+        if (act.id === "forjar_equipamento" && this.hasAnyActiveItem(["oficina_artesao", "ferramentas_mestre"])) {
+          STATE.gold += 20;
+          itemBonusNotes.push("+20 Ouro");
+        }
+        if (["disputar_torneio", "marchar_guerra", "liderar_cerco"].includes(act.id)) {
+          STATE.duelsWon = (STATE.duelsWon || 0) + 1;
+          if (this.hasAnyActiveItem(["cavalo_guerra", "espada_longa", "lamina_damasco"])) {
+            STATE.gold += 15;
+            STATE.honor = Utils.clamp(STATE.honor + 3, 0, 100);
+            itemBonusNotes.push("+15 Ouro, +3 Honra");
+          }
+        }
+        if (act.id === "compor_balada" && this.hasAnyActiveItem(["flauta_osso", "alaude_nobre", "harpa_dourada"])) {
+          STATE.gold += 15;
+          STATE.attrs.carisma = Math.min(100, (STATE.attrs.carisma || 20) + 2);
+          itemBonusNotes.push("+15 Ouro, +2 Carisma");
+        }
+        if (act.id === "tratar_doentes" && this.hasActiveItem("alambique_alquimia")) {
+          STATE.hp = Math.min(STATE.maxHp, STATE.hp + 10);
+          itemBonusNotes.push("+10 Saúde");
+        }
+        if ((act.id === "estudar_manuscritos" || act.id === "estudar_heresia") && this.hasActiveItem("grimorio_latim")) {
+          STATE.attrs.intelecto = Math.min(100, (STATE.attrs.intelecto || 20) + 3);
+          STATE.gold += 18;
+          itemBonusNotes.push("+3 Intelecto, +18 Ouro");
+        }
+        if ((act.id === "orar_jejuar" || act.id === "fazer_caridade") && this.hasActiveItem("reliquia_santa")) {
+          STATE.honor = Utils.clamp(STATE.honor + 5, 0, 100);
+          STATE.hp = Math.min(STATE.maxHp, STATE.hp + 8);
+          itemBonusNotes.push("+5 Honra, +8 Saúde");
+        }
+        const itemBonusStr = itemBonusNotes.length > 0 ? ` [Bônus de Posse: ${itemBonusNotes.join(", ")}]` : "";
+
         STATE.activityYearCount = STATE.activityYearCount || {};
         const count = STATE.activityYearCount[act.id] || 0;
         STATE.activityYearCount[act.id] = count + 1;
@@ -197,7 +258,7 @@ Object.assign(Engine, {
         const isFatigued = count > 0 && Math.random() > Math.pow(0.40, count);
 
         if (isFatigued) {
-          popMsg = `A exaustão por repetição contínua (-${vigorCost} Vigor) limitou seu aproveitamento. O corpo e a mente demandam descanso para assimilar novos avanços.`;
+          popMsg = `A exaustão por repetição contínua (-${vigorCost} Vigor) limitou seu aproveitamento. O corpo e a mente demandam descanso para assimilar novos avanços.${itemBonusStr}`;
           this.addLog(`${act.icon} ${act.name}: ${popMsg}`);
         } else if (act.attr && STATE.attrs && STATE.attrs[act.attr] !== undefined) {
           const curVal = STATE.attrs[act.attr];
@@ -219,22 +280,23 @@ Object.assign(Engine, {
           if (boost > 0) {
             STATE.attrs[act.attr] = Math.min(100, curVal + boost);
             if (act.attr === "saude") STATE.maxHp = Math.max(10, this.getEffectiveAttr("saude"));
-            popMsg = `Dedicação exemplar (-${vigorCost} Vigor)! Seu domínio em ${act.attr.toUpperCase()} aprimorou-se notavelmente (+${boost}).`;
+            popMsg = `Dedicação exemplar (-${vigorCost} Vigor)! Seu domínio em ${act.attr.toUpperCase()} aprimorou-se notavelmente (+${boost}).${itemBonusStr}`;
             this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
           } else {
-            popMsg = curVal >= 100
+            popMsg = (curVal >= 100
               ? `Você já atingiu a mestria máxima em ${act.attr.toUpperCase()} (100). A prática (-${vigorCost} Vigor) manteve sua técnica lapidada.`
-              : `A prática árdua (-${vigorCost} Vigor) manteve sua disciplina, mas seu domínio em ${act.attr.toUpperCase()} não avançou além do platô atual.`;
+              : `A prática árdua (-${vigorCost} Vigor) manteve sua disciplina, mas seu domínio em ${act.attr.toUpperCase()} não avançou além do platô atual.`) + itemBonusStr;
             this.addLog(`${act.icon} ${act.name}: ${popMsg}`);
           }
         } else {
-          popMsg = `Sua dedicação (-${vigorCost} Vigor) serviu para manter sua rotina e disciplina em dia.`;
+          popMsg = `Sua dedicação (-${vigorCost} Vigor) serviu para manter sua rotina e disciplina em dia.${itemBonusStr}`;
           this.addLog(`${act.icon} ${act.name}: ${popMsg}`);
         }
       }
     } else {
       sfx = "fail";
       let penaltyMsg = "";
+      const arm = this.getBestArmorReduction ? this.getBestArmorReduction() : { reduction: 0 };
 
       const martialActs = ["treinar_armas","treinar_arco","disputar_torneio","desafiar_duelo","marchar_guerra","liderar_cerco","cacar_lobos","cacar_floresta"];
       const socialActs = ["socializar_taverna","jogos_azar","feira_burgo","banho_perfumado"];
@@ -262,10 +324,11 @@ Object.assign(Engine, {
 
       if (act.id === "duelo_clandestino") {
         const hLoss = Utils.rand(4, 8);
+        const dmg = arm.reduction > 0 ? Math.max(1, Math.round(16 * (1 - arm.reduction))) : 16;
         STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
         STATE.honor = Utils.clamp(STATE.honor - hLoss, 0, 100);
-        STATE.hp = Math.max(1, STATE.hp - 16);
-        popMsg = `Derrotado e vaiado na arena clandestina: -1 Reputação, -${hLoss} Honra, -16 HP.`;
+        STATE.hp = Math.max(1, STATE.hp - dmg);
+        popMsg = `Derrotado e vaiado na arena clandestina: -1 Reputação, -${hLoss} Honra, -${dmg} HP.`;
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "bad");
       } else if (act.id === "caca_furtiva") {
         const hLoss = Utils.rand(4, 8);
@@ -294,7 +357,8 @@ Object.assign(Engine, {
         popMsg = "Briga entre cavaleiros mancha a justa: gasto de ouro rendeu pouco renome (+2 Honra).";
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "bad");
       } else if (["furtar_bolsas","assaltar_estrada","saquear_navio","conspirar_golpe"].includes(act.id)) {
-        const dmg = STATE.age < 12 ? 2 : 6;
+        const baseDmg = STATE.age < 12 ? 2 : 6;
+        const dmg = arm.reduction > 0 ? Math.max(1, Math.round(baseDmg * (1 - arm.reduction))) : baseDmg;
         const hLoss = Utils.rand(4, 8);
         STATE.hp = Math.max(STATE.age < 12 ? 5 : 0, STATE.hp - dmg);
         STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
@@ -302,7 +366,9 @@ Object.assign(Engine, {
         popMsg = `Os guardas deram o alarme e você escapou ferido pelos becos (-1 Rep, -${hLoss} Honra, -${dmg} Saúde, -${vigorCost} Vigor)${penaltyMsg}!`;
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "bad");
       } else {
-        const dmg = STATE.age < 12 ? 2 : 6;
+        const baseDmg = STATE.age < 12 ? 2 : 6;
+        const usesArmor = ["cacar_floresta", "cacar_lobos", "disputar_torneio", "marchar_guerra", "liderar_cerco", "desafiar_duelo", "treinar_armas"].includes(act.id);
+        const dmg = (usesArmor && arm.reduction > 0) ? Math.max(1, Math.round(baseDmg * (1 - arm.reduction))) : baseDmg;
         STATE.hp = Math.max(STATE.age < 12 ? 5 : 0, STATE.hp - dmg);
         popMsg = `O esforço exaustivo malogrou e cobrou pedágio do seu corpo (-${dmg} Saúde${vigorCost ? `, -${vigorCost} Vigor` : ""})${penaltyMsg}.`;
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "bad");
@@ -313,6 +379,7 @@ Object.assign(Engine, {
       }
     }
 
+    if (this.checkAchievements) this.checkAchievements();
     Storage.saveToSlot(CONFIG.activeSlot);
     UI.renderAll();
     UI.notify(popTitle, popMsg, sfx);

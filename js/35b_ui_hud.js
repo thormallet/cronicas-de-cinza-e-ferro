@@ -87,12 +87,13 @@ Object.assign(UI, {
       }
       const isDisabled = lackVigor || lackGold || healUsed;
       const safeDesc = String(a.desc || "").replace(/"/g, "&quot;");
+      const regBadge = a.exclusiveKingdom ? ` <span class="badge gold">🌍 Tradição Regional</span>` : "";
       return `
         <button type="button" class="action-btn ${a.jobPool ? "primary" : ""}" ${isDisabled ? "disabled" : ""}
           onclick="window.Engine.performActivity('${a.id}')" title="${safeDesc}">
           <span class="act-icon">${a.icon}</span>
           <div>
-            <strong>${a.name}</strong>
+            <strong>${a.name}${regBadge}</strong>
             <small>${a.desc || ""}</small>
             <span class="cost-row">${chips.join("")}</span>
           </div>

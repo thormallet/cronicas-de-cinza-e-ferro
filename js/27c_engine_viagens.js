@@ -43,6 +43,12 @@ Object.assign(Engine, {
     });
   },
 
+  getCityTravelCost(targetCityId) {
+    const curCity = this.getCityObj(STATE.currentCityId, STATE.kingdom);
+    const destCity = this.getCityObj(targetCityId, STATE.kingdom);
+    return this.getTravelCost(curCity, destCity);
+  },
+
   getTravelCost(fromCity, toCity) {
     if (!fromCity || !toCity || fromCity.id === toCity.id) return { vigor: 0, gold: 0, deps: 0 };
     let vigor = 22;
@@ -58,16 +64,24 @@ Object.assign(Engine, {
     const classMult = sClass === "nobre" ? 1.85 : (sClass === "media" ? 1.35 : 1.0);
     const deps = this.getTravelingDependentsCount ? this.getTravelingDependentsCount() : 0;
     const depUnit = sClass === "nobre" ? 28 : (sClass === "media" ? 18 : 12);
-    let gold = Math.round(baseGold * classMult) + deps * depUnit;
+    let depGold = deps * depUnit;
+    if (this.hasActiveItem && this.hasActiveItem("carruagem_luxo")) {
+      depGold = 0;
+      vigor = Math.max(8, vigor - 6);
+    }
+    let gold = Math.round(baseGold * classMult) + depGold;
 
     const itMeta = (!STATE.guildTraining && this.getItinerantMeta) ? this.getItinerantMeta(STATE.job) : null;
     if (itMeta) {
       vigor = Math.round(vigor * (itMeta.travelVigorMult || 0.85));
       gold = Math.round(gold * (itMeta.travelGoldMult || 0.80));
     }
-    if (STATE && Array.isArray(STATE.inventory) && STATE.inventory.includes("cavalo_guerra")) {
-      vigor = Math.max(8, vigor - 5);
-      gold = Math.round(gold * 0.82);
+    if (this.hasAnyActiveItem && this.hasAnyActiveItem(["cavalo_guerra", "cavalo_carga"])) {
+      vigor = Math.max(8, vigor - 4);
+      gold = Math.round(gold * 0.80);
+    }
+    if (this.hasActiveItem && this.hasActiveItem("astrolabio_bronze")) {
+      gold = Math.round(gold * 0.85);
     }
     const mode = this.getTravelModeObj ? this.getTravelModeObj() : { goldMult: 1, vigorMult: 1 };
     vigor = Math.max(8, Math.round(vigor * (mode.vigorMult || 1)));
@@ -96,7 +110,13 @@ Object.assign(Engine, {
       vigor = Math.round(vigor * (itMeta.travelVigorMult || 0.85));
       gold = Math.round(gold * discGold);
     }
-    if (STATE && Array.isArray(STATE.inventory) && STATE.inventory.includes("cavalo_guerra")) {
+    if (this.hasActiveItem && this.hasActiveItem("navio_mercante")) {
+      vigor = Math.max(14, vigor - 12);
+      gold = Math.round(gold * 0.55);
+    } else if (this.hasAnyActiveItem && this.hasAnyActiveItem(["barco_pesca", "carruagem_luxo"])) {
+      vigor = Math.max(14, vigor - 6);
+      gold = Math.round(gold * 0.75);
+    } else if (this.hasActiveItem && this.hasActiveItem("cavalo_guerra")) {
       vigor = Math.max(14, vigor - 5);
       gold = Math.round(gold * 0.88);
     }
@@ -145,11 +165,20 @@ Object.assign(Engine, {
 
     const mode = this.getTravelModeObj();
     const oldCityId = STATE.currentCityId;
+    const wasDiscovered = Array.isArray(STATE.visitedCities) && STATE.visitedCities.includes(destCity.id);
     STATE.vigor -= vigorCost;
     STATE.gold -= goldCost;
     STATE.currentCityId = destCity.id;
     STATE.travelCount = (STATE.travelCount || 0) + 1;
     if (mode.honorBonus) STATE.honor = Utils.clamp(STATE.honor + mode.honorBonus, 0, 100);
+    if (!wasDiscovered) {
+      if (this.hasActiveItem && this.hasActiveItem("astrolabio_bronze")) {
+        STATE.gold += 15;
+      }
+      if (this.hasActiveItem && this.hasActiveItem("carruagem_luxo")) {
+        STATE.honor = Utils.clamp(STATE.honor + 2, 0, 100);
+      }
+    }
 
     this.syncFamilyLocationOnMove(oldCityId, STATE.kingdom, destCity.id, STATE.kingdom);
     const lostOcc = this.handleOccupationOnMove(destCity, false);
@@ -162,6 +191,7 @@ Object.assign(Engine, {
     const msg = `Via ${mode.icon} **${mode.name}**, você viajou de ${curCity.name} para **${destCity.name}** [${tierLabel}] (-${vigorCost} Vigor, -${goldCost} Ouro). ${destCity.desc}${lostNote}${discNote}`;
     this.addLog(`🧭 JORNADA PELO REINO: ${msg}`, lostOcc ? "epoch" : "good");
     this.maybeTriggerTravelEncounter();
+    if (this.checkAchievements) this.checkAchievements();
     Storage.saveToSlot(CONFIG.activeSlot);
     UI.renderAll();
   },

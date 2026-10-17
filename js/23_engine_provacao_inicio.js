@@ -8,12 +8,12 @@ Object.assign(Engine, {
   startSpecialJobTrial(customKind = null) {
     if (!STATE) return;
     const activeId = STATE.guildTraining ? STATE.guildTraining.jobId : STATE.job;
-    const martialIds = ["soldado","mercenario","cavaleiro","escudeiro","falcoeiro"];
+    const martialIds = ["soldado","mercenario","cavaleiro","escudeiro","falcoeiro","forjador_katana","arqueiro_reais"];
     const clergyIds = ["monge","freira","clerigo","abadessa","inquisidor","bispo"];
-    const craftIds = ["artesao","bordadeira","ferreiro","pedreiro","ourives","moleiro","mineiro","lenhador","lavadeira","servo","campones","pastor"];
-    const scholarIds = ["erudito","medico","alquimista","curandeiro","parteira","juiz","chanceler","diplomata"];
+    const craftIds = ["artesao","bordadeira","ferreiro","pedreiro","ourives","moleiro","mineiro","lenhador","lavadeira","servo","campones","pastor","mestre_prata_alpino","vinhateiro_ducal"];
+    const scholarIds = ["erudito","medico","alquimista","curandeiro","parteira","juiz","chanceler","diplomata","mandarim_imperial","astronomo_al_zahra"];
     const rogueIds = ["ladrao","bandido","pirata","espiao","coveiro"];
-    const explorerIds = ["explorador","cacador","pescador"];
+    const explorerIds = ["explorador","cacador","pescador","cacador_peles_norte","mestre_especiarias","mestre_caravanserai"];
 
     let kind = customKind;
     if (!kind) {

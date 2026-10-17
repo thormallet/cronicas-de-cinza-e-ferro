@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 4.0 (Edição Mercador)
+Crônicas de Cinza e Ferro — Versão 4.1 (Edição Mercador Integrada)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,49 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 4.1 — EDIÇÃO MERCADOR INTEGRADA (REFINAMENTO & COESÃO PRÁTICA):
+1. Resolução Definitiva de UI/HUD e Estabilidade Geral:
+   - Eliminação cabal de erros críticos de execução em tempo de execução, incluindo o travamento de crest is not defined no memorial dinástico.
+   - Renderização garantida e reativa do HUD de status em todas as telas e transições de ciclo anual.
+
+2. Integração Funcional e Prática dos 32 Bens de Mercado:
+   - Os bens adquiridos deixam de ser meros ativos contábeis e passam a conceder vantagens mecânicas ativas e passivas integradas ao mundo vivo:
+     * Imóveis e Propriedades:
+       - Garantem abrigo térmico e proteção contra as penalidades do Inverno Rigoroso.
+       - Concedem bônus substanciais de sobrevivência contra surtos da Peste Negra e contágios epidêmicos.
+       - Imunidade às crises de Fome generalizada na comarca.
+       - Bônus contínuos de defesa territorial e influência política anual na gestão do Feudo.
+       - Isenção e descontos expressivos em gastos na Taverna, Jogos de Azar e Banquetes Nobres.
+     * Transportes & Frotas (Cavalos, Carruagens e Frotas):
+       - Redução drástica de custos operacionais de viagem (ouro, vigor e manutenção de comitiva).
+       - Dobro de lucros em expedições mercantis, caravanas e rotas marítimas comerciais.
+     * Armas & Armaduras:
+       - Aplicação direta de bônus de dano (+10% a +25%) e poder bélico em combates e torneios.
+       - Mitigação profunda de ferimentos (-20% a -60%) e bloqueio ativo de cicatrizes em provações, duelos de honra, caçadas perigosas e justas.
+     * Ferramentas, Instrumentos & Relíquias:
+       - Bônus diretos em ações de ofício profissional, trabalho artesanal e criação de obras-primas.
+       - Vantagens em cortejos românticos (instrumentos musicais refinados), práticas de medicina, estudos acadêmicos e ritos de devoção espiritual.
+     * Interatividade e Mobilidade Social:
+       - Botão de Ação Prática Anual ("⚡ Usar / Inspecionar") em cada bem no inventário do jogador, permitindo usufruto ativo a cada ciclo.
+       - Card dedicado no inventário/mercado para pleitear formalmente a Carta de Nobreza perante a corte régia com base em terras e patrimônio líquido.
+
+3. Correção Rigorosa do Filtro de Atividades Regionais:
+   - Correção do filtro exclusiveKingdom: agora apenas as atividades culturais e ofícios do reino em que o protagonista se encontra são exibidos na interface, garantindo imersão cultural estrita e fidelidade geográfica.
+
+4. Alinhamento Completo de Conquistas e Tags de Legado:
+   - Harmonização das 25 conquistas persistentes salvas em localStorage, com desbloqueios consistentes em todas as categorias de gameplay.
+   - Tags de legado dinástico padronizadas como honrarias puramente visuais e narrativas no Panteão de Falecidos, sem poluição de atributos iniciais.
+
+5. Sistema Biológico de Gravidez e Reprodução Realista:
+   - Fisiologia reprodutiva com janela biológica feminina (16 a 45 anos; teto de 1 gestação anual).
+   - Ausência de teto etário para homens férteis, permitindo paternidade tardia com a esposa e múltiplas amantes ativas no mesmo ciclo anual.
+   - Decisão paterna interativa no nascimento: Legitimar Herdeiro Pleno, Reconhecer como Filho Bastardo ou Abandonar/Negar Paternidade.
+
+6. Estatuto Dinástico e Sistema Bancário Duplo:
+   - Sucessão familiar configurável entre Primogenitura Feudal, Partilha Igualitária (Gavelkind) e Sucessão Designada por Testamento.
+   - Sistema financeiro de modelo duplo: atuação como tomador de crédito (penhora de bens e agiotagem) ou banqueiro/usurário investidor de capitais.
 ======================================================================
 
 VERSÃO 4.0 — EDIÇÃO MERCADOR (MERCADO VIVO, PATRIMÔNIO LÍQUIDO, BANCOS & DINASTIAS):

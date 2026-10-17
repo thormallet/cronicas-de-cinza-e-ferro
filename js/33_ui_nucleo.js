@@ -261,18 +261,21 @@ const UI = {
       </div>`;
     }).join("");
 
-    const dyn = Storage.getDynasty();
-    const gBox = document.getElementById("dynasty-gallery");
-    if (dyn.length === 0) {
-      gBox.innerHTML = `<p style="color:var(--text-muted)">Nenhuma vida encerrada registrada no memorial ainda.</p>`;
-    } else {
-      gBox.innerHTML = dyn.map(d => {
-        const tagsHtml = (Array.isArray(d.legacyTags) && d.legacyTags.length > 0)
-          ? `<div style="margin-top:0.25rem;display:flex;gap:0.25rem;flex-wrap:wrap">` +
-            d.legacyTags.map(t => `<span class="badge gold" style="font-size:0.7rem;padding:0.1rem 0.35rem" title="${t.desc || ''}">${t.icon || '⚜️'} ${t.name || t.id}</span>`).join("") +
-            `</div>`
-          : "";
-        return `
+    try {
+      const dyn = Storage.getDynasty();
+      const gBox = document.getElementById("dynasty-gallery");
+      if (gBox) {
+        if (!Array.isArray(dyn) || dyn.length === 0) {
+          gBox.innerHTML = `<p style="color:var(--text-muted)">Nenhuma vida encerrada registrada no memorial ainda.</p>`;
+        } else {
+          gBox.innerHTML = dyn.map(d => {
+            const crest = (window.Utils && Utils.renderCrestHTML) ? Utils.renderCrestHTML(d.surname || d.name) : "";
+            const tagsHtml = (Array.isArray(d.legacyTags) && d.legacyTags.length > 0)
+              ? `<div style="margin-top:0.25rem;display:flex;gap:0.25rem;flex-wrap:wrap">` +
+                d.legacyTags.map(t => `<span class="badge gold" style="font-size:0.7rem;padding:0.1rem 0.35rem" title="${t.desc || ''}">${t.icon || '⚜️'} ${t.name || t.id}</span>`).join("") +
+                `</div>`
+              : "";
+            return `
         <div class="slot-item">
           <div>
             <strong>${crest}${d.name}</strong> (${d.generation}ª Geração | ${d.years}, ${d.age} anos)<br>
@@ -281,7 +284,11 @@ const UI = {
           </div>
         </div>
       `;
-      }).join("");
+          }).join("");
+        }
+      }
+    } catch (e) {
+      console.error(e);
     }
   },
 

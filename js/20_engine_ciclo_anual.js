@@ -18,6 +18,7 @@ Object.assign(Engine, {
 
     SoundFX.play("year");
     this.ensureVigorFields();
+    STATE.usedItemUidsThisYear = [];
     STATE.age++;
     STATE.year++;
     STATE.healthCareUsedThisYear = false;
@@ -106,14 +107,19 @@ Object.assign(Engine, {
     });
 
     // Desgaste por Envelhecimento Progressivo e Realista
+    const hasMirror = this.hasActiveItem("espelho_veneziano");
     if (STATE.age >= 38 && STATE.age < 48) {
       if (Math.random() < 0.25) {
         const pool = ["forca", "destreza", "beleza"].filter(k => (STATE.attrs[k] || 0) > 15);
         if (pool.length > 0) {
           const target = Utils.pick(pool);
-          STATE.attrs[target] -= 1;
-          const targetName = target === "forca" ? "Força" : (target === "destreza" ? "Destreza" : "Beleza");
-          this.addLog(`Com a chegada da meia-idade, o vigor juvenil dá os primeiros sinais de declínio (-1 ${targetName}).`, "bad");
+          if (target === "beleza" && STATE.age > 45 && hasMirror && Math.random() < 0.5) {
+            this.addLog("🪞 Os cuidados estéticos diante do seu Espelho Veneziano preservaram sua beleza da ação do tempo!", "good");
+          } else {
+            STATE.attrs[target] -= 1;
+            const targetName = target === "forca" ? "Força" : (target === "destreza" ? "Destreza" : "Beleza");
+            this.addLog(`Com a chegada da meia-idade, o vigor juvenil dá os primeiros sinais de declínio (-1 ${targetName}).`, "bad");
+          }
         }
       }
     } else if (STATE.age >= 48 && STATE.age < 60) {
@@ -121,9 +127,13 @@ Object.assign(Engine, {
         const pool = ["forca", "destreza", "beleza"].filter(k => (STATE.attrs[k] || 0) > 15);
         if (pool.length > 0) {
           const target = Utils.pick(pool);
-          STATE.attrs[target] -= 1;
-          const targetName = target === "forca" ? "Força" : (target === "destreza" ? "Destreza" : "Beleza");
-          this.addLog(`O peso dos anos se faz sentir com rigor sobre sua compleição (-1 ${targetName}).`, "bad");
+          if (target === "beleza" && hasMirror && Math.random() < 0.5) {
+            this.addLog("🪞 Os cuidados estéticos diante do seu Espelho Veneziano preservaram sua beleza da ação do tempo!", "good");
+          } else {
+            STATE.attrs[target] -= 1;
+            const targetName = target === "forca" ? "Força" : (target === "destreza" ? "Destreza" : "Beleza");
+            this.addLog(`O peso dos anos se faz sentir com rigor sobre sua compleição (-1 ${targetName}).`, "bad");
+          }
         }
       }
     } else if (STATE.age >= 60 && STATE.age < 72) {
@@ -131,7 +141,8 @@ Object.assign(Engine, {
         const pool = ["forca", "destreza", "saude", "beleza"].filter(k => (STATE.attrs[k] || 0) > 12);
         if (pool.length > 0) {
           const target = Utils.pick(pool);
-          const loss = Utils.rand(1, 2);
+          let loss = Utils.rand(1, 2);
+          if (target === "beleza" && hasMirror) loss = Math.max(0, Math.floor(loss / 2));
           const actualLoss = Math.min(loss, (STATE.attrs[target] || 12) - 10);
           if (actualLoss > 0) {
             STATE.attrs[target] -= actualLoss;
@@ -149,7 +160,8 @@ Object.assign(Engine, {
         const pool = ["forca", "destreza", "saude", "beleza"].filter(k => (STATE.attrs[k] || 0) > 10);
         if (pool.length > 0) {
           const target = Utils.pick(pool);
-          const loss = Utils.rand(2, 3);
+          let loss = Utils.rand(2, 3);
+          if (target === "beleza" && hasMirror) loss = Math.max(1, Math.floor(loss / 2));
           const actualLoss = Math.min(loss, (STATE.attrs[target] || 10) - 10);
           if (actualLoss > 0) {
             STATE.attrs[target] -= actualLoss;
@@ -165,8 +177,8 @@ Object.assign(Engine, {
     }
 
     // Inverno Rigoroso e Enfermidades Sazonais
+    const hasShelter = this.hasAnyActiveItem(["casebre_madeira", "casa_urbana", "oficina_artesao", "moinho_vento", "taverna_porto", "terra_aravel", "solar_nobre", "forte_fronteira", "castelo_feudal", "palacio_real"]);
     if (Math.random() < 0.20) {
-      const hasShelter = STATE.properties && STATE.properties.length > 0 && STATE.socialClass !== "plebeu";
       if (!hasShelter) {
         const frostHp = Utils.rand(4, 8);
         STATE.hp = Math.max(1, STATE.hp - frostHp);
@@ -176,6 +188,19 @@ Object.assign(Engine, {
           frostStr = true;
         }
         this.addLog(`O inverno impiedoso castigou seu corpo desprovido de luxos (-${frostHp} Saúde${frostStr ? ", -1 Força" : ""}).`, "bad");
+      }
+    }
+
+    // Sinergia de Bens com Desempenho de Ofício e Feudo
+    if ((STATE.guildTraining || STATE.job !== "crianca") && this.hasAnyActiveItem(["ferramentas_mestre", "astrolabio_bronze", "alambique_alquimia", "oficina_artesao"])) {
+      STATE.jobPerformance = Utils.clamp((STATE.jobPerformance || 50) + 4, 0, 100);
+    }
+    if (STATE.fief) {
+      if (this.hasAnyActiveItem(["forte_fronteira", "castelo_feudal"])) {
+        STATE.fief.defense = Utils.clamp((STATE.fief.defense || 50) + 4, 0, 100);
+      }
+      if (this.hasAnyActiveItem(["coroa_colecionador", "palacio_real"])) {
+        STATE.fief.influence = Utils.clamp((STATE.fief.influence || 50) + 2, 0, 100);
       }
     }
 
@@ -280,7 +305,7 @@ Object.assign(Engine, {
       }
     }
 
-    if (STATE.age >= 20 && STATE.socialClass !== "nobre" && !this.hasActiveOccupation() && (!STATE.properties || STATE.properties.length === 0)) {
+    if (STATE.age >= 20 && STATE.socialClass !== "nobre" && !this.hasActiveOccupation() && !hasShelter) {
       if (Math.random() < 0.35) {
         STATE.reputation = Utils.clamp(STATE.reputation - 1, -10, 10);
         this.addLog("Viver como ocioso sem ofício ou terras mancha sua imagem perante a comunidade (-1 Reputação).", "bad");
@@ -365,31 +390,49 @@ Object.assign(Engine, {
 
     if (ep.effect === "plague") {
       const inUrban = curCity.tier === "cidade" || curCity.tier === "capital";
-      const diff = isChild ? 40 : (inUrban ? 64 : 46);
-      const dmg = isChild ? 6 : (inUrban ? 22 : 11);
+      const hasPlagueProtection = this.hasAnyActiveItem(["solar_nobre", "castelo_feudal", "palacio_real", "casa_urbana", "alambique_alquimia", "reliquia_santa"]);
+      const diff = (isChild ? 40 : (inUrban ? 64 : 46)) - (hasPlagueProtection ? 18 : 0);
+      let dmg = isChild ? 6 : (inUrban ? 22 : 11);
+      if (hasPlagueProtection) dmg = Math.max(1, Math.round(dmg / 2));
       const res = this.rollCheck("saude", diff);
+      if (hasPlagueProtection) {
+        this.addLog("🏛️ O isolamento em sua propriedade/relíquia protegeu você do pior da Peste!", "good");
+      }
       if (!res.success) {
         STATE.hp -= dmg;
         this.addLog(`O miasma da praga (${inUrban ? "agravado pelas ruas apinhadas da cidade" : "nas terras da vila"}) debilitou sua saúde (-${dmg} Saúde)!`, "bad");
       } else {
         this.addLog(`Sua constituição resistiu ao contágio da pestilência em ${curCity.name}.`, "good");
       }
+      if (!STATE.flags.includes("Sobreviveu à Peste")) STATE.flags.push("Sobreviveu à Peste");
     } else if (ep.effect === "famine") {
-      const grainCost = curCity.tier === "vila" ? 10 : 16;
-      if (STATE.gold >= grainCost) {
-        STATE.gold -= grainCost;
-        this.addLog(`Você pagou caro por grãos estocados em ${curCity.name} (-${grainCost} Ouro).`);
+      if (this.hasAnyActiveItem(["terra_aravel", "moinho_vento"])) {
+        STATE.gold += 20;
+        this.addLog("🌾 Suas terras/moinho garantiram trigo farto durante a Grande Fome (+20 Ouro)!", "good");
       } else {
-        STATE.hp -= isChild ? 4 : 14;
-        this.addLog("A fome corroeu seu estômago durante o inverno.", "bad");
+        const grainCost = curCity.tier === "vila" ? 10 : 16;
+        if (STATE.gold >= grainCost) {
+          STATE.gold -= grainCost;
+          this.addLog(`Você pagou caro por grãos estocados em ${curCity.name} (-${grainCost} Ouro).`);
+        } else {
+          STATE.hp -= isChild ? 4 : 14;
+          this.addLog("A fome corroeu seu estômago durante o inverno.", "bad");
+        }
       }
     } else if (ep.effect === "harvest") {
-      const bonus = curCity.tier === "vila" ? 22 : 14;
+      let bonus = curCity.tier === "vila" ? 22 : 14;
+      if (this.hasAnyActiveItem(["terra_aravel", "moinho_vento"])) {
+        bonus += 25;
+      }
       STATE.gold += bonus;
       STATE.hp = Math.min(STATE.maxHp, STATE.hp + 10);
       if (STATE.fief) STATE.fief.prosperity = Utils.clamp(STATE.fief.prosperity + 6, 0, 100);
       this.addLog(`A fartura da colheita rendeu +${bonus} Ouro e revigorou sua saúde!`, "good");
     } else if (ep.effect === "war") {
+      const hasWarGear = this.hasAnyActiveItem(["armadura_placas", "cota_malha", "forte_fronteira"]);
+      if (hasWarGear) {
+        STATE.honor = Utils.clamp(STATE.honor + 4, 0, 100);
+      }
       if (["soldado","mercenario","cavaleiro"].includes(STATE.job)) {
         const wCheck = this.rollCheck("forca", 56);
         if (wCheck.success) {
@@ -397,8 +440,9 @@ Object.assign(Engine, {
           STATE.honor = Utils.clamp(STATE.honor + 6, 0, 100);
           this.addLog("Convocado às fronteiras em guerra, você destacou-se em combate (+30 Ouro, +6 Honra)!", "good");
         } else {
-          STATE.hp -= 14;
-          this.addLog("Você foi ferido nas escaramuças sangrentas da fronteira (-14 Saúde).", "bad");
+          const warDmg = hasWarGear ? 7 : 14;
+          STATE.hp -= warDmg;
+          this.addLog(`Você foi ferido nas escaramuças sangrentas da fronteira (-${warDmg} Saúde).`, "bad");
         }
       }
       if (STATE.socialClass === "nobre" && (STATE.nobleTitleLevel || 0) >= 1 && STATE.fief) {

@@ -9,18 +9,32 @@ Object.assign(Engine, {
     const ch = st.choices[choiceIdx];
     if (!ch) return;
 
+    const wpn = this.getBestWeaponBonus ? this.getBestWeaponBonus() : { mult: 0 };
+    const arm = this.getBestArmorReduction ? this.getBestArmorReduction() : { reduction: 0 };
+    const trialType = tr.kind || tr.type;
+    const isCombatTrial = ["battle", "joust", "heist", "expedition"].includes(trialType);
+
+    let progDmg = ch.dmg;
+    if (wpn.mult > 0 && isCombatTrial) {
+      progDmg = Math.round(progDmg * (1 + wpn.mult));
+    }
+    let selfDmg = ch.selfDmg;
+    if (arm.reduction > 0) {
+      selfDmg = Math.max(1, Math.round(selfDmg * (1 - arm.reduction)));
+    }
+
     const check = this.rollCheck(ch.attr, ch.diff);
     if (check.success) {
       SoundFX.play("sword");
-      tr.enemyHp = Math.max(0, tr.enemyHp - ch.dmg);
-      tr.logNotes.push(`✔ Fase ${tr.stageIdx + 1}: Êxito em ${ch.attr.toUpperCase()} (-${ch.dmg}% em ${tr.enemyLabel}).`);
+      tr.enemyHp = Math.max(0, tr.enemyHp - progDmg);
+      tr.logNotes.push(`✔ Fase ${tr.stageIdx + 1}: Êxito em ${ch.attr.toUpperCase()} (-${progDmg}% em ${tr.enemyLabel}).`);
     } else {
       SoundFX.play("fail");
-      const glancing = Math.round(ch.dmg * 0.35);
+      const glancing = Math.round(progDmg * 0.35);
       tr.enemyHp = Math.max(0, tr.enemyHp - glancing);
-      tr.playerHp = Math.max(0, tr.playerHp - ch.selfDmg);
-      STATE.hp = Math.max(5, STATE.hp - Math.round(ch.selfDmg * 0.35));
-      tr.logNotes.push(`✖ Fase ${tr.stageIdx + 1}: Contratempo (-${ch.selfDmg}% em ${tr.playerLabel}, avanço parcial de ${glancing}%).`);
+      tr.playerHp = Math.max(0, tr.playerHp - selfDmg);
+      STATE.hp = Math.max(5, STATE.hp - Math.max(1, Math.round(selfDmg * 0.35)));
+      tr.logNotes.push(`✖ Fase ${tr.stageIdx + 1}: Contratempo (-${selfDmg}% em ${tr.playerLabel}, avanço parcial de ${glancing}%).`);
     }
 
     tr.stageIdx++;
@@ -39,6 +53,10 @@ Object.assign(Engine, {
         if (this.hasActiveOccupation()) {
           STATE.jobPerformance = Utils.clamp((STATE.jobPerformance || 50) + perfReward, 0, 100);
         }
+        if (trialType === "battle" || trialType === "joust") {
+          STATE.duelsWon = (STATE.duelsWon || 0) + 1;
+        }
+        if (this.checkAchievements) this.checkAchievements();
         SoundFX.play("bells");
         const winMsg = `Triunfo memorável em ${title}! Você conquistou +${goldReward} Ouro, +${perfReward} Desempenho, +6 Honra e +1 Reputação!`;
         this.addLog(`🏆 ${winMsg}`, "epoch");
@@ -87,10 +105,11 @@ Object.assign(Engine, {
 
       const rankPenalty = Math.min(6, (STATE.jobRank || 0) * 1.5);
       const check = this.rollCheck(actObj.attr, actObj.diff + (STATE.jobRank || 0) * 2);
+      const hasJobTools = this.hasAnyActiveItem(["ferramentas_mestre", "astrolabio_bronze", "alambique_alquimia", "oficina_artesao"]);
 
       if (check.success) {
         const baseGain = actObj.highReward ? Utils.rand(13, 19) : Utils.rand(9, 15);
-        const gainPerf = Math.max(5, Math.round(baseGain - rankPenalty));
+        const gainPerf = Math.max(5, Math.round(baseGain - rankPenalty)) + (hasJobTools ? 4 : 0);
         STATE.jobPerformance = Utils.clamp(STATE.jobPerformance + gainPerf, 0, 100);
         const visitedBonus = (actObj.isItinerantShared || actObj.isItinerantSpec)
           ? Math.min(24, (Array.isArray(STATE.visitedCities) ? STATE.visitedCities.length : 1) * 2)
@@ -100,6 +119,9 @@ Object.assign(Engine, {
           : ((actObj.highReward ? Utils.rand(14, 28) : Utils.rand(6, 15)) + visitedBonus);
         if (actObj.id === "it_spec_mercador" && !isGuild) bonusGold += 18;
         if ((actObj.id === "it_spec_pirata" || actObj.id === "it_spec_bandido") && !isGuild) bonusGold += 14;
+        if (hasJobTools && bonusGold > 0) {
+          bonusGold = Math.round(bonusGold * 1.25);
+        }
         STATE.gold += bonusGold;
 
         if (STATE.attrs[actObj.attr] !== undefined && STATE.attrs[actObj.attr] < 100 && Math.random() < 0.65) {
