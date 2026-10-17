@@ -214,7 +214,7 @@ Object.assign(UI, {
 
     const livingAll = STATE.npcs.filter(n => n.alive);
     document.getElementById("cnt-rel").textContent = livingAll.length;
-    document.getElementById("cnt-inv").textContent = STATE.inventory.length;
+    document.getElementById("cnt-inv").textContent = Array.isArray(STATE.itemInstances) ? STATE.itemInstances.length : STATE.inventory.length;
 
     const logBox = document.getElementById("log-container");
     if (logBox.children.length === 0 && STATE.log.length > 0) {
@@ -427,13 +427,13 @@ Object.assign(UI, {
         : vilaMembers.map(n => this.renderPersonCard(n)).join("");
     }
 
-    const suitorMembers = STATE.npcs.filter(n => n.alive && ["Pretendente","Amor"].includes(n.role));
+    const suitorMembers = STATE.npcs.filter(n => n.alive && n.role === "Pretendente");
     const cntSuitorsEl = document.getElementById("cnt-suitors");
     if (cntSuitorsEl) cntSuitorsEl.textContent = suitorMembers.length;
     const suitorsBox = document.getElementById("suitors-list");
     if (suitorsBox) {
       suitorsBox.innerHTML = suitorMembers.length === 0
-        ? `<p style="color:var(--text-muted)">Nenhum pretendente ou romance ativo. Clique em "🌹 Procurar Pretendente" acima!</p>`
+        ? `<p style="color:var(--text-muted)">Nenhum pretendente formal ativo. Clique em "🌹 Procurar Pretendente" acima!</p>`
         : suitorMembers.map(n => this.renderPersonCard(n)).join("");
     }
 
@@ -508,32 +508,9 @@ Object.assign(UI, {
         : deadMembers.map(n => this.renderPersonCard(n)).join("");
     }
 
-    document.getElementById("inventory-list").innerHTML = STATE.inventory.length === 0
-      ? `<p style="color:var(--text-muted)">Você possui apenas as roupas do corpo.</p>`
-      : STATE.inventory.map(id => {
-          const it = DATA.items.find(x => x.id === id);
-          if (!it) return "";
-          const sellBtn = it.type === "propriedade"
-            ? `<button type="button" onclick="window.Engine.sellProperty('${it.id}')">🪙 Vender (+${Math.round(it.price * 0.75)})</button>`
-            : "";
-          return `<div class="item-card"><div><strong>${it.name}</strong><br><small>${it.desc}</small></div>${sellBtn}</div>`;
-        }).join("");
-
-    document.getElementById("shop-list").innerHTML = DATA.items.map(it => {
-      const alreadyOwned = it.type !== "propriedade" && STATE.inventory.includes(it.id);
-      return `
-        <div class="item-card">
-          <div>
-            <strong>${it.name}</strong> <span class="badge gold">${it.price} Ouro</span>
-            ${alreadyOwned ? `<span class="badge good">No Espólio</span>` : ""}<br>
-            <small>${it.desc}</small>
-          </div>
-          <button type="button" ${alreadyOwned ? "disabled" : ""} onclick="window.Engine.buyItem('${it.id}')">
-            ${alreadyOwned ? "Adquirido" : "Comprar"}
-          </button>
-        </div>
-      `;
-    }).join("");
+    if (this.renderInventoryAndMarket) this.renderInventoryAndMarket();
+    if (this.renderLoversList) this.renderLoversList();
+    if (this.renderSuccessionLawSection) this.renderSuccessionLawSection();
 
     const flags = Array.isArray(STATE.flags) ? STATE.flags : [];
     const visC = Array.isArray(STATE.visitedCities) ? STATE.visitedCities.length : 1;

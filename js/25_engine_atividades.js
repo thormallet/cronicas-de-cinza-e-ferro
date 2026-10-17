@@ -165,6 +165,22 @@ Object.assign(Engine, {
         STATE.attrs.destreza = Math.min(100, (STATE.attrs.destreza || 20) + 2);
         popMsg = `Com dados raspados e destreza furtiva, você limpou as bolsas da mesa (+${goldGain} Ouro, +2 Destreza)!`;
         this.addLog(`${act.icon} ${act.name}: ${popMsg}`, "good");
+      } else if (act.exclusiveKingdom) {
+        sfx = "coin";
+        const kName = this.getKingdom().name;
+        const regGold = Utils.rand(20, 45);
+        STATE.gold += regGold;
+        if (act.attr && STATE.attrs && STATE.attrs[act.attr] !== undefined) {
+          STATE.attrs[act.attr] = Math.min(100, (STATE.attrs[act.attr] || 20) + 3);
+        }
+        const repBonus = Math.random() < 0.5;
+        if (repBonus) {
+          STATE.reputation = Utils.clamp(STATE.reputation + 1, -10, 10);
+        } else {
+          STATE.honor = Utils.clamp(STATE.honor + 4, 0, 100);
+        }
+        popMsg = `Com maestria nas tradições de ${kName}, sua atuação em ${act.name} foi aclamada (+${regGold} Ouro, +3 ${act.attr.toUpperCase()}${repBonus ? ", +1 Reputação" : ", +4 Honra"})!`;
+        this.addLog(`${act.icon} ⚜️ TRADIÇÃO REGIONAL (${kName}): ${popMsg}`, "good");
       } else {
         if (["treinar_armas","treinar_arco","disputar_torneio","desafiar_duelo","marchar_guerra","liderar_cerco","cacar_lobos","cacar_floresta"].includes(act.id)) {
           sfx = "sword";

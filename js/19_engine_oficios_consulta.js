@@ -21,6 +21,19 @@ Object.assign(Engine, {
 
     STATE.visibleJobIds = pickRandomIds(accessibleJobs, curJobId, 10);
     STATE.visibleGuildIds = pickRandomIds(accessibleGuilds, curGuildId, 10);
+
+    const regionalJob = accessibleJobs.find(j => j.exclusiveKingdom === STATE.kingdom);
+    if (regionalJob) {
+      if (!STATE.visibleJobIds.includes(regionalJob.id)) {
+        STATE.visibleJobIds.unshift(regionalJob.id);
+        if (STATE.visibleJobIds.length > 10) STATE.visibleJobIds.pop();
+      }
+      if (regionalJob.guildYears && regionalJob.guildYears > 0 && !STATE.visibleGuildIds.includes(regionalJob.id)) {
+        STATE.visibleGuildIds.unshift(regionalJob.id);
+        if (STATE.visibleGuildIds.length > 10) STATE.visibleGuildIds.pop();
+      }
+    }
+
     this.refreshVisibleJobActivities();
   },
 
@@ -87,13 +100,13 @@ Object.assign(Engine, {
     const activeId = STATE.guildTraining ? STATE.guildTraining.jobId : STATE.job;
     const isGuild = !!STATE.guildTraining;
 
-    const martialIds = ["soldado","mercenario","cavaleiro","escudeiro","falcoeiro"];
+    const martialIds = ["soldado","mercenario","cavaleiro","escudeiro","falcoeiro","forjador_katana","arqueiro_reais"];
     const clergyIds = ["monge","freira","clerigo","abadessa","inquisidor","bispo"];
-    const craftIds = ["artesao","bordadeira","ferreiro","pedreiro","ourives","moleiro","mineiro","lenhador","lavadeira","servo","campones","pastor"];
-    const scholarIds = ["erudito","medico","alquimista","curandeiro","parteira","juiz","chanceler","diplomata"];
+    const craftIds = ["artesao","bordadeira","ferreiro","pedreiro","ourives","moleiro","mineiro","lenhador","lavadeira","servo","campones","pastor","mestre_prata_alpino"];
+    const scholarIds = ["erudito","medico","alquimista","curandeiro","parteira","juiz","chanceler","diplomata","mandarim_imperial","astronomo_al_zahra"];
     const rogueIds = ["ladrao","bandido","pirata","espiao","coveiro"];
-    const socialIds = ["bardo","dancarina","taverneiro","mercador","dama_companhia"];
-    const explorerIds = ["explorador","cacador","pescador"];
+    const socialIds = ["bardo","dancarina","taverneiro","mercador","dama_companhia","mestre_especiarias","mestre_caravanserai","vinhateiro_ducal","banqueiro_laguna"];
+    const explorerIds = ["explorador","cacador","pescador","cacador_peles_norte"];
 
     let specific = [];
     if (martialIds.includes(activeId)) {
@@ -204,6 +217,7 @@ Object.assign(Engine, {
 
   isJobAccessibleForPlayer(job, ignoreCityTier = false) {
     if (!job || job.id === "crianca" || job.titular) return false;
+    if (job.exclusiveKingdom && job.exclusiveKingdom !== STATE.kingdom) return false;
     const tiers = job.tiers || ["plebeu", "media", "nobre"];
     if (!tiers.includes(STATE.socialClass)) return false;
     if (job.gender && job.gender !== "any" && job.gender !== STATE.sex) return false;

@@ -120,12 +120,38 @@ const Creator = {
       }
     });
 
-    const startGold = sClass === "nobre" ? 160 : (sClass === "media" ? 45 : 8);
+    const startGold = sClass === "nobre" ? 320 : (sClass === "media" ? 95 : 18);
     const startRep = sClass === "nobre" ? 3 : (sClass === "media" ? 1 : 0);
     const startHonor = sClass === "nobre" ? 65 : 50;
 
     const kCities = (DATA.cities && DATA.cities[kingdom]) ? DATA.cities[kingdom] : [{ id: "cap", name: "Capital", tier: "capital" }];
     const birthCity = Utils.pick(kCities);
+
+    let initInventory = [];
+    let initItemInstances = [];
+    if (sClass === "nobre") {
+      initInventory.push("solar_nobre");
+      initItemInstances.push({
+        uid: "it_init_solar",
+        id: "solar_nobre",
+        state: "bom",
+        kingdom,
+        cityId: birthCity.id,
+        buyPrice: 900,
+        mortgaged: false
+      });
+    } else if (sClass === "media") {
+      initInventory.push("casa_urbana");
+      initItemInstances.push({
+        uid: "it_init_casa",
+        id: "casa_urbana",
+        state: "bom",
+        kingdom,
+        cityId: birthCity.id,
+        buyPrice: 120,
+        mortgaged: false
+      });
+    }
 
     const father = Utils.genNPC("Pai", Utils.rand(22, 38), "M", surname, sClass, null, null, kingdom);
     const mother = Utils.genNPC("Mãe", Utils.rand(20, 34), "F", surname, sClass, null, null, kingdom);
@@ -170,7 +196,20 @@ const Creator = {
       attrs: finalAttrs,
       traits: secretTraits,
       npcs: [father, mother, sibling],
-      inventory: [],
+      inventory: initInventory,
+      propertyMeta: [],
+      itemInstances: initItemInstances,
+      activeLoans: [],
+      bankerLoans: [],
+      pregnancies: [],
+      pendingBirthQueue: [],
+      successionLaw: "primogenitura",
+      designatedHeirId: null,
+      wealthTier: sClass === "nobre" ? "nobre" : (sClass === "media" ? "burgues" : "plebeu"),
+      abandonedChildrenCount: 0,
+      duelsWon: 0,
+      bargainsWon: 0,
+      bankerProfits: 0,
       flags: [],
       history: [],
       log: [],

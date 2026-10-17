@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#170e09">
-<title>Crônicas de Cinza e Ferro — Edição Explorador v3.5.1</title>
+<title>Crônicas de Cinza e Ferro — Edição Mercador v4.0</title>
 <link rel="stylesheet" href="css/01_base.css">
 <link rel="stylesheet" href="css/02_layout.css">
 <link rel="stylesheet" href="css/03_abas_cronica.css">
@@ -154,6 +154,21 @@
   </div>
 </div>
 
+<!-- CARTÃO DE CONQUISTAS GLOBAIS E PROEZAS DA LINHAGEM -->
+<div id="achievements-modal-backdrop" class="custom-dialog-backdrop" style="z-index:10002">
+  <div class="custom-dialog" role="dialog" aria-modal="true" style="max-width:560px;max-height:85vh;display:flex;flex-direction:column">
+    <div class="dialog-art" aria-hidden="true">🏆</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-gold);padding-bottom:0.5rem;margin-bottom:0.75rem">
+      <h3 style="margin:0;font-size:1.15rem">🏆 Conquistas da Linhagem</h3>
+      <span id="achievements-progress-badge" class="badge gold">0/20 Desbloqueadas</span>
+    </div>
+    <div id="achievements-list" class="stack-list" style="overflow-y:auto;flex:1;padding-right:0.25rem"></div>
+    <div class="custom-dialog-buttons" style="margin-top:0.75rem">
+      <button type="button" class="primary" onclick="window.UI.closeAchievementsModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <!-- SHELL DO APP: COLUNA ÚNICA CENTRAL (MOBILE-FIRST) -->
 <div id="app-shell">
 
@@ -163,10 +178,13 @@
     <div class="brand-crest">👑</div>
     <div>
       <h1>Crônicas de Cinza e Ferro</h1>
-      <span class="royal-subtitle">🧭 Edição Explorador • v3.5.1 🧭</span>
+      <span class="royal-subtitle">👑 Edição Mercador • v4.0 ⚖️</span>
     </div>
   </div>
-  <button type="button" class="icon-btn" aria-label="Configurações" onclick="window.UI.openSheet('sheet-config')">⚙️</button>
+  <div style="display:flex;gap:0.35rem;align-items:center">
+    <button type="button" class="icon-btn" aria-label="Conquistas Globais" title="Conquistas Globais" onclick="window.UI.openAchievementsModal()">🏆</button>
+    <button type="button" class="icon-btn" aria-label="Configurações" onclick="window.UI.openSheet('sheet-config')">⚙️</button>
+  </div>
 </header>
 
 <!-- TELA 1: MENU -->
@@ -175,12 +193,13 @@
     <div class="card">
       <div class="royal-hero-banner">
         <h2>👑 Crônicas de Cinza e Ferro</h2>
-        <div style="margin-bottom:0.5rem"><span class="royal-subtitle">Edição Explorador — Dinastias, Guildas & Coroa</span></div>
+        <div style="margin-bottom:0.5rem"><span class="royal-subtitle">Edição Mercador — Feudos, Empréstimos &amp; Negócios</span></div>
         <p style="font-size:0.9rem;opacity:0.92">
-          Nasça do barro ou da púrpura real. Ingresse em corporações de ofício, receba Cartas de Nobreza com seu cônjuge consorte e herdeiros, governe feudos e forje sua dinastia.
+          Nasça do barro ou da púrpura real. Ingresse em corporações de ofício, negocie em grandes mercados, tome e conceda empréstimos bancários, governe feudos e forje sua dinastia.
         </p>
       </div>
-      <button type="button" class="primary" style="width:100%;padding:0.8rem;font-size:1.08rem;margin-bottom:0.9rem" onclick="window.Creator.init()">⚔️ Iniciar Nova Linhagem Régia</button>
+      <button type="button" class="primary" style="width:100%;padding:0.8rem;font-size:1.08rem;margin-bottom:0.45rem" onclick="window.Creator.init()">⚔️ Iniciar Nova Linhagem Régia</button>
+      <button type="button" style="width:100%;padding:0.6rem;font-size:0.95rem;margin-bottom:0.9rem" onclick="window.UI.openAchievementsModal()">🏆 Conquistas da Linhagem</button>
       <h3>📜 Crônicas Salvas (Autosave Anual)</h3>
       <div id="menu-slots" class="slot-list"></div>
     </div>
@@ -374,6 +393,7 @@
   <div class="sheet-body">
     <div class="chips">
       <button type="button" class="tab-btn active" onclick="window.UI.switchRelSubTab('sub-rel-fam', this)">🩸 Sangue &amp; Cônjuge</button>
+      <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-amantes', this)">🌹 Amantes (<span id="cnt-amantes">0</span>)</button>
       <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-amigos', this)">🤝 Amigos (<span id="cnt-friends">0</span>)</button>
       <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-vila', this)">🏘️ Comarca (<span id="cnt-vila">0</span>)</button>
       <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-pretendentes', this)">🌹 Pretendentes (<span id="cnt-suitors">0</span>)</button>
@@ -396,6 +416,12 @@
       <div id="family-list" class="people-grid"></div>
     </div>
 
+    <div id="sub-rel-amantes" class="rel-sub-panel" style="display:none">
+      <h4>🌹 Amantes &amp; Romances Secretos</h4>
+      <p class="sheet-hint">Encontros ardentes longe dos olhos da Igreja e da Corte. Cuide para não despertar escândalos conjugais ou vendetas sangrentas.</p>
+      <div id="lovers-list" class="people-grid"></div>
+    </div>
+
     <div id="sub-rel-amigos" class="rel-sub-panel" style="display:none">
       <h4>Amigos Íntimos &amp; Aliados</h4>
       <div id="friends-list" class="people-grid"></div>
@@ -407,7 +433,7 @@
     </div>
 
     <div id="sub-rel-pretendentes" class="rel-sub-panel" style="display:none">
-      <h4>Pretendentes &amp; Amores</h4>
+      <h4>Pretendentes &amp; Pretensões de Matrimônio</h4>
       <div id="suitors-list" class="people-grid"></div>
     </div>
 
@@ -497,17 +523,61 @@
     <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
   </div>
   <div class="sheet-body">
-    <div class="card">
-      <h3>Posses, Relíquias e Propriedades</h3>
-      <div id="inventory-list" class="stack-list"></div>
+    <div class="chips" id="inv-sub-chips">
+      <button type="button" class="tab-btn active" onclick="window.UI.switchInvSubTab('sub-inv-posses', this)">📦 Posses (<span id="cnt-inv-tab">0</span>)</button>
+      <button type="button" class="tab-btn" onclick="window.UI.switchInvSubTab('sub-inv-mercado', this)">🛒 Mercado de Bens</button>
+      <button type="button" class="tab-btn" onclick="window.UI.switchInvSubTab('sub-inv-banco', this)">🏛️ Casa Bancária &amp; Usura</button>
     </div>
-    <div class="card">
-      <h3>Mercado, Empréstimos e Feudos</h3>
-      <div class="market-actions">
-        <button type="button" onclick="window.Engine.takeLoan(50)">⚖️ Tomar Empréstimo (+50 Ouro / +65 Dívida)</button>
-        <button type="button" onclick="window.Engine.payDebt()">🪙 Quitar Dívidas</button>
+
+    <!-- SUB-ABA 1: POSSES E INVENTÁRIO -->
+    <div id="sub-inv-posses" class="inv-sub-panel">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;flex-wrap:wrap;gap:0.4rem">
+          <h3 style="margin:0">📦 Suas Posses, Terras e Equipamentos</h3>
+          <span id="inv-net-worth-badge" class="badge gold">Patrimônio: 0 🪙</span>
+        </div>
+        <p class="sheet-hint">Bens sofrem desgaste pelo tempo e clima. Mantenha suas propriedades reformadas para preservar seu valor e rendimento.</p>
+        <div id="inventory-list" class="stack-list"></div>
       </div>
-      <div id="shop-list" class="stack-list"></div>
+    </div>
+
+    <!-- SUB-ABA 2: MERCADO DE COMPRA -->
+    <div id="sub-inv-mercado" class="inv-sub-panel" style="display:none">
+      <div class="card">
+        <h3>🛒 Mercado Regional &amp; Mercadores</h3>
+        <p class="sheet-hint">Os preços variam conforme a região e a conjuntura do ano. Negocie com mercadores para obter descontos vantajosos.</p>
+        <div class="chips market-category-chips" style="margin-bottom:0.75rem">
+          <button type="button" class="tab-btn active" onclick="window.UI.setMarketCategoryFilter('todos', this)">Todos</button>
+          <button type="button" class="tab-btn" onclick="window.UI.setMarketCategoryFilter('imovel', this)">Imóveis</button>
+          <button type="button" class="tab-btn" onclick="window.UI.setMarketCategoryFilter('transporte', this)">Transporte</button>
+          <button type="button" class="tab-btn" onclick="window.UI.setMarketCategoryFilter('arma', this)">Armas</button>
+          <button type="button" class="tab-btn" onclick="window.UI.setMarketCategoryFilter('armadura', this)">Armaduras</button>
+          <button type="button" class="tab-btn" onclick="window.UI.setMarketCategoryFilter('instrumento', this)">Instrumentos</button>
+          <button type="button" class="tab-btn" onclick="window.UI.setMarketCategoryFilter('ferramenta', this)">Ferramentas</button>
+          <button type="button" class="tab-btn" onclick="window.UI.setMarketCategoryFilter('reliquia', this)">Relíquias</button>
+        </div>
+        <div id="shop-list" class="stack-list"></div>
+      </div>
+    </div>
+
+    <!-- SUB-ABA 3: CASA BANCÁRIA E EMPRÉSTIMOS HISTÓRICOS -->
+    <div id="sub-inv-banco" class="inv-sub-panel" style="display:none">
+      <div class="card">
+        <h3>📜 Dívidas Ativas &amp; Empréstimos Contratados</h3>
+        <div id="bank-active-loans-list" class="stack-list"></div>
+      </div>
+      <div class="card">
+        <h3>🪙 Linhas de Crédito &amp; Credores Históricos</h3>
+        <p class="sheet-hint">Agiotas cobram juros predatórios e não perdoam atrasos. A Casa Bancária exige hipoteca formal de imóveis ou navios.</p>
+        <div id="bank-creditors-list" class="stack-list"></div>
+      </div>
+      <div class="card">
+        <h3>🏛️ Balcão de Usura &amp; Investimentos Financeiros</h3>
+        <p class="sheet-hint">Como financista ou senhor abastado, você pode emprestar seu excedente a mercadores, barões ou à Coroa Real para auferir juros elevados.</p>
+        <div id="bank-investments-wallet" class="stack-list" style="margin-bottom:0.75rem"></div>
+        <h4>Oportunidades de Concessão de Crédito</h4>
+        <div id="bank-clients-list" class="stack-list"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -519,6 +589,10 @@
     <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
   </div>
   <div class="sheet-body">
+    <div class="card" id="succession-law-card">
+      <h3>👑 Estatuto de Sucessão da Casa</h3>
+      <div id="succession-law-box"></div>
+    </div>
     <div class="card">
       <h3>Anais da Casa, Flags de Destino e Crônica Completa</h3>
       <div id="history-flags" style="margin-bottom:0.8rem"></div>
@@ -567,12 +641,13 @@
       <button type="button" id="btn-sound" onclick="window.SoundFX.toggle()">🔊 Som: ON</button>
       <button type="button" id="btn-typewriter" onclick="window.UI.toggleTypewriter()">✒️ Digitação: OFF</button>
       <button type="button" id="btn-theme" onclick="window.UI.toggleTheme()">☀️ Tema: Claro</button>
+      <button type="button" onclick="window.UI.openAchievementsModal()">🏆 Conquistas da Linhagem</button>
       <button type="button" onclick="window.Storage.exportSave()">💾 Exportar</button>
       <button type="button" onclick="document.getElementById('import-input').click()">📂 Importar</button>
       <input type="file" id="import-input" style="display:none" accept=".json" onchange="window.Storage.importSave(event)">
       <button type="button" onclick="window.UI.showScreen('screen-menu')">🏰 Menu</button>
     </div>
-    <p class="cfg-version">Crônicas de Cinza e Ferro — Edição Explorador<br>v3.5.1 · Reações Rápidas, Honra &amp; Desonra</p>
+    <p class="cfg-version">Crônicas de Cinza e Ferro — Edição Mercador<br>v4.0 · Bens, Usura, Amantes &amp; Conquistas</p>
   </div>
 </div>
 
@@ -587,6 +662,8 @@
 <script src="js/05c_dados_cultura_oficios.js"></script>
 <script src="js/06_dados_oficios.js"></script>
 <script src="js/07_dados_atividades.js"></script>
+<script src="js/07b_dados_mercado_40.js"></script>
+<script src="js/07c_dados_conquistas_legado.js"></script>
 <script src="js/08_eventos_base_a.js"></script>
 <script src="js/09_eventos_base_b.js"></script>
 <script src="js/10_eventos_base_c.js"></script>
@@ -612,6 +689,7 @@
 <script src="js/27b_engine_explorador.js"></script>
 <script src="js/27c_engine_viagens.js"></script>
 <script src="js/28_engine_economia_morte.js"></script>
+<script src="js/28b_engine_banco_40.js"></script>
 <script src="js/29_rel_npcs.js"></script>
 <script src="js/30_rel_apresentacoes.js"></script>
 <script src="js/31_rel_interacao.js"></script>
@@ -620,6 +698,7 @@
 <script src="js/34_ui_modais.js"></script>
 <script src="js/35_ui_render_all.js"></script>
 <script src="js/35b_ui_hud.js"></script>
+<script src="js/35c_ui_mercado_conquistas.js"></script>
 <script src="js/36_inicializacao.js"></script>
 </body>
 </html>

@@ -19,12 +19,29 @@ const SafeStorage = {
 const Storage = {
   KEY_SLOTS: "ccf_save_slots_v4",
   KEY_DYNASTY: "ccf_dynasty_v4",
+  KEY_ACHIEVEMENTS: "ccf_achievements_v4",
 
   getSlots() {
     try {
       const raw = SafeStorage.getItem(this.KEY_SLOTS);
       return raw ? JSON.parse(raw) : [null, null, null];
     } catch (e) { return [null, null, null]; }
+  },
+
+  getAchievements() {
+    try {
+      const raw = SafeStorage.getItem(this.KEY_ACHIEVEMENTS);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  },
+
+  unlockAchievement(achId) {
+    if (!achId) return false;
+    const list = this.getAchievements();
+    if (list.includes(achId)) return false;
+    list.push(achId);
+    SafeStorage.setItem(this.KEY_ACHIEVEMENTS, JSON.stringify(list));
+    return true;
   },
 
   saveToSlot(slotIdx = CONFIG.activeSlot) {
@@ -70,7 +87,12 @@ const Storage = {
 
   exportSave() {
     SoundFX.play("click");
-    const payload = { state: STATE, slots: this.getSlots(), dynasty: this.getDynasty() };
+    const payload = {
+      state: STATE,
+      slots: this.getSlots(),
+      dynasty: this.getDynasty(),
+      achievements: this.getAchievements()
+    };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -87,6 +109,7 @@ const Storage = {
         const data = JSON.parse(e.target.result);
         if (data.slots) SafeStorage.setItem(this.KEY_SLOTS, JSON.stringify(data.slots));
         if (data.dynasty) SafeStorage.setItem(this.KEY_DYNASTY, JSON.stringify(data.dynasty));
+        if (data.achievements) SafeStorage.setItem(this.KEY_ACHIEVEMENTS, JSON.stringify(data.achievements));
         if (data.state) {
           STATE = data.state;
           UI.showScreen("screen-game");

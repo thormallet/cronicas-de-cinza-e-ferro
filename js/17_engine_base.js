@@ -15,11 +15,18 @@ const Engine = {
   },
 
   getClassLabel(c) {
+    const wTier = STATE && STATE.wealthTier;
+    const wObj = (wTier && DATA.socialClassThresholds && DATA.socialClassThresholds[wTier]) ? DATA.socialClassThresholds[wTier] : null;
     if (c === "nobre") {
       const titleStr = (STATE && STATE.socialClass === "nobre") ? this.getNobleTitleLabel() : "";
-      return titleStr ? `Nobreza (${titleStr})` : "Nobreza";
+      if (titleStr) return `Nobreza (${titleStr})`;
+      if (wObj && wTier === "nobre") return `Nobreza (${wObj.label})`;
+      return "Nobreza";
     }
-    return c === "media" ? "Classe Média" : "Plebeu";
+    if (c === "media") {
+      return wObj ? `Classe Média (${wObj.label})` : "Classe Média";
+    }
+    return wObj ? `Plebeu (${wObj.label})` : "Plebeu";
   },
 
   getPhase(age = STATE.age) {
@@ -29,13 +36,22 @@ const Engine = {
     return "Velhice";
   },
 
-  /* Bônus de equipamento contam apenas 1 vez por item único (propriedades continuam gerando renda cumulativa) */
+  /* Bônus de equipamento com multiplicador de performance do estado de conservação */
   getEffectiveAttr(attrId) {
     let val = STATE.attrs[attrId] || 0;
     const uniqueItems = new Set(STATE.inventory);
     uniqueItems.forEach(itemId => {
       const it = DATA.items.find(x => x.id === itemId);
-      if (it && it.bonus && it.bonus[attrId]) val += it.bonus[attrId];
+      if (it && it.bonus && it.bonus[attrId]) {
+        let multPerf = 1.0;
+        if (Array.isArray(STATE.itemInstances)) {
+          const inst = STATE.itemInstances.find(x => x.id === itemId && !x.mortgaged);
+          if (inst && DATA.itemStates && DATA.itemStates[inst.state]) {
+            multPerf = DATA.itemStates[inst.state].multPerf;
+          }
+        }
+        val += Math.round(it.bonus[attrId] * multPerf);
+      }
     });
     return Utils.clamp(val, 0, 100);
   },
@@ -81,7 +97,47 @@ const Engine = {
     if (STATE.alive === undefined) STATE.alive = true;
     if (STATE.isDead === undefined) STATE.isDead = false;
     if (!Array.isArray(STATE.propertyMeta)) STATE.propertyMeta = [];
+    if (!Array.isArray(STATE.itemInstances)) STATE.itemInstances = [];
+    if (!Array.isArray(STATE.activeLoans)) STATE.activeLoans = [];
+    if (!Array.isArray(STATE.bankerLoans)) STATE.bankerLoans = [];
+    if (!Array.isArray(STATE.pregnancies)) STATE.pregnancies = [];
+    if (!Array.isArray(STATE.pendingBirthQueue)) STATE.pendingBirthQueue = [];
+    if (!STATE.successionLaw) STATE.successionLaw = "primogenitura";
+    if (STATE.designatedHeirId === undefined) STATE.designatedHeirId = null;
+    if (!STATE.wealthTier) {
+      STATE.wealthTier = STATE.socialClass === "nobre" ? "nobre" : (STATE.socialClass === "media" ? "burgues" : "plebeu");
+    }
+    if (STATE.abandonedChildrenCount === undefined) STATE.abandonedChildrenCount = 0;
+    if (STATE.duelsWon === undefined) STATE.duelsWon = 0;
+    if (STATE.bargainsWon === undefined) STATE.bargainsWon = 0;
+    if (STATE.bankerProfits === undefined) STATE.bankerProfits = 0;
+
+    /* Sincronização retrocompatível de inventário e instâncias de bens */
     if (Array.isArray(STATE.inventory)) {
+      const instCounts = {};
+      STATE.itemInstances.forEach(inst => {
+        instCounts[inst.id] = (instCounts[inst.id] || 0) + 1;
+      });
+      const invCounts = {};
+      STATE.inventory.forEach(id => {
+        invCounts[id] = (invCounts[id] || 0) + 1;
+      });
+      Object.keys(invCounts).forEach(itemId => {
+        const needed = invCounts[itemId] - (instCounts[itemId] || 0);
+        const it = DATA.items.find(x => x.id === itemId);
+        for (let i = 0; i < needed; i++) {
+          STATE.itemInstances.push({
+            uid: "it_" + Math.random().toString(36).slice(2, 9),
+            id: itemId,
+            state: "bom",
+            kingdom: STATE.kingdom,
+            cityId: STATE.currentCityId,
+            buyPrice: (it && it.price) ? it.price : 50,
+            mortgaged: false
+          });
+        }
+      });
+
       const propIds = STATE.inventory.filter(id => {
         const it = DATA.items.find(x => x.id === id);
         return it && it.type === "propriedade";
@@ -96,6 +152,24 @@ const Engine = {
       if (STATE.propertyMeta.length > propIds.length) {
         STATE.propertyMeta.length = propIds.length;
       }
+    }
+
+    /* Migração de gravidez única legada para array de gestações */
+    if (STATE.pregnancy && STATE.pregnancies.length === 0) {
+      STATE.pregnancies.push({
+        id: STATE.pregnancy.id || ("preg_" + Math.random().toString(36).slice(2, 8)),
+        motherId: STATE.pregnancy.motherId || (STATE.sex === "F" ? "player" : (STATE.pregnancy.partner ? STATE.pregnancy.partner.id : "npc_partner")),
+        motherName: STATE.pregnancy.motherName || (STATE.sex === "F" ? STATE.name : (STATE.pregnancy.partner ? STATE.pregnancy.partner.name : "Parceira")),
+        motherRole: STATE.pregnancy.motherRole || (STATE.sex === "F" ? "hero" : "Esposa"),
+        fatherId: STATE.pregnancy.fatherId || (STATE.sex === "M" ? "player" : (STATE.pregnancy.partner ? STATE.pregnancy.partner.id : "npc_partner")),
+        fatherName: STATE.pregnancy.fatherName || (STATE.sex === "M" ? STATE.name : (STATE.pregnancy.partner ? STATE.pregnancy.partner.name : "Parceiro")),
+        isPlayerMother: STATE.pregnancy.isPlayerMother !== undefined ? STATE.pregnancy.isPlayerMother : (STATE.sex === "F"),
+        isBastard: !!STATE.pregnancy.isBastard,
+        isTwins: !!STATE.pregnancy.isTwins
+      });
+    }
+    if (STATE.pregnancies.length > 0 && !STATE.pregnancy) {
+      STATE.pregnancy = STATE.pregnancies[0];
     }
   },
 
@@ -132,32 +206,59 @@ const Engine = {
         gross += Math.round(tObj.bonusIncome * (0.5 + (fProsperity / 100)));
       }
     }
-    let upkeep = STATE.socialClass === "nobre" ? 18 : (STATE.socialClass === "media" ? 7 : 3);
+
+    let upkeep = STATE.socialClass === "nobre" ? 22 : (STATE.socialClass === "media" ? 8 : 3);
+    if (STATE.wealthTier === "patricio") upkeep = Math.max(upkeep, 15);
+    else if (STATE.wealthTier === "nobre") upkeep = Math.max(upkeep, 28);
     if (curCity.tier === "vila") upkeep = Math.max(1, Math.round(upkeep * 0.8));
     else if (curCity.tier === "capital") upkeep = Math.round(upkeep * 1.25);
     if (STATE.age < 14 && STATE.job === "crianca" && !STATE.guildTraining) upkeep = 0;
 
-    let propCursor = 0;
-    STATE.inventory.forEach(itemId => {
-      const it = DATA.items.find(x => x.id === itemId);
-      if (it) {
-        if (it.income) {
-          let itemInc = it.income;
-          if (it.type === "propriedade" && Array.isArray(STATE.propertyMeta)) {
-            const meta = STATE.propertyMeta[propCursor++];
-            if (meta && meta.kingdom && meta.kingdom !== STATE.kingdom) {
-              itemInc = Math.round(itemInc * 0.65);
-            }
+    /* Renda e manutenção de instâncias de bens e propriedades */
+    if (Array.isArray(STATE.itemInstances) && STATE.itemInstances.length > 0) {
+      STATE.itemInstances.forEach(inst => {
+        const it = DATA.items.find(x => x.id === inst.id);
+        if (it) {
+          const stateObj = (DATA.itemStates && DATA.itemStates[inst.state]) || { multValue: 1.0, multPerf: 1.0 };
+          if (it.income && !inst.mortgaged) {
+            const regFactor = (inst.kingdom && inst.kingdom !== STATE.kingdom) ? 0.65 : 1.0;
+            gross += Math.round(it.income * stateObj.multValue * regFactor);
           }
-          gross += itemInc;
+          if (it.upkeep) {
+            const decayFactor = inst.state === "arruinado" ? 1.4 : (inst.state === "desgastado" ? 1.2 : 1.0);
+            upkeep += Math.round(it.upkeep * decayFactor);
+          }
         }
-        if (it.upkeep) upkeep += it.upkeep;
-      }
-    });
+      });
+    } else {
+      /* Fallback retrocompatível para inventário sem instâncias */
+      let propCursor = 0;
+      STATE.inventory.forEach(itemId => {
+        const it = DATA.items.find(x => x.id === itemId);
+        if (it) {
+          if (it.income) {
+            let itemInc = it.income;
+            if (it.type === "propriedade" && Array.isArray(STATE.propertyMeta)) {
+              const meta = STATE.propertyMeta[propCursor++];
+              if (meta && meta.kingdom && meta.kingdom !== STATE.kingdom) {
+                itemInc = Math.round(itemInc * 0.65);
+              }
+            }
+            gross += itemInc;
+          }
+          if (it.upkeep) upkeep += it.upkeep;
+        }
+      });
+    }
 
     const taxRate = this.getKingdom().tax;
     const taxes = Math.floor(gross * taxRate);
-    const debtInterest = Math.floor(STATE.debt * 0.10);
+    let debtInterest = Math.floor((STATE.debt || 0) * 0.10);
+    if (Array.isArray(STATE.activeLoans)) {
+      STATE.activeLoans.forEach(l => {
+        debtInterest += Math.floor((l.balance || 0) * (l.interestRate || 0.10));
+      });
+    }
     const net = gross - upkeep - taxes - debtInterest;
     return { gross, upkeep, taxes, debtInterest, net };
   },

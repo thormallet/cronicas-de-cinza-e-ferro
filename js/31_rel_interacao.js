@@ -190,11 +190,11 @@ Object.assign(Engine, {
             this.handleEcclesiasticalScandal(npc.name);
           }
 
-          const isOppositeSex = (STATE.sex === "M" && npc.sex === "F") || (STATE.sex === "F" && npc.sex === "M");
-          const canConceive = isOppositeSex && STATE.age >= 16 && STATE.age < 52 && npc.age >= 16 && npc.age < 48 && !STATE.pregnancy;
-          if (canConceive && Math.random() < 0.14) {
-            STATE.pregnancy = { partnerId: npc.id, partnerName: npc.name, isBastard: npc.role !== "Cônjuge" };
-            this.addLog(`🤰 Sinais de Gestação: Poucas semanas após o encontro ardente, confirma-se que um filho de **${npc.name}** está sendo gerado! O parto ocorrerá no próximo ano.`, "epoch");
+          if (Math.random() < 0.14) {
+            const preg = this.tryConceiveWithPartner(npc, npc.role !== "Cônjuge");
+            if (preg) {
+              this.addLog(`🤰 Sinais de Gestação: Poucas semanas após o encontro ardente, confirma-se que um filho com **${npc.name}** está sendo gerado! O parto ocorrerá no próximo ano.`, "epoch");
+            }
           }
 
           if (spouse && spouse.id !== npc.id && Math.random() < 0.55) {
@@ -326,18 +326,13 @@ Object.assign(Engine, {
           this.handleEcclesiasticalScandal(npc.name);
         }
 
-        const isOppositeSex = (STATE.sex === "M" && npc.sex === "F") || (STATE.sex === "F" && npc.sex === "M");
-        const canConceive = isOppositeSex && STATE.age >= 16 && STATE.age < 52 && npc.age >= 16 && npc.age < 48;
         const fertilityChance = (STATE.age < 40 && npc.age < 40) ? 0.25 : 0.10;
+        let preg = null;
+        if (Math.random() < fertilityChance) {
+          preg = this.tryConceiveWithPartner(npc, npc.role !== "Cônjuge");
+        }
 
-        if (STATE.pregnancy) {
-          this.addLog(`❤️‍🔥 Você e **${npc.name}** compartilharam momentos de ternura nos aposentos (-5 Vigor) enquanto aguardam a chegada do bebê que já está a caminho.`, "good");
-        } else if (canConceive && Math.random() < fertilityChance) {
-          STATE.pregnancy = {
-            partnerId: npc.id,
-            partnerName: npc.name,
-            isBastard: npc.role !== "Cônjuge"
-          };
+        if (preg) {
           SoundFX.play("bells");
           this.addLog(`🤰 GRAVIDEZ CONFIRMADA: Após noites de paixão com **${npc.name}** (-5 Vigor), a semente da sua linhagem floresceu! A gestação seguirá durante este ano e o parto ocorrerá no ano seguinte.`, "epoch");
         } else {
@@ -462,6 +457,82 @@ Object.assign(Engine, {
             return;
           }
         }
+        break;
+      }
+
+      case "make_lover": {
+        if (!requireVigor(4)) return;
+        if (npc.role === "Cônjuge") {
+          UI.notify("Já Casados", "Esta pessoa já é seu cônjuge legítimo.");
+          return;
+        }
+        if (npc.affinity < 40) {
+          UI.notify("Afinidade Insuficiente", "É necessário ao menos 40 de Afinidade para estabelecer uma ligação amorosa fixa.");
+          return;
+        }
+        npc.role = "Amor";
+        npc.memory = `Tornou-se seu amante fixo sob juramentos secretos no ano ${STATE.year}.`;
+        SoundFX.play("love");
+        this.addLog(`🌹 PAIXÃO JURADA: Você e **${npc.name}** firmaram um pacto amoroso fixo (-4 Vigor). A chama arde nos encontros reservados!`, "good");
+        break;
+      }
+
+      case "break_lover": {
+        if (!requireVigor(3)) return;
+        SoundFX.play("click");
+        const lowAff = (npc.affinity || 0) < 0;
+        npc.role = lowAff ? "Rival" : "Conhecido";
+        npc.affinity = Utils.clamp(npc.affinity - 25, -100, 100);
+        npc.memory = `Rompeu a ligação de amantes com você no ano ${STATE.year}.`;
+        this.addLog(`💔 ROMPIMENTO: Você rompeu definitivamente a ligação romântica com **${npc.name}** (-3 Vigor, -25 Afinidade).`, "bad");
+        break;
+      }
+
+      case "legitimize_child": {
+        const cost = 80;
+        if (STATE.gold < cost) {
+          UI.notify("Ouro Insuficiente", `A legitimação chancelar perante a Sé e a Coroa custa ${cost} Ouro.`);
+          return;
+        }
+        const honorCost = STATE.socialClass === "nobre" ? 10 : 5;
+        STATE.gold -= cost;
+        STATE.honor = Math.max(0, STATE.honor - honorCost);
+        npc.legitimacy = "legitimo";
+        npc.isBastard = false;
+        npc.surname = STATE.surname;
+        const firstName = (npc.name || "").split(" ")[0];
+        npc.name = `${firstName} ${STATE.surname}`;
+        npc.memory = `Legitimado plenamente como filho de direito da Casa ${STATE.surname} no ano ${STATE.year}.`;
+        SoundFX.play("bells");
+        Storage.unlockAchievement("ach_bastardo_legitimado");
+        this.syncFamilyNobleTitles();
+        this.addLog(`📜 CARTA DE LEGITIMAÇÃO: Você investiu ${cost} Ouro e outorgou legitimidade plena a **${npc.name}** (-${honorCost} Honra). Agora é herdeiro legítimo do seu sangue e brasão!`, "epoch");
+        break;
+      }
+
+      case "acknowledge_bastard": {
+        npc.legitimacy = "bastardo_reconhecido";
+        npc.isBastard = true;
+        STATE.honor = Math.max(0, STATE.honor - 3);
+        npc.memory = `Reconhecido como bastardo de sangue da Casa ${STATE.surname} no ano ${STATE.year}.`;
+        SoundFX.play("bells");
+        this.addLog(`⚜️ BASTARDO RECONHECIDO: Você reconheceu formalmente **${npc.name}** como bastardo da linhagem dos ${STATE.surname} (-3 Honra).`, "normal");
+        break;
+      }
+
+      case "abandon_child": {
+        if (npc.age >= 16) {
+          UI.notify("Maior de Idade", "Apenas crianças menores de 16 anos podem ser entregues a um mosteiro ou orfanato.");
+          return;
+        }
+        STATE.honor = Math.max(0, STATE.honor - 12);
+        STATE.abandonedChildrenCount = (STATE.abandonedChildrenCount || 0) + 1;
+        npc.role = "Abandonado";
+        npc.abandoned = true;
+        npc.memory = `Entregue à roda dos expostos e apartado do convívio familiar no ano ${STATE.year}.`;
+        SoundFX.play("fail");
+        this.addLog(`🚪 RODA DOS EXPOSTOS: Você rompeu os laços paternos e entregou **${npc.name}** a um mosteiro (-12 Honra).`, "bad");
+        UI.closeNPCModal();
         break;
       }
     }

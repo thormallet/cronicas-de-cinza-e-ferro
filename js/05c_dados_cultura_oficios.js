@@ -77,7 +77,17 @@ Object.assign(DATA, {
     dama_companhia: { tiers: ["capital"],                   portable: false },
     falcoeiro:      { tiers: ["capital"],                   portable: false },
     diplomata:      { tiers: ["capital"],                   portable: true, crossKingdom: true },
-    chanceler:      { tiers: ["capital"],                   portable: false }
+    chanceler:           { tiers: ["capital"],                   portable: false },
+    mandarim_imperial:   { tiers: ["vila", "cidade", "capital"], portable: true },
+    forjador_katana:     { tiers: ["vila", "cidade", "capital"], portable: true },
+    mestre_especiarias:  { tiers: ["vila", "cidade", "capital"], portable: true },
+    mestre_caravanserai: { tiers: ["vila", "cidade", "capital"], portable: true },
+    astronomo_al_zahra:  { tiers: ["vila", "cidade", "capital"], portable: true },
+    vinhateiro_ducal:    { tiers: ["vila", "cidade", "capital"], portable: true },
+    arqueiro_reais:      { tiers: ["vila", "cidade", "capital"], portable: true },
+    cacador_peles_norte: { tiers: ["vila", "cidade", "capital"], portable: true },
+    mestre_prata_alpino: { tiers: ["vila", "cidade", "capital"], portable: true },
+    banqueiro_laguna:    { tiers: ["vila", "cidade", "capital"], portable: true }
   },
 
   /* REGRAS GEOGRÁFICAS DE ATIVIDADES (v3.2.1) */

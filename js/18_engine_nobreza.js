@@ -106,23 +106,59 @@ Object.assign(Engine, {
     return STATE.sex === "F" ? tObj.titleF : tObj.titleM;
   },
 
+  hasRequiredNoblePossessions(targetLevel) {
+    if (!STATE) return false;
+    const req = (DATA.noblePossessionReqs && DATA.noblePossessionReqs[targetLevel]) || { minWealth: 600, minProperties: 1 };
+    const worth = this.getNetWorth ? this.getNetWorth() : STATE.gold;
+    if (worth < req.minWealth) return false;
+
+    const maritimeKingdoms = ["serenissima", "al_zahra", "suvarnabhumi", "tianxia"];
+    const isMaritime = maritimeKingdoms.includes(STATE.kingdom);
+
+    const properties = (STATE.itemInstances || []).filter(x => {
+      const it = DATA.items.find(i => i.id === x.id);
+      if (!it) return false;
+      if (it.category === "propriedade") return true;
+      if (isMaritime && (x.id === "navio_mercante" || x.id === "taverna_porto" || x.id === "oficina_artesao")) return true;
+      return false;
+    });
+
+    if (properties.length < req.minProperties) return false;
+
+    if (!isMaritime && targetLevel >= 3) {
+      const feudalEstates = ["terra_aravel", "solar_nobre", "forte_fronteira", "castelo_feudal", "palacio_real"];
+      const hasFeudalBase = STATE.itemInstances.some(x => feudalEstates.includes(x.id));
+      if (!hasFeudalBase) return false;
+    }
+
+    return true;
+  },
+
   checkNobleTitleConferral() {
     if (!STATE || STATE.socialClass !== "nobre") return;
     if (!STATE.nobleTitleLevel || STATE.nobleTitleLevel < 1) STATE.nobleTitleLevel = 1;
 
-    const hasEstate = STATE.inventory.includes("solar_nobre") || STATE.inventory.includes("terra_aravel");
-    const hasDeeds = STATE.flags.length >= 2;
+    if (!this.hasRequiredNoblePossessions(1)) {
+      if (STATE.nobleTitleLevel > 1) {
+        STATE.nobleTitleLevel--;
+        const downTitle = this.getNobleTitleLabel();
+        this.syncFamilyNobleTitles();
+        this.addLog(`📉 DECLÍNIO NOBILIÁRQUICO: A perda de propriedades e ruína patrimonial levaram os arautos régios a rebaixar seu título para **${downTitle}**!`, "bad");
+      }
+      return;
+    }
+
     const infBonus = (STATE.fief && STATE.fief.influence >= 75) ? 1 : 0;
     const effRep = STATE.reputation + infBonus;
     let targetLevel = STATE.nobleTitleLevel;
 
-    if (STATE.nobleTitleLevel === 1 && (effRep >= 4 || STATE.honor >= 68 || hasEstate)) {
+    if (STATE.nobleTitleLevel === 1 && effRep >= 4 && STATE.honor >= 65 && this.hasRequiredNoblePossessions(2)) {
       targetLevel = 2;
-    } else if (STATE.nobleTitleLevel === 2 && effRep >= 6 && STATE.honor >= 74 && (STATE.gold >= 300 || hasEstate)) {
+    } else if (STATE.nobleTitleLevel === 2 && effRep >= 6 && STATE.honor >= 72 && this.hasRequiredNoblePossessions(3)) {
       targetLevel = 3;
-    } else if (STATE.nobleTitleLevel === 3 && effRep >= 8 && STATE.honor >= 80 && (hasEstate || hasDeeds)) {
+    } else if (STATE.nobleTitleLevel === 3 && effRep >= 8 && STATE.honor >= 78 && this.hasRequiredNoblePossessions(4)) {
       targetLevel = 4;
-    } else if (STATE.nobleTitleLevel === 4 && effRep >= 9 && STATE.honor >= 88 && STATE.gold >= 800 && hasEstate) {
+    } else if (STATE.nobleTitleLevel === 4 && effRep >= 9 && STATE.honor >= 85 && this.hasRequiredNoblePossessions(5)) {
       targetLevel = 5;
     }
 
@@ -132,9 +168,45 @@ Object.assign(Engine, {
       this.syncFamilyNobleTitles();
       this.ensureCourtMembers();
       SoundFX.play("bells");
-      const msg = `Pelo seu prestígio na corte, honra ilibada, posses e feitos extraordinários, a Coroa de ${this.getKingdom().name} conferiu a você a Carta Patente de **${newTitle}** da Casa ${STATE.surname} (estendendo o título de Consorte ao seu cônjuge e de Herdeiro aos seus filhos)!`;
+      const msg = `Pelo seu prestígio na corte, honra ilibada, posses territoriais e feitos extraordinários, a Coroa de ${this.getKingdom().name} conferiu a você a Carta Patente de **${newTitle}** da Casa ${STATE.surname}!`;
       this.addLog(`👑 INVESTIDURA DE NOBREZA TITULAR: ${msg}`, "epoch");
       UI.notify("👑 Título Nobiliárquico Conferido!", msg, "bells");
+      if (this.checkAchievements) this.checkAchievements();
     }
+  },
+
+  buyNobilityCharter() {
+    this.ensureVigorFields();
+    if (STATE.socialClass === "nobre") {
+      UI.notify("Já Nobre", "Sua linhagem já pertence à nobreza do reino.");
+      return;
+    }
+    const worth = this.getNetWorth ? this.getNetWorth() : STATE.gold;
+    const hasProp = Array.isArray(STATE.itemInstances) && STATE.itemInstances.some(x => {
+      const it = DATA.items.find(i => i.id === x.id);
+      return it && (it.category === "propriedade" || it.category === "transporte");
+    });
+
+    if (worth < 1200 || !hasProp) {
+      UI.notify("Patrimônio Insuficiente", "Apenas patrícios com patrimônio de ao menos 1.200 moedas e posse de propriedades podem pleitear uma Carta de Nobreza.");
+      return;
+    }
+
+    const charterCost = 400;
+    if (STATE.gold < charterCost) {
+      UI.notify("Ouro Insuficiente", `A taxa chancelar para outorga de Carta de Fidalguia custa ${charterCost} Ouro.`);
+      return;
+    }
+
+    STATE.gold -= charterCost;
+    STATE.nobleTitleLevel = 1;
+    this.setFamilySocialClass("nobre", "Outorga formal e venalidade da Carta de Nobreza perante a Chancelaria Régia");
+    SoundFX.play("bells");
+    Storage.unlockAchievement("ach_sangue_nobre");
+    const newTitle = this.getNobleTitleLabel();
+    this.addLog(`⚜️ CARTA DE NOBREZA ADQUIRIDA: Você pagou 400 Ouro e ascendeu formalmente ao estamento nobre como **${newTitle}** da Casa ${STATE.surname}!`, "epoch");
+    UI.notify("⚜️ Ascensão Nobiliárquica!", `Você foi investido formalmente como ${newTitle}!`, "bells");
+    Storage.saveToSlot(CONFIG.activeSlot);
+    UI.renderAll();
   }
 });

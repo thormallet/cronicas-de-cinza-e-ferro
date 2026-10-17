@@ -267,12 +267,17 @@ const UI = {
       gBox.innerHTML = `<p style="color:var(--text-muted)">Nenhuma vida encerrada registrada no memorial ainda.</p>`;
     } else {
       gBox.innerHTML = dyn.map(d => {
-        const crest = Utils.renderCrestHTML(d.surname || d.name);
+        const tagsHtml = (Array.isArray(d.legacyTags) && d.legacyTags.length > 0)
+          ? `<div style="margin-top:0.25rem;display:flex;gap:0.25rem;flex-wrap:wrap">` +
+            d.legacyTags.map(t => `<span class="badge gold" style="font-size:0.7rem;padding:0.1rem 0.35rem" title="${t.desc || ''}">${t.icon || '⚜️'} ${t.name || t.id}</span>`).join("") +
+            `</div>`
+          : "";
         return `
         <div class="slot-item">
           <div>
             <strong>${crest}${d.name}</strong> (${d.generation}ª Geração | ${d.years}, ${d.age} anos)<br>
             <small>${d.job} em ${d.kingdom} | Ouro final: ${d.gold} | <em>${d.cause}</em></small>
+            ${tagsHtml}
           </div>
         </div>
       `;

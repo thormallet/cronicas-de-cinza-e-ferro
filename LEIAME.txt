@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 3.5.1 (Patch de Rigor Medieval, Atrofia & Desgaste Vital)
+Crônicas de Cinza e Ferro — Versão 4.0 (Edição Mercador)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,97 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 4.0 — EDIÇÃO MERCADOR (MERCADO VIVO, PATRIMÔNIO LÍQUIDO, BANCOS & DINASTIAS):
+1. Novo Sistema de Mercado & Catálogo de Bens (Construído From Scratch):
+   - Catálogo econômico completo com 32 novos bens autênticos distribuídos em 7 categorias orgânicas:
+     * Imóveis: Casebre de Madeira, Casa Urbana no Burgo, Oficina com Forja, Moinho de Vento na Colina, Estalagem do Porto, Alódio de Terras Aráveis, Solar Senhorial Fortificado, Forte Militar de Fronteira, Castelo Feudal com Fosso e Palácio Ducal de Mármore.
+     * Transportes & Frotas: Cavalo de Carga, Destriero Pesado de Guerra, Carruagem Nobre Entalhada, Barcaça Costeira e Nau Mercante Armada.
+     * Armas: Adaga de Ferro Temperado, Arco Composto Laminado, Espada Longa de Aço e Lâmina Curva de Damasco.
+     * Armaduras: Gibão de Couro Fervido, Cota de Malha Rebitada e Arnês Completo de Placas.
+     * Instrumentos: Flauta Pastoril de Osso, Alaúde de Ébano e Madrepérola e Harpa Barroca Talhada.
+     * Ferramentas & Ofício: Estojo de Ferramentas de Mestre, Astrolábio de Bronze Náutico e Alambique e Serpentina de Cobre.
+     * Relíquias & Colecionáveis: Espelho de Cristal Veneziano, Códice Iluminado em Latim, Relicário de Santo Mártir e Coroa de Filigrana e Safiras.
+   - Atributos dinâmicos e ciclo econômico contínuo:
+     * Renda passiva anual real gerada por imóveis e frotas produtivas diretamente integrada ao balanço fiscal.
+     * Custo anual de manutenção e taxas prediais cobrados rigorosamente na virada do ciclo anual.
+     * 4 Estados de Conservação realistas: Novo (100% de valor e eficácia), Bom (80% valor / 90% eficácia), Desgastado (50% valor / 70% eficácia) e Arruinado (20% valor / 40% eficácia, sem renda passiva).
+     * Ações interativas no painel de bens: Manutenção Preventiva, Reparo de Desgaste e Grande Reforma de Reconstrução para restaurar integridade e rendimento.
+     * Flutuação determinística regional de preços: cotações variam de ano a ano com base no reino, comarcas e escassez local (produtos manufaturados, importados ou de luxo oscilam sazonalmente).
+
+2. Sistema Dinâmico de Barganha e Negociação:
+   - Compra e venda ativas com mecânicas de pechincha e regateio no mercado de qualquer comarca.
+   - Testes táticos de Carisma e Intelecto contra a perspicácia e ganância dos mercadores locais:
+     * Barganha de Compra bem-sucedida: concede descontos expressivos de 15% a 30% sobre o preço nominal do bem.
+     * Barganha de Venda bem-sucedida: permite liquidar propriedades e alfaias por até 105% do valor integral de mercado.
+     * Risco real de falha crítica: forçar a pechincha pode irritar o mercador, suspendendo negociações no ano ou gerando acréscimo punitivo no preço.
+
+3. Classe Social Dinâmica Atrelada ao Patrimônio Líquido (Net Worth):
+   - Recálculo contínuo e automático do estrato social executado na virada de cada ano:
+     Patrimônio Líquido = Moedas de Ouro em Caixa + Valor Real de Avaliação dos Bens Físicos - Total de Dívidas Ativas.
+   - 5 Faixas Estamentais rigorosas com exigências patrimoniais e de reputação autênticas:
+     * Miserável (< 60 moedas): extrema penúria, mendicância e alta vulnerabilidade social.
+     * Plebeu (60 a 349 moedas): artesãos, camponeses e trabalhadores com poupança e autonomia modestas.
+     * Burguês (350 a 1.199 moedas): mestres artífices, mercadores prósperos e donos de oficinas/estabelecimentos.
+     * Patrício (1.200 a 2.999 moedas): alta burguesia urbana, magnatas marítimos e elite das guildas financeiras.
+     * Nobre (3.000+ moedas): senhores de terras férteis, solares, fortalezas e aristocratas titulares.
+   - Rebaixamento dinâmico em caso de falência: a perda de patrimônio por catástrofes, guerras ou endividamento insolúvel rebaixa imediatamente a classe social, o prestígio público e as regalias sociais.
+
+4. Nobreza Titular Baseada em Posses e Variação Regional:
+   - Fim dos títulos puramente nominais: cada um dos 5 Graus de Nobreza (Fidalgo/Cavalheiro, Barão, Visconde, Conde e Duque de Sangue) exige bens físicos reais e patrimônio líquido proporcional para investidura e sustentação.
+   - Adaptação cultural e geográfica autêntica:
+     * Reinos Marítimos (Sereníssima de Laguna, Álbion, etc.): exigência de frotas mercantes armadas, caravelas e armazéns portuários para reconhecimento aristocrático.
+     * Reinos Feudais Territoriais (Valória, Sacro Império de Teutônia, Terras do Norte, etc.): exigência de solares fortificados, terras aráveis, feudos e castelos com fosso.
+   - O não cumprimento dos requisitos de posses bloqueia elevações nobiliárquicas na corte régia e impede a concessão de novas patentes.
+
+5. Sistema Histórico de Empréstimos (Modelo Duplo — Tomador e Banqueiro):
+   - Como Tomador de Empréstimos (Necessidade de Crédito e Liquidez):
+     * Agiotas do Beco: moedas rápidas sem garantia prévia, porém com juros predatórios (25%); inadimplência acarreta cobrança violenta por capangas armados, risco de espancamento, cicatrizes permanentes e declínio drástico de saúde.
+     * Cambistas da Corte: crédito mercantil moderado (15% de juros) lastreado em fiança formal de bens móveis, transportes e instrumentos.
+     * Casa Bancária da Laguna: linhas institucionais vultosas a juros baixos (8%), exigindo hipoteca formal de imóveis e caravelas; em caso de calote insolúvel, executa penhora judicial compulsória das propriedades dadas em garantia.
+   - Como Banqueiro / Usurário (Investimento de Capital e Renda Financeira):
+     * Financiamento de Mercadores Aventureiros: empréstimo de 150 moedas com retorno potencial de 20% ou risco de naufrágio/calote (25%).
+     * Socorro a Barões Endividados: crédito de 500 moedas a 12% de juros, lastreado em terras e safras com possibilidade de adjudicação judicial das posses feudais.
+     * Tesouro da Coroa Real: aporte régio de 1.500 moedas a 8% de juros para campanhas militares da Coroa, com retorno quase garantido e enorme prestígio cortesão (+Honra e +Reputação).
+
+6. Gravidez Realista, Biologia e Relações:
+   - Fisiologia reprodutiva e limites biológicos históricos rigorosos:
+     * Apenas personagens femininas engravidam (janela biológica restrita de 16 a 45 anos, com teto de 1 gestação por ano).
+     * Personagens masculinos não possuem limite estrito de idade fértil e podem engravidar a esposa legítima e múltiplas amantes ativas no mesmo ciclo anual.
+     * Chance remota de 2% de gravidez de Gêmeos, gerando dois herdeiros simultâneos na linhagem.
+   - Decisão Paterna Interativa no Batismo/Nascimento:
+     * Legitimar como Herdeiro Pleno (-50 Ouro, -6 Honra, atritos severos e ciúmes do cônjuge/herdeiros mais velhos).
+     * Reconhecer como Filho Natural/Bastardo da Casa (-3 Honra, acolhimento sob o teto familiar sem direitos de primogenitura).
+     * Negar Paternidade / Abandonar na Roda dos Expostos (-10 Honra, condenação moral pública e estigma de infâmia).
+   - Sub-aba e Painel de Amantes Dedicado:
+     * Gestão de cortejos paralelos, amantes secretas e favoritos de alcova na aba Relações.
+     * Ações exclusivas de romance: Presentear com Mimos Luxuosos (-15 Ouro), Encontros Ardentes Clandestinos e Rompimento Definitivo da Ligação Romântica.
+
+7. Estatuto Dinástico & Leis de Sucessão Familiar:
+   - Três modelos jurídicos e tradicionais de partilha de espólio selecionáveis na aba Linhagem:
+     * Primogenitura Feudal: a tradição marcial clássica; 85% de todo o ouro em caixa e 100% dos bens imóveis, frotas e títulos são transmitidos intactos ao primogênito legítimo.
+     * Partilha Igualitária (Gavelkind): o ouro total é dividido em cotas iguais entre todos os filhos legítimos vivos, fortalecendo a harmonia familiar (+25 de afinidade mútua).
+     * Sucessão Designada por Testamento: lavratura de testamento em cartório permitindo a livre escolha de qualquer herdeiro universal favorito (incluindo bastardos legitimados e pupilos).
+
+8. Profissões e Atividades Exclusivas por Região:
+   - 10 Novos Ofícios Regionais Exclusivos, distribuídos entre os 10 reinos do mundo conhecido:
+     * Tianxia: Mandarim Imperial Letrado (Academia Hanlin Imperial).
+     * Yamato: Forjador de Katana e Armaduras (Irmandade dos Mestres das Lâminas).
+     * Suvarnabhumi: Mestre Mercador de Especiarias (Guilda das Frotas de Pimenta e Canela).
+     * Parsa: Mestre de Caravanserai (Liga dos Hospedeiros da Rota da Seda).
+     * Al-Zahra: Astrônomo da Casa da Sabedoria (Observatório da Casa da Sabedoria).
+     * Valois: Vinhateiro e Tanoeiro Ducal (Confraria das Vinhas Reais de Valois).
+     * Álbion: Arqueiro Longo da Guarda Real (Corpo dos Arqueiros de Teixo de Álbion).
+     * Severnaya: Caçador de Peles Boreal (Grêmio dos Peleiros do Norte).
+     * Teutônia: Mestre Mineiro de Prata Alpina (Guilda Livre dos Mineiros de Prata Imperial).
+     * Sereníssima: Banqueiro de Câmbio da Laguna (Banco de Câmbio de Rialto e Sereníssima).
+   - 10 Atividades Culturais Exclusivas acessíveis nas comarcas natais:
+     * Caligrafia e Clássicos Celestes (Tianxia), Cerimônia do Chá e Meditação (Yamato), Cortejo dos Elefantes Sagrados (Suvarnabhumi), Arquearia a Galope nos Planaltos (Parsa), Sessão na Casa da Sabedoria (Al-Zahra), Degustação nas Adegas Ducais (Valois), Tiro com Arco Longo nas Colinas (Álbion), Caçada de Inverno na Taiga (Severnaya), Prospecção nas Galerias de Prata (Teutônia) e Sarau de Máscaras nos Canais (Sereníssima).
+
+9. Conquistas Globais e Tags de Legado:
+   - 20 Conquistas Globais Históricas registradas de forma persistente em `localStorage` com modal dedicado, visual heráldico e efeitos sonoros comemorativos (Primeiro Cobrezinho, Mestre Juramentado, Brasão de Linhagem, Sangue Ducal, Cofres Transbordantes, Senhor da Fortaleza, Almirante dos Mares, Patriarca Centenário, Cavaleiro Sem Mácula, Príncipe do Crime, Bênção dos Altares, Luz da Razão, Campeão da Liça, Credor dos Tronos, Cinco Gerações, Aliança de Sangue Real, Caminhos do Mundo, Soberano em Seu Domínio, Cicatrizes da Peste, Lenda de Cinza e Ferro).
+   - 16 Tags de Legado Ancestral atribuídas na crônica de falecimento e perpetuadas no Panteão de Dinastias (Sangue Guerreiro, Mente Astuta, Graça das Cortes, Beleza de Linhagem, Vigor Ancestral, Mãos de Artífice, Favor Divino, Estrela Sortuda, Cofre Hereditário, Renome Ancestral, Brasão Respeitado, Nobreza de Sangue, Tradição Mercantil, Alma Itinerante, Linhagem Imorredoura e Império de Propriedades).
 ======================================================================
 
 VERSÃO 3.5.1 — PATCH DE RIGOR MEDIEVAL, ATROFIA DE ATRIBUTOS E DECAIMENTO DE HONRA/RECONHECIMENTO:

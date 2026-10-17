@@ -121,12 +121,16 @@ Object.assign(UI, {
       if (npc.role === "Cônjuge") {
         buttons.push({ id: "make_love", icon: "❤️‍🔥", title: STATE.pregnancy ? "Acariciar no Leito (Gestação em curso)" : "Fazer Amor", sub: "-5 Vigor | Paixão conjugal (Chance moderada de gravidez)", primary: true });
         buttons.push({ id: "court", icon: "🌹", title: "Dedicar Poema & Carinho", sub: "-4 Vigor | Renova a chama do matrimônio" });
+      } else if (npc.role === "Amor") {
+        buttons.push({ id: "make_love", icon: "🔥", title: "Encontro Ardente", sub: "-5 Vigor | Paixão secreta nos aposentos", primary: true });
+        buttons.push({ id: "gift", icon: "🎁", title: "Presentear Amante", sub: "-15 Ouro | Mimo luxuoso para manter o encanto" });
+        buttons.push({ id: "break_lover", icon: "💔", title: "Romper Ligação de Amantes", sub: "-3 Vigor | Encerra a ligação romântica (-25 Afinidade)" });
       } else if (!isFamilyBlood && STATE.age >= 15 && npc.age >= 15) {
         buttons.push({ id: "court", icon: "🌹", title: "Cortejar & Galantear", sub: "-4 Vigor | Usa Carisma e Beleza (Cuidado se casado!)" });
         if (STATE.age >= 16 && npc.age >= 16) {
           buttons.push({ id: "seduce", icon: "🔥", title: "Tentar Seduzir em Segredo", sub: "-6 Vigor | Paixão furtiva facilitada pela sua Beleza" });
-          if (npc.role === "Amor" || npc.affinity >= 75) {
-            buttons.push({ id: "make_love", icon: "❤️‍🔥", title: "Encontro Ardente nos Aposentos", sub: "-5 Vigor | Paixão secreta nos aposentos", primary: true });
+          if (npc.affinity >= 40) {
+            buttons.push({ id: "make_lover", icon: "🌹", title: "Tomar como Amante Secreto", sub: "-4 Vigor | Sela um pacto amoroso reservado" });
           }
           if (!hasSpouse && !Engine.isEcclesiasticalOccupation() && npc.sex !== STATE.sex && npc.maritalStatus !== "Casado(a)") {
             buttons.push({ id: "propose", icon: "💍", title: "Pedir em Casamento", sub: "-5 Vigor | Une as Casas (Homem e Mulher solteiros)", primary: true });
@@ -134,8 +138,16 @@ Object.assign(UI, {
         }
       }
 
-      if (npc.role === "Filho" && STATE.age >= 16) {
-        buttons.push({ id: "train_child", icon: "🎓", title: "Educar & Treinar Herdeiro", sub: "-5 Vigor | Eleva Força, Intelecto e Carisma do filho", primary: true });
+      if (npc.role === "Filho") {
+        if (npc.isBastard || npc.legitimacy === "bastardo_reconhecido") {
+          buttons.push({ id: "legitimize_child", icon: "📜", title: "Legitimar Filho de Sangue", sub: "-80 Ouro | Transforma em herdeiro legítimo pleno perante a Sé", primary: true });
+        }
+        if (npc.age < 16) {
+          buttons.push({ id: "abandon_child", icon: "🚪", title: "Entregar à Roda dos Expostos", sub: "Entrega a um mosteiro (-12 Honra, exclui da linhagem)" });
+        }
+        if (STATE.age >= 16) {
+          buttons.push({ id: "train_child", icon: "🎓", title: "Educar & Treinar Herdeiro", sub: "-5 Vigor | Eleva Força, Intelecto e Carisma do filho", primary: true });
+        }
       }
 
       if (phase === "Velhice" && (npc.role === "Filho" || npc.age < STATE.age - 15)) {
@@ -315,6 +327,20 @@ Object.assign(UI, {
     const locNpcBadge = awayCityObj ? `<span class="badge">📍 Em ${awayCityObj.name}</span>` : "";
     const nJobLabel = n.jobTitle || (n.age < 12 ? "Sem Ofício" : "Sem Cargo");
 
+    let childExtraHtml = "";
+    if (n.alive && n.role === "Filho") {
+      const isBastard = !!(n.isBastard || n.legitimacy === "bastardo_reconhecido");
+      const bastBadge = isBastard ? `<span class="badge bad">Bastardo</span>` : `<span class="badge good">Legítimo</span>`;
+      let childBtns = [];
+      if (isBastard) {
+        childBtns.push(`<button type="button" class="chip-btn" style="padding:0.2rem 0.5rem;font-size:0.75rem" onclick="event.stopPropagation();window.Engine.interactNPC('${n.id}','legitimize_child')">📜 Legitimar</button>`);
+      }
+      if (n.age < 16) {
+        childBtns.push(`<button type="button" class="chip-btn" style="padding:0.2rem 0.5rem;font-size:0.75rem;background:rgba(239,68,68,0.2);color:#ef4444" onclick="event.stopPropagation();window.Engine.interactNPC('${n.id}','abandon_child')">🚪 Roda dos Expostos</button>`);
+      }
+      childExtraHtml = `<div style="display:flex;gap:0.35rem;align-items:center;flex-wrap:wrap;margin-top:0.35rem" onclick="event.stopPropagation()">${bastBadge} ${childBtns.join(" ")}</div>`;
+    }
+
     return `
       <div class="person-card ${n.alive ? '' : 'dead'}" ${clickAttr}>
         ${Utils.renderPortraitHTML(n)}
@@ -329,6 +355,7 @@ Object.assign(UI, {
             <span>• ${nJobLabel}</span>
           </div>
           <div class="stat-bar" style="height:6px"><div class="stat-fill ${barClass}" style="width:${affPct}%"></div></div>
+          ${childExtraHtml}
           ${n.alive ? `<span class="click-hint">✦ Clique para Audiência</span>` : `<small style="color:var(--text-muted)">Em memória (Casa ${nSurname})</small>`}
         </div>
       </div>

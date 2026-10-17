@@ -27,20 +27,9 @@
   }
 
   /* Slots de save e galeria de dinastias em 2 colunas */
-  #menu-slots,
-  #dynasty-gallery {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-  #menu-slots .slot-item,
-  #dynasty-gallery .slot-item {
-    margin-bottom: 0;
-  }
-  #menu-slots .slot-item button {
-    width: auto;
-    flex: 1;
-  }
+  #menu-slots, #dynasty-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  #menu-slots .slot-item, #dynasty-gallery .slot-item { margin-bottom: 0; }
+  #menu-slots .slot-item button { width: auto; flex: 1; }
 
   /* 2. COLUNA ESQUERDA: #sheet-ficha sempre visível (300px) */
   body.in-game #sheet-ficha {

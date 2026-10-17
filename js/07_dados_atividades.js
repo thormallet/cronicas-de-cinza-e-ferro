@@ -70,22 +70,22 @@ Object.assign(DATA, {
     { id: "job_act_cartografar_costa", jobPool: true, icon: "🗺️", name: "[Ofício] Traçar Carta de Marear e Ventos", minAge: 15, maxAge: 99, jobs: ["explorador","pirata","pescador","mercador"], attr: "intelecto", diff: 56, desc: "Registrar correntes marítimas, baixios e enseadas com o astrolábio (+Desempenho e Ouro)." },
     { id: "job_act_colheita_mutirao", jobPool: true, icon: "🌾", name: "[Ofício] Liderar Ceifa e Moagem da Estação", minAge: 12, maxAge: 99, jobs: ["servo","campones","moleiro","pastor","lenhador","lavadeira"], attr: "saude", diff: 50, desc: "Coordenar o trabalho braçal do amanhecer ao pôr do sol (+Desempenho e Ouro)." },
     { id: "job_act_audiencia_chancelaria", jobPool: true, icon: "📜", name: "[Ofício] Redigir Éditos e Tratados Régios", minAge: 18, maxAge: 99, jobs: ["juiz","chanceler","diplomata","erudito"], attr: "intelecto", diff: 62, desc: "Selar diplomas de Estado e arbitrar disputas entre casas nobres (+Desempenho e Reputação)." },
-    { id: "job_act_voo_gerifalte", jobPool: true, icon: "🦅", name: "[Ofício] Adestrar Falcão Gerifalte Real", minAge: 14, maxAge: 99, jobs: ["falcoeiro","cacador","escudeiro"], attr: "destreza", diff: 54, desc: "Treinar a ave de rapina com isca de couro nos campos abertos (+Desempenho e Honra)." }
+    { id: "job_act_voo_gerifalte", jobPool: true, icon: "🦅", name: "[Ofício] Adestrar Falcão Gerifalte Real", minAge: 14, maxAge: 99, jobs: ["falcoeiro","cacador","escudeiro"], attr: "destreza", diff: 54, desc: "Treinar a ave de rapina com isca de couro nos campos abertos (+Desempenho e Honra)." },
+
+    /* ATIVIDADES EXCLUSIVAS DE REGIÃO (v4.0) */
+    { id: "act_reg_tianxia", icon: "📜", name: "Caligrafia e Clássicos Celestes", minAge: 12, maxAge: 99, jobs: ["any"], attr: "intelecto", diff: 55, cost: 8, exclusiveKingdom: "tianxia", desc: "Copiar tratados canônicos com pincel e tinta nobre em busca de harmonia mental (+Intelecto)." },
+    { id: "act_reg_yamato", icon: "🍵", name: "Cerimônia do Chá e Meditação", minAge: 12, maxAge: 99, jobs: ["any"], attr: "fe", diff: 52, cost: 5, exclusiveKingdom: "yamato", desc: "Buscar serenidade de espírito e compostura perante o caminho da espada (+Fé)." },
+    { id: "act_reg_suvarnabhumi", icon: "🐘", name: "Cortejo dos Elefantes Sagrados", minAge: 14, maxAge: 99, jobs: ["any"], attr: "forca", diff: 58, cost: 10, exclusiveKingdom: "suvarnabhumi", desc: "Ajudar a guiar paquidermes ornados em cortejos de templos ribeirinhos (+Força)." },
+    { id: "act_reg_parsa", icon: "🏇", name: "Arquearia a Galope nos Planaltos", minAge: 14, maxAge: 99, jobs: ["any"], attr: "destreza", diff: 60, cost: 12, exclusiveKingdom: "parsa", desc: "Disparar flechas em pleno galope pelas estepes e colinas secas (+Destreza)." },
+    { id: "act_reg_al_zahra", icon: "🔭", name: "Sessão na Casa da Sabedoria", minAge: 14, maxAge: 99, jobs: ["any"], attr: "intelecto", diff: 56, cost: 6, exclusiveKingdom: "al_zahra", desc: "Participar de debates matemáticos e médicos sob os arcos mouriscos (+Intelecto)." },
+    { id: "act_reg_valois", icon: "🍷", name: "Degustação nas Adegas Ducais", minAge: 16, maxAge: 99, jobs: ["any"], attr: "carisma", diff: 50, cost: 15, exclusiveKingdom: "valois", desc: "Apreciar colheitas nobres e aprofundar laços com a fidalguia da corte (+Carisma)." },
+    { id: "act_reg_albion", icon: "🎯", name: "Tiro com Arco Longo nas Colinas", minAge: 12, maxAge: 99, jobs: ["any"], attr: "destreza", diff: 55, cost: 6, exclusiveKingdom: "albion", desc: "Praticar disparos à grande distância com arcos de teixo nas campinas (+Destreza)." },
+    { id: "act_reg_severnaya", icon: "❄️", name: "Caçada de Inverno na Taiga", minAge: 14, maxAge: 99, jobs: ["any"], attr: "saude", diff: 62, cost: 10, exclusiveKingdom: "severnaya", desc: "Rastrear alces e feras nas florestas boreais sob frio cortante (+Saúde)." },
+    { id: "act_reg_teutonia", icon: "⛏️", name: "Prospecção nas Galerias de Prata", minAge: 15, maxAge: 99, jobs: ["any"], attr: "forca", diff: 58, cost: 8, exclusiveKingdom: "teutonia", desc: "Adentrar as minas alpinas em busca de veios ricos de minério (+Força)." },
+    { id: "act_reg_serenissima", icon: "🎭", name: "Sarau de Máscaras nos Canais", minAge: 15, maxAge: 99, jobs: ["any"], attr: "beleza", diff: 54, cost: 20, exclusiveKingdom: "serenissima", desc: "Cruzar a laguna em trajes finos e máscaras venezianas entre nobres e mecenas (+Beleza)." }
   ],
 
-  items: [
-    { id: "adaga_ferro", name: "🗡️ Adaga de Ferro Temperado", type: "arma", price: 25, upkeep: 0, bonus: { destreza: 8 }, desc: "Aumenta a Destreza em confrontos curtos." },
-    { id: "espada_longa", name: "⚔️ Espada Longa de Aço", type: "arma", price: 85, upkeep: 2, bonus: { forca: 15 }, desc: "Aumenta consideravelmente a Força marcial." },
-    { id: "cota_malha", name: "🛡️ Cota de Malha Rebitada", type: "armadura", price: 120, upkeep: 3, bonus: { saude: 15 }, desc: "Proteção robusta contra lâminas." },
-    { id: "cavalo_guerra", name: "🐎 Destriero de Guerra", type: "montaria", price: 180, upkeep: 8, bonus: { forca: 10, carisma: 10 }, desc: "Impõe respeito e poder de carga. Essencial para cavaleiros." },
-    { id: "espelho_veneziano", name: "🪞 Espelho de Cristal & Unguentos Reais", type: "item", price: 70, upkeep: 1, bonus: { beleza: 14, carisma: 5 }, desc: "Instrumentos de toucador e perfumes orientais que realçam sua Beleza (+14) e Carisma (+5)." },
-    { id: "grimorio_latim", name: "📕 Códice Iluminado Antigo", type: "item", price: 95, upkeep: 0, bonus: { intelecto: 15 }, desc: "Eleva o Intelecto nos estudos." },
-    { id: "reliquia_santa", name: "⚱️ Relicário de Osso Sagrado", type: "item", price: 110, upkeep: 0, bonus: { fe: 15, sorte: 8 }, desc: "Abençoa a Fé e a Sorte do portador." },
-    { id: "oficina_artesao", name: "🏚️ Oficina no Burgo", type: "propriedade", price: 160, income: 22, upkeep: 4, bonus: {}, desc: "Gera +22 Ouro/ano (Manutenção: 4)." },
-    { id: "taverna_porto", name: "🍺 Estalagem da Encruzilhada", type: "propriedade", price: 260, income: 38, upkeep: 8, bonus: { carisma: 8 }, desc: "Gera +38 Ouro/ano (Manutenção: 8)." },
-    { id: "terra_aravel", name: "🌾 Alódio de Terras Aráveis", type: "propriedade", price: 350, income: 52, upkeep: 10, bonus: {}, desc: "Gera +52 Ouro/ano (Manutenção: 10)." },
-    { id: "solar_nobre", name: "🏰 Solar Fortificado com Guarda", type: "propriedade", price: 750, income: 115, upkeep: 25, bonus: { carisma: 15, saude: 10 }, desc: "Gera +115 Ouro/ano (Manutenção: 25)." }
-  ],
+  items: [],
 
   epochEvents: [
     { id: "peste_negra", name: "A Grande Pestilência", desc: "Bubões negros e febre de sangue varrem cidades e campos. Os sinos dobram sem cessar.", effect: "plague" },

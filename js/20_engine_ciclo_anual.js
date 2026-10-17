@@ -7,7 +7,11 @@ Object.assign(Engine, {
       UI.renderEventModal();
       return;
     }
-    if (STATE.pendingChild) {
+    if (STATE.pendingChild || (STATE.pendingBirthQueue && STATE.pendingBirthQueue.length > 0)) {
+      if (!STATE.pendingChild && STATE.pendingBirthQueue.length > 0) {
+        STATE.pendingChild = STATE.pendingBirthQueue.shift();
+      }
+      if (this.ensureLegitimacyUI) this.ensureLegitimacyUI();
       UI.openChildNameModal();
       return;
     }
@@ -289,21 +293,39 @@ Object.assign(Engine, {
       this.addLog("Os rumores de suas trapaças passadas continuam a persegui-lo (-1 Reputação).", "bad");
     }
 
-    if (STATE.pregnancy) {
+    if (this.processAnnualLoans) this.processAnnualLoans();
+    if (this.degradeItemsAnnually) this.degradeItemsAnnually();
+    if (this.recalculateSocialClassByWealth) this.recalculateSocialClassByWealth();
+    if (this.checkAchievements) this.checkAchievements();
+
+    if ((Array.isArray(STATE.pregnancies) && STATE.pregnancies.length > 0) || STATE.pregnancy) {
       this.resolveChildbirth();
-    } else {
-      const spouse = STATE.npcs.find(n => n.role === "Cônjuge" && n.alive);
-      if (spouse) {
-        const isOppositeSex = (STATE.sex === "M" && spouse.sex === "F") || (STATE.sex === "F" && spouse.sex === "M");
-        const canConceive = isOppositeSex && STATE.age >= 16 && STATE.age < 50 && spouse.age >= 16 && spouse.age < 46;
-        if (canConceive && Math.random() < 0.08) {
-          STATE.pregnancy = { partnerId: spouse.id, partnerName: spouse.name, isBastard: false };
-          const msgSpont = `Na convivência doce do matrimônio com ${spouse.name}, uma bênção inesperada floresceu: ${STATE.sex === "F" ? "você descobriu estar grávida" : `${spouse.name} anunciou estar esperando um filho seu`}! O parto é aguardado para o próximo ano.`;
-          this.addLog(`🤰 GRAVIDEZ ESPONTÂNEA: ${msgSpont}`, "epoch");
-          UI.notify("🤰 Gravidez Espontânea no Lar!", msgSpont, "bells");
-        }
+    }
+
+    // Gestações espontâneas anuais (Cônjuge e Amantes ativas)
+    const spouse = STATE.npcs.find(n => n.role === "Cônjuge" && n.alive);
+    if (spouse && Math.random() < 0.08) {
+      const pregSpouse = this.tryConceiveWithPartner(spouse, false);
+      if (pregSpouse) {
+        const msgSpont = `Na convivência doce do matrimônio com ${spouse.name}, uma bênção inesperada floresceu: ${STATE.sex === "F" ? "você descobriu estar grávida" : `${spouse.name} anunciou estar esperando um filho seu`}! O parto é aguardado para o próximo ano.`;
+        this.addLog(`🤰 GRAVIDEZ ESPONTÂNEA: ${msgSpont}`, "epoch");
+        UI.notify("🤰 Gravidez Espontânea no Lar!", msgSpont, "bells");
       }
     }
+
+    const lovers = STATE.npcs.filter(n => (n.role === "Amor" || n.role === "Amante") && n.alive && n.affinity >= 25);
+    lovers.forEach(lover => {
+      if (Math.random() < 0.06) {
+        const pregLover = this.tryConceiveWithPartner(lover, true);
+        if (pregLover) {
+          const lMsg = STATE.sex === "F"
+            ? `Um romance ardente com ${lover.name} deixou frutos: você percebe os sinais inequívocos de uma gravidez fora dos votos sagrados!`
+            : `Um mensageiro discreto traz notícias de ${lover.name}: ela está esperando um filho do seu romance secreto!`;
+          this.addLog(`🔥🤰 GRAVIDEZ SECRETA: ${lMsg}`, "epoch");
+          UI.notify("🔥 Sinais de Gestação Secreta", lMsg, "bells");
+        }
+      }
+    });
 
     this.updateNPCs();
 

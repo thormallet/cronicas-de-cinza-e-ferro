@@ -114,6 +114,11 @@ Object.assign(Engine, {
       this.addLog(`⚒️ NOVO OFÍCIO: Você ingressou no cargo inicial de **${startRank}** na carreira de **${j.name}**. Seu desempenho anual determinará suas promoções ou rebaixamentos!`, "good");
     }
 
+    if (j.exclusiveKingdom) {
+      if (Storage.unlockAchievement) Storage.unlockAchievement("ach_oficio_regional");
+      if (this.checkAchievements) this.checkAchievements();
+    }
+
     this.refreshVisibleJobActivities();
     this.ensureColleagues(true);
     Storage.saveToSlot(CONFIG.activeSlot);
