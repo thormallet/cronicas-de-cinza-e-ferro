@@ -1,5 +1,5 @@
 /* ============================================================================
-   [CCF v4.2] — 02_layout.css
+   [CCF v4.3] — 02_layout.css
    Layout Global: Mobile-First, App-Shell Centralizado, Cards Nobres & Telas
    ============================================================================ */
 
@@ -37,7 +37,7 @@
   border: 1.5px solid var(--border-gold);
   border-radius: 14px;
   padding: 1rem 1.05rem;
-  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 225, 150, 0.12);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 225, 150, 0.15);
   margin-bottom: 0.85rem;
   position: relative;
   width: 100%;
@@ -59,6 +59,8 @@ h2, h3, h4 {
   text-transform: uppercase;
   font-size: 0.98rem;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  text-wrap: balance;
+  line-height: 1.15;
 }
 
 h2 { font-size: 1.25rem; }
@@ -140,18 +142,22 @@ input {
   background: var(--panel-inner);
   padding: 1rem;
   border: 1.5px solid var(--border);
-  border-radius: 12px;
+  border-radius: 10px;
   text-align: left;
   gap: 0.75rem;
-  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 225, 150, 0.12);
   width: 100%;
   box-sizing: border-box;
 }
 
 .slot-item:hover {
   border-color: var(--gold-bright);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.75), 0 0 10px rgba(201, 156, 51, 0.2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.75), 0 0 10px rgba(201, 156, 51, 0.2), inset 0 1px 0 rgba(255, 225, 150, 0.15);
+}
+
+.slot-item:active {
+  transform: translateY(1px) scale(0.985);
 }
 
 .slot-item > div:last-child {
@@ -379,6 +385,7 @@ input {
   position: relative;
   width: 72px;
   height: 72px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -388,8 +395,8 @@ input {
   transition: transform 0.22s ease;
 }
 
-.avatar-portrait.lg { width: 88px; height: 88px; }
-.avatar-portrait.sm { width: 56px; height: 56px; }
+.avatar-portrait.lg { width: 88px; height: 88px; aspect-ratio: 1 / 1; flex-shrink: 0; }
+.avatar-portrait.sm { width: 56px; height: 56px; aspect-ratio: 1 / 1; flex-shrink: 0; }
 
 .avatar-portrait:hover {
   transform: scale(1.05);
@@ -398,6 +405,8 @@ input {
 .avatar-portrait svg.portrait-svg {
   width: 94%;
   height: 94%;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
   border-radius: 50%;
   filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.75));
 }
@@ -428,6 +437,8 @@ input {
   right: -3px;
   width: 26px;
   height: 26px;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
   border-radius: 50%;
   background: radial-gradient(circle, #521622, #240b10);
   border: 1.5px solid var(--gold-bright);
@@ -445,6 +456,7 @@ input {
   justify-content: center;
   width: 25px;
   height: 25px;
+  aspect-ratio: 1 / 1;
   border-radius: 50%;
   border: 1.5px solid var(--border-gold);
   background: radial-gradient(circle, #421822, #1b0a0e);

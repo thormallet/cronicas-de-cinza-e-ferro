@@ -1,5 +1,5 @@
 /* ============================================================================
-   [CCF v4.2] — 03_abas_cronica.css
+   [CCF v4.3] — 03_abas_cronica.css
    Feed Central: Linha do Tempo da Crônica & Cartões de Ação Ergonômicos
    ============================================================================ */
 
@@ -49,7 +49,8 @@
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.6px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 235, 175, 0.35);
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 235, 175, 0.45);
 }
 
 .log-year-head .log-dot {
@@ -68,7 +69,9 @@
   font-size: 0.98rem;
   line-height: 1.55;
   color: var(--text);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 235, 175, 0.08);
+  text-wrap: pretty;
+  max-width: 72ch;
   animation: fadeSlideUp 0.22s ease;
   transition: border-color 0.15s ease;
 }
@@ -155,10 +158,10 @@
   background: linear-gradient(180deg, var(--panel-card) 0%, var(--panel-inner) 100%);
   color: var(--text);
   text-shadow: none;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 225, 150, 0.08);
   font-family: var(--font-body);
   font-size: 0.96rem;
-  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.12s ease, background 0.15s ease, border-color 0.15s ease;
   box-sizing: border-box;
 }
 
@@ -193,7 +196,9 @@
 }
 
 .action-btn:active:not(:disabled) {
-  transform: scale(0.98);
+  transform: translateY(1px) scale(0.975);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  transition-duration: 0.08s;
 }
 
 .action-btn.primary {
@@ -217,10 +222,16 @@
 .act-icon {
   font-size: 1.85rem;
   line-height: 1;
-  min-width: 42px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
-  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1);
   flex-shrink: 0;
 }
 

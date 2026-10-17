@@ -1,23 +1,47 @@
 ---
 name: cronicas-arquitetura
-description: Mapa de arquitetura, regras de escopo global e convenções de Crônicas de Cinza e Ferro. Obrigatório antes de editar qualquer arquivo JS, CSS ou HTML.
+description: Mapa de arquitetura, regras de escopo global, contrato estético DESIGN.md e convenções híbridas (UI-Skills + Vanilla) de Crônicas de Cinza e Ferro. Obrigatório antes de editar qualquer arquivo JS, CSS ou HTML.
 ---
 # Arquitetura Crônicas de Cinza e Ferro
 
-## Regras Inegociáveis para Edição Direta de Arquivos
-1. **PROIBIDO APAGAR LÓGICA EXISTENTE:** Ao editar um arquivo diretamente, use ferramentas de substituição cirúrgica (diff/replace). NUNCA reescreva um arquivo inteiro omitindo funções antigas.
-2. **ESCOPO GLOBAL CLÁSSICO:** Sem `import` ou `export`. Tudo usa `Object.assign(Alvo, { ... })`.
-3. **LIMITE DE 250 LINHAS:** Nenhum arquivo JS novo pode passar de ~250 linhas.
+## Regras Inegociáveis para Edição Direta de Arquivos (Motor & Estado)
+1. **PROIBIDO APAGAR LÓGICA EXISTENTE:** Ao editar um arquivo diretamente, use ferramentas de substituição cirúrgica (diff/replace). NUNCA reescreva um arquivo inteiro omitindo funções antigas ou deixando comentários `// ... resto do código`.
+2. **ESCOPO GLOBAL CLÁSSICO (ZERO-BUILD):** Sem `import` ou `export`, sem JSX/React e sem classes utilitárias de Tailwind. Tudo usa `Object.assign(Alvo, { ... })` e roda direto no navegador via `index.html`.
+3. **LIMITE DE 250 LINHAS:** Nenhum arquivo JS novo pode passar de ~250 linhas. Se crescer além disso, divida em submódulos registrados no `index.html` antes de `js/36_inicializacao.js`.
 4. **RETROCOMPATIBILIDADE DE SAVE:** Todo campo novo em `STATE` exige inicialização em `Creator.startGame()` (`js/16_criador.js`) E função `Engine.ensure...()` para não quebrar saves antigos.
 
+## Regras Inegociáveis de Engenharia de Interface (Compatibilização UI-Skills)
+5. **CONTRATO ESTÉTICO & FACHADA SAGRADA (`DESIGN.md` & `css/01_base.css`):**
+   - A essência visual do jogo é **Dark Medieval BitLife Premium** (Obsidiana, Couro Envelhecido, Pergaminho Nobre, Ouro Real & Carmesim, fontes `'Cinzel'` e `'Eczar'`).
+   - Use exclusivamente as variáveis CSS (`var(--...)`) declaradas em `css/01_base.css` e documentadas em `DESIGN.md`.
+   - **Exceção Canônica ao `baseline-ui`:** Texturas e gradientes medievais de couro, madeira, ouro forjado e carmesim (`linear-gradient`/`radial-gradient` do tema) e sombras multicamadas (`--shadow-sm/md/lg/gold`) são parte da identidade oficial do jogo. Em contrapartida, é estritamente proibido o "AI Slop" moderno (gradientes neon/roxos sci-fi, cores fora dos tokens ou brilhos excessivos em ações secundárias).
+6. **PERFORMANCE DE MOVIMENTO 60FPS (`fixing-motion-performance`):**
+   - **Proibido animar propriedades de layout** (`width`, `height`, `top`, `left`, `margin`, `padding`) que causem *layout thrashing*.
+   - Anime exclusivamente propriedades de compositor GPU (`transform`, `opacity`).
+   - Use curvas `ease-out` / `cubic-bezier(0.22, 1, 0.36, 1)` nas entradas (partindo de `scale(0.92~0.96)`, nunca `scale(0)`), saídas sutis (`120ms–180ms`), e feedback tátil `:active` (`transform: translateY(1px) scale(0.975)` em `<= 180ms`).
+   - Evite animar `backdrop-filter: blur()` frame a frame e respeite `@media (prefers-reduced-motion: reduce)`.
+   - Mantenha trocas de abas frequentes instantâneas ou ultra-rápidas.
+7. **TIPOGRAFIA DE DADOS & GEOMETRIA (`cronicas-ui-craft`):**
+   - **Alinhamento Numérico:** Todo número dinâmico (ouro, idade, ano, atributos, HP, vigor, preços, porcentagens) DEVE usar `font-variant-numeric: tabular-nums` para evitar saltos horizontais.
+   - **Balanço e Leitura:** Títulos (`h1`–`h4`) usam `text-wrap: balance` e `line-height: 1.15`; textos narrativos e crônicas usam `text-wrap: pretty` e medida entre `60ch` e `75ch`.
+   - **Raios Concêntricos:** Elementos aninhados com borda/fundo obedecem à fórmula `inner_radius = outer_radius - padding`.
+8. **ACESSIBILIDADE & ERGONOMIA TÁTIL (`fixing-accessibility`):**
+   - **Alvos de 44px:** Todo botão, `.icon-btn`, `.chip-btn`, `select` ou `input` deve ter área mínima de toque de `44x44px` (`min-height: 44px`) e respiro de `8px–12px` entre controles adjacentes.
+   - **Semântica e Foco:** Botões apenas com ícone/emoji exigem `aria-label` descritivo; SVGs decorativos exigem `aria-hidden="true"`; estados de foco `:focus-visible` exibem anel dourado (`var(--gold-bright)`).
+   - **Status Nunca Só por Cor:** Sempre parear cores de estado (`--good`, `--bad`, `--gold`) com ícone, sinal (`+`/`-`) ou texto.
+   - **Viewport & Safe Areas:** Usar `100dvh` (com fallback `100vh`) e `env(safe-area-inset-*)` em barras fixas, modais e bottom sheets.
+
 ## Mapa de Arquivos Atualizado
+- **Design System & Regras:**
+  - `DESIGN.md` (Contrato visual, tokens, tipografia e exceções canônicas medievais)
+  - `AGENTS.md` / `GEMINI.md` (Diretrizes de orquestração do Mestre de Obras)
 - **CSS:**
-  - `css/01_base.css` (variáveis, resets, botões)
-  - `css/02_layout.css` (estrutura base)
+  - `css/01_base.css` (variáveis `:root`, resets, tipografia `tabular-nums`/`balance`, botões, `@keyframes` GPU)
+  - `css/02_layout.css` (estrutura base, `.screen`, `.card`, ergonomia 44px)
   - `css/03_abas_cronica.css` (log narrativo e abas)
-  - `css/04_cards_modais.css` (modais e cards)
-  - `css/05_hud_bitlife.css` (HUD estilo BitLife e barras)
-  - `css/06_sheets.css` (bottom sheets / gavetas)
+  - `css/04_cards_modais.css` (modais, `.person-card`, `.npc-card`, `.badge`)
+  - `css/05_hud_bitlife.css` (HUD estilo BitLife, `#app-shell` `100dvh`, barras e dock)
+  - `css/06_sheets.css` (bottom sheets / gavetas deslizantes via `transform`)
   - `css/07_desktop.css` (responsividade telas grandes)
 - **Dados e Eventos (`DATA`):**
   - `js/01_retrato_dados.js` e `js/02_retrato_render.js` (SVG procedural)

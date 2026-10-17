@@ -7,7 +7,8 @@ O formato baseia-se nas diretrizes do [Keep a Changelog](https://keepachangelog.
 ---
 
 ## Sumário
-- [4.2.0 — Edição Feudos & Dinastias](#420--2026-10-17) *(Destaque / Atual)*
+- [4.3.0 — Overhaul Visual & Engenharia UI-Skills](#430--2026-10-17) *(Destaque / Atual)*
+- [4.2.0 — Edição Feudos & Dinastias](#420--2026-10-17)
 - [3.5.1 — Patch de Rigor Medieval, Atrofia & Desgaste Vital](#351--2026-10-16)
 - [3.5.0 — Quick-Time Events, Moralidade & Dilemas Feudais](#350--2026-10-16)
 - [3.4.1 — 2026-10-16](#341--2026-10-16)
@@ -21,6 +22,48 @@ O formato baseia-se nas diretrizes do [Keep a Changelog](https://keepachangelog.
 - [3.0.0 — O Grande Salto Modular & Retratos Procedurais](#300--o-grande-salto-modular--retratos-procedurais)
 - [2.0.0 — Reinos Históricos & Dinastias](#200--reinos-históricos--dinastias)
 - [1.0.0 — Fundação de Cinza e Ferro](#100--fundação-de-cinza-e-ferro)
+
+---
+
+## [4.3.0] — 2026-10-17
+### Overhaul Visual Profundo & Engenharia UI-Skills
+
+> **Destaque:** Esta versão consolida o visual de *Crônicas de Cinza e Ferro* nos mais altos padrões mundiais de engenharia de interface e design de games narrativos. Traz uma reforma visual e ergonômica abrangente, fundamentada no Design System Dark Medieval BitLife Premium, com rigor de tipografia suíço-medieval, alinhamento tabular perfeito, animações cinematográficas estritamente em 60 FPS por aceleração de GPU, toque responsivo calibrado para mobile-first (alvos táteis ≥ 44–48px), o icônico Selo Régio central magnético e total conformidade de acessibilidade (WCAG AA e preferências de movimento reduzido).
+
+#### 1. Balanço Tipográfico & Rigor de Alinhamento Numérico
+- **Dados Tabulares Invariantes (`font-variant-numeric: tabular-nums`):**
+  - Implementação sistemática em todos os números dinâmicos do jogo: tesouro em ouro (`#st-gold`), idade (`#st-age`), ano corrente (`#st-year`), dívidas (`#st-debt`), rendimentos (`#st-income`), honra (`#st-honor`), reputação régia (`#st-sheet-rep`), barras de status vitais (`.sbar-val`), pílulas de atributos e medalhões de ano na Crônica (`.log-year-head`).
+  - Elimina completamente tremores e oscilações visuais de largura durante transições de valores, contagens e avanços de ciclo.
+- **Balanço Tipográfico de Títulos (`text-wrap: balance`):**
+  - Aplicação de `text-wrap: balance` e `line-height: 1.15` em todos os cabeçalhos (`h1, h2, h3, h4`), prevenindo quebras de linha irregulares e palavras órfãs em telas mobile e desktop.
+- **Leitura Fluida Narrativa (`text-wrap: pretty`):**
+  - Aplicação de `text-wrap: pretty` com controle de largura máxima (`max-width: 65ch` a `72ch`) nos parágrafos narrativos, modais de eventos e entradas da crônica histórica, garantindo legibilidade editorial premium.
+
+#### 2. Performance de Animações 60 FPS por Aceleração GPU
+- **Transições Exclusivas de GPU (`transform` e `opacity`):**
+  - Eliminação de transições em propriedades custosas que causam reflow/relayout do DOM (como `top`, `bottom`, `width`, `height`, `all`).
+  - Transições de cards, botões e painéis migradas para `transform` acelerado por hardware e curvas cúbicas refinadas (`cubic-bezier(0.22, 1, 0.36, 1)` e `cubic-bezier(0.2, 0, 0.2, 1)`).
+- **Bottom Sheets Deslizantes Ultrarrápidas (280ms):**
+  - Painéis inferiores com transição fluida `translateY(105%)` para `translateY(0)` em 0.28s, com fechamento limpo via visibilidade desacoplada e chanfro interno iluminado no topo.
+
+#### 3. O Grande Selo Régio Magnético & Feedback Tátil
+- **Selo Régio Central como Coração Tátil da Interface:**
+  - Botão de avanço de ano com formato circular régio, moldura de ouro forjado e pulso luminoso solene (`sealGlow`).
+  - Feedback tátil responsivo imediato: expansão no hover (`scale(1.05)`) e resposta física com compressão e rebaixamento mecânico no active (`transform: translateY(2px) scale(0.94); box-shadow: 0 4px 10px rgba(0,0,0,0.8);` em ≤ 150ms).
+- **Cards e Ações com Resposta Física Mecânica:**
+  - Botões, `.action-btn`, `.slot-item` e `.person-card` receberam iluminação superior chanfrada (`inset 0 1px 0 rgba(...)`) e retorno háptico/mecânico consistente no clique (`translateY(1px) scale(0.975)` a `0.985`).
+
+#### 4. Ergonomia Mobile-First & Prevenção de CLS
+- **Alvos de Toque Confortáveis (Área Mínima ≥ 44px × 44px):**
+  - Todos os ícones interativos (`.act-icon`, `.icon-btn`, `.nav-btn`) e botões de comando possuem dimensões de toque padronizadas de 44px a 48px, prevenindo toques acidentais em smartphones.
+- **Estabilidade de Layout Cumulativo (CLS Zero):**
+  - Retratos procedurais (`.avatar-portrait`, `.portrait-svg`), anéis de estamento e brasões dinásticos (`.avatar-crest-Pip`, `.fam-crest`) ganharam trava de proporção explícita `aspect-ratio: 1 / 1` e `flex-shrink: 0`, eliminando qualquer salto visual durante renderização assíncrona ou carregamento.
+
+#### 5. Acessibilidade & Movimento Reduzido (WCAG AA)
+- **Foco Visível Acessível (`:focus-visible`):**
+  - Contorno de foco de alto contraste em ouro real (`outline: 2px solid var(--gold-bright) !important; outline-offset: 2px !important;`) para navegação por teclado e tecnologias assistivas em todos os elementos focáveis.
+- **Suporte Nativo a `@media (prefers-reduced-motion: reduce)`:**
+  - Desativação instantânea de durações de transição e animações contínuas para usuários com sensibilidade vestibular, preservando a usabilidade plena sem transições abruptas.
 
 ---
 

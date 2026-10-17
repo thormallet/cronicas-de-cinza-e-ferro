@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 4.2 (Edição Feudos & Dinastias)
+Crônicas de Cinza e Ferro — Versão 4.3 (Overhaul Visual & Engenharia UI-Skills)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,42 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 4.3 — OVERHAUL VISUAL PROFUNDO & ENGENHARIA UI-SKILLS:
+======================================================================
+FRENTE 1 — BALANÇO TIPOGRÁFICO & DADOS TABULARES INVARIANTES:
+- Dados Tabulares (font-variant-numeric: tabular-nums):
+  Padronização em todos os campos numéricos dinâmicos (ouro, dívidas, idade, anos, rendimentos, status vitais, pílulas de atributos e medalhões da crônica), eliminando tremores ou oscilações de largura em contagens e transições.
+- Balanço de Títulos (text-wrap: balance):
+  Equilíbrio tipográfico e harmonia visual em h1, h2, h3 e h4 com line-height calibrado a 1.15 em telas móveis e desktop.
+- Fluidez Editorial (text-wrap: pretty):
+  Parágrafos narrativos, modais de eventos e crônica ajustados com text-wrap: pretty e limites ergonômicos de 65ch a 72ch.
+
+FRENTE 2 — PERFORMANCE PURA DE 60 FPS EM ANIMAÇÕES GPU:
+- Transições Aceleradas por Hardware:
+  Eliminação de repaints e reflows custosos causados por transição de 'all' ou propriedades geométricas.
+  Foco exclusivo em 'transform' e 'opacity' com curvas cúbicas cinematográficas (cubic-bezier(0.22, 1, 0.36, 1)).
+- Bottom Sheets Deslizantes Rápidos (280ms):
+  Painéis deslizantes inferiores com transição translateY pura em 0.28s e chanfro superior iluminado.
+
+FRENTE 3 — O GRANDE SELO RÉGIO MAGNÉTICO & FEEDBACK FÍSICO:
+- Selo Régio Central (Avanço de Ano):
+  Design magnético com pulso de luz heráldico (sealGlow), expansão no hover (scale(1.05)) e compressão física tátil no active (translateY(2px) scale(0.94)) em menos de 150ms.
+- Cartões com Chanfro e Retorno Mecânico:
+  Cards de ação, pessoas e saves com relevo chanfrado (inset 0 1px 0 rgba(...)) e resposta mecânica tátil no clique.
+
+FRENTE 4 — ERGONOMIA MOBILE-FIRST & PREVENÇÃO DE CLS:
+- Alvos de Toque Confortáveis (≥ 44px × 44px):
+  Padronização de todos os ícones interativos e botões de comando para ergonomia de toque precisa sem cliques falsos.
+- Estabilidade Visual Cumulativa (CLS Zero):
+  Trava de proporção aspect-ratio: 1 / 1 e flex-shrink: 0 em retratos procedurais, aros de estamento e brasões.
+
+FRENTE 5 — ACESSIBILIDADE RIGOROSA (WCAG AA & REDUCED MOTION):
+- Foco Visível de Alto Contraste (:focus-visible):
+  Contorno em ouro real de 2px com offset de 2px para navegação nítida por teclado e leitores de tela.
+- Respeito a @media (prefers-reduced-motion: reduce):
+  Desativação suave de animações para usuários com sensibilidade a movimento vestibular.
 ======================================================================
 
 VERSÃO 4.2 — EDIÇÃO FEUDOS & DINASTIAS (SIMULAÇÃO SOCIAL, NOBREZA & DESIGN PREMIUM):

@@ -1,5 +1,5 @@
 /* ============================================================================
-   [CCF v4.2] — 01_base.css
+   [CCF v4.3] — 01_base.css
    Estilo Visual: Dark Medieval BitLife Premium
    Paleta: Obsidiana, Couro Envelhecido, Pergaminho Nobre, Ouro Real & Carmesim
    ============================================================================ */
@@ -73,6 +73,7 @@
   --shadow-lg: 0 14px 40px rgba(0, 0, 0, 0.92);
   --shadow-gold: 0 0 16px rgba(201, 156, 51, 0.28);
   --shadow: rgba(0, 0, 0, 0.88);
+  --shadow-inset-top: inset 0 1px 0 rgba(229, 183, 70, 0.18);
 }
 
 [data-theme="light"] {
@@ -116,6 +117,20 @@ body {
     radial-gradient(ellipse at 50% 85%, rgba(139, 38, 38, 0.08) 0%, transparent 60%),
     repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0px, rgba(0, 0, 0, 0.2) 2px, transparent 2px, transparent 48px),
     repeating-linear-gradient(0deg, rgba(255, 215, 120, 0.015) 0px, rgba(255, 215, 120, 0.015) 1px, transparent 1px, transparent 8px);
+}
+
+/* BALANÇO TIPOGRÁFICO & DADOS TABULARES [CCF v4.3] */
+h1, h2, h3, h4 {
+  text-wrap: balance;
+  line-height: 1.15;
+}
+
+p, .custom-dialog p, .log-entry {
+  text-wrap: pretty;
+}
+
+.tabular-nums, .hud-gold strong, .hud-meta strong, .sbar-val, .stat-pill strong, .badge, .log-year-head, #st-age, #st-year, #st-gold, #st-debt, #st-income, #st-honor, #st-sheet-honor, #st-sheet-rep, .perf-bar-row span:last-child {
+  font-variant-numeric: tabular-nums;
 }
 
 /* SCROLLBAR REFINADA */
@@ -208,7 +223,7 @@ button, select, input {
   padding: 0.5rem 0.95rem;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.12s ease, background 0.15s ease, border-color 0.15s ease;
   box-shadow: 0 3px 8px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255, 230, 170, 0.2);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
   display: inline-flex;
@@ -228,6 +243,7 @@ button:hover:not(:disabled) {
 button:active:not(:disabled) {
   transform: translateY(1px) scale(0.975);
   box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  transition-duration: 0.08s;
 }
 
 button:disabled {
@@ -260,12 +276,22 @@ select, input {
   text-shadow: none;
   user-select: text;
   box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 select:focus, input:focus {
   outline: none;
   border-color: var(--gold-bright);
   box-shadow: 0 0 10px var(--gold-glow), inset 0 2px 5px rgba(0,0,0,0.5);
+}
+
+/* ACESSIBILIDADE :FOCUS-VISIBLE [CCF v4.3] */
+button:focus-visible,
+select:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--gold-bright) !important;
+  outline-offset: 2px !important;
 }
 
 /* CABEÇALHO GLOBAL (MENU / CRIAÇÃO / MORTE) */
@@ -352,3 +378,14 @@ body.in-game #app-header {
   border-radius: 999px;
   white-space: nowrap;
 }
+
+/* ACESSIBILIDADE DE MOVIMENTO REDUZIDO [CCF v4.3] */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

@@ -1,5 +1,5 @@
 /* ============================================================================
-   [CCF v4.2] — 05_hud_bitlife.css
+   [CCF v4.3] — 05_hud_bitlife.css
    HUD Superior BitLife Medieval, Barras de Status, Dock & Selo Régio
    ============================================================================ */
 
@@ -66,6 +66,7 @@
   border-radius: 50%;
   width: 54px;
   height: 54px;
+  aspect-ratio: 1 / 1;
   flex-shrink: 0;
   cursor: pointer;
   transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
@@ -124,6 +125,7 @@
 
 .hud-meta strong {
   color: var(--gold-bright);
+  font-variant-numeric: tabular-nums;
 }
 
 .hud-job {
@@ -147,6 +149,7 @@
   color: var(--gold-radiant);
   text-shadow: 0 0 12px rgba(229, 183, 70, 0.5);
   line-height: 1.15;
+  font-variant-numeric: tabular-nums;
 }
 
 .hud-gold small {
@@ -421,7 +424,7 @@
   color: #fff5dd;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.85), inset 0 2px 4px rgba(255, 255, 255, 0.35), inset 0 -5px 10px rgba(0, 0, 0, 0.6);
-  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1), filter 0.15s ease;
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0.2, 1), filter 0.15s ease, box-shadow 0.15s ease;
   cursor: pointer;
 }
 
@@ -449,13 +452,14 @@
 
 .seal-btn:hover:not(:disabled) {
   background: radial-gradient(circle at 35% 28%, #ea4c3a 0%, #b52329 45%, #630f16 100%);
-  transform: scale(1.06);
+  transform: scale(1.05);
   color: #ffffff;
 }
 
 .seal-btn:active:not(:disabled) {
-  transform: scale(0.92);
+  transform: translateY(2px) scale(0.94);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8), inset 0 3px 6px rgba(0, 0, 0, 0.8);
+  transition-duration: 0.08s;
 }
 
 .seal-btn:disabled {

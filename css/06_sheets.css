@@ -1,5 +1,5 @@
 /* ============================================================================
-   [CCF v4.2] — 06_sheets.css
+   [CCF v4.3] — 06_sheets.css
    Bottom Sheets Deslizantes, Chips de Sub-abas & Painéis de Gestão
    ============================================================================ */
 
@@ -34,10 +34,10 @@ body.sheet-open .sheet-backdrop {
   background: linear-gradient(180deg, #17110c 0%, #0e0a07 100%);
   border-top: 3px solid var(--border-gold);
   border-radius: 20px 20px 0 0;
-  box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 230, 160, 0.25);
   transform: translateY(105%);
   visibility: hidden;
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.3s;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.28s;
   box-sizing: border-box;
 }
 
@@ -49,7 +49,7 @@ body.sheet-open .sheet-backdrop {
 .sheet.active {
   transform: translateY(0);
   visibility: visible;
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
 }
 
 /* CABEÇALHO COM PUXADOR TÁTIL */

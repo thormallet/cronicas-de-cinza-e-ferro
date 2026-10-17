@@ -1,5 +1,5 @@
 /* ============================================================================
-   [CCF v4.2] — 04_cards_modais.css
+   [CCF v4.3] — 04_cards_modais.css
    Modais Flutuantes, Cartões de Audiência, Diálogos & Quick-Time Events
    ============================================================================ */
 
@@ -19,20 +19,22 @@
   gap: 0.85rem;
   align-items: center;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 225, 150, 0.12);
   position: relative;
   box-sizing: border-box;
 }
 
 .person-card:hover {
   border-color: var(--gold-bright);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.75), 0 0 12px rgba(201, 156, 51, 0.3);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.75), 0 0 12px rgba(201, 156, 51, 0.3), inset 0 1px 0 rgba(255, 225, 150, 0.15);
   transform: translateY(-1.5px);
 }
 
 .person-card:active {
-  transform: scale(0.985);
+  transform: translateY(1px) scale(0.975);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  transition-duration: 0.08s;
 }
 
 .person-card.dead {
@@ -111,6 +113,7 @@
   padding: 0.15rem 0.55rem;
   font-family: var(--font-serif);
   font-size: 0.74rem;
+  font-variant-numeric: tabular-nums;
   border-radius: 999px;
   background: #20160e;
   border: 1px solid var(--border);
@@ -180,7 +183,7 @@
   width: 100%;
   padding: 0 1.25rem 1.25rem;
   border-radius: 20px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(201, 156, 51, 0.28);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(201, 156, 51, 0.28), inset 0 1px 0 rgba(255, 230, 160, 0.25);
   text-align: center;
   animation: popIn 0.26s cubic-bezier(0.22, 1, 0.36, 1);
   max-height: 90vh;
@@ -249,6 +252,8 @@
   font-size: 1.05rem;
   line-height: 1.6;
   color: var(--text);
+  text-wrap: pretty;
+  max-width: 65ch;
 }
 
 /* RODAPÉ DE BOTÕES DOS MODAIS */
