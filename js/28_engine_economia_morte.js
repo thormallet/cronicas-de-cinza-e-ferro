@@ -654,6 +654,16 @@ Object.assign(Engine, {
       }).join("");
     }
 
+    if (typeof document !== "undefined") {
+      document.body.classList.add("memento-mori-active");
+      if (!document.getElementById("memento-vignette")) {
+        const vig = document.createElement("div");
+        vig.id = "memento-vignette";
+        vig.className = "memento-mori-vignette";
+        document.body.appendChild(vig);
+      }
+    }
+
     UI.showScreen("screen-death");
   }
 });

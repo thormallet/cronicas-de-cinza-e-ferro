@@ -114,6 +114,7 @@ const UI = {
   },
 
   showScreen(id) {
+    if (id !== "screen-death" && typeof document !== "undefined") document.body.classList.remove("memento-mori-active");
     SoundFX.play("click");
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     const screenEl = document.getElementById(id);

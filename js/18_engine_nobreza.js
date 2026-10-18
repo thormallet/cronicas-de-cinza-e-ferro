@@ -278,5 +278,21 @@ Object.assign(Engine, {
     UI.notify("⚜️ Ascensão Nobiliárquica!", `Você foi investido formalmente como ${newTitle}!`, "fanfare");
     Storage.saveToSlot(CONFIG.activeSlot);
     UI.renderAll();
+  },
+
+  renderFief() {
+    if (!STATE || !STATE.fief) return "";
+    const diorama = (window.Utils && window.Utils.renderFiefDioramaSVG) ? window.Utils.renderFiefDioramaSVG(STATE.fief) : "";
+    const progressionBox = document.getElementById("noble-patent-progression-box");
+    if (progressionBox && diorama) {
+      let dBox = document.getElementById("fief-diorama-slot");
+      if (!dBox) {
+        dBox = document.createElement("div");
+        dBox.id = "fief-diorama-slot";
+        progressionBox.parentNode.insertBefore(dBox, progressionBox);
+      }
+      dBox.innerHTML = diorama;
+    }
+    return diorama;
   }
 });

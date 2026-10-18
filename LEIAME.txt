@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 4.3.1 (Patch de Integridade, Sucessão Equânime & Micro-interações)
+Crônicas de Cinza e Ferro — Versão 4.4 (O Grande Códice Gótico & Pop-ups Zero-Scroll)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,41 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 4.4 — O GRANDE CÓDICE GÓTICO & POP-UPS ZERO-SCROLL:
+======================================================================
+FRENTE 1 — REFORMULAÇÃO DEFINITIVA DOS POP-UPS NO MOBILE (ZERO-SCROLL):
+- Eliminação Total da Rolagem Interna em Modais de Eventos:
+  A antiga arte vertical de 100px foi compactada em um medalhão circular heráldico (38px x 38px) integrado ao cabeçalho (.ev-head), liberando a área nobre central da tela.
+- Grid de Ações 2x2 no Mobile:
+  Em telas móveis (<= 600px), os botões de escolha do evento passam a ser distribuídos em um Grid de 2 colunas com altura calibrada (42px) e alvos táteis de 44px, permitindo que todas as opções e a narrativa caibam 100% no campo de visão em um relance, sem cobrir o texto e sem necessidade de rolagem.
+
+FRENTE 2 — CÓDICE GÓTICO & FITAS MARCADORAS DE SEDA (RIBBON BOOKMARKS):
+- Fitas Marcadoras de Seda Suspensas no Topo:
+  Adicionado o dock de fitas de seda coloridas (#ribbon-dock) com corte chanfrado em flâmula e gradientes heráldicos para alternância rápida entre Relações (vermelho), Ofícios (ouro velho), Ações (azul aço), Inventário (verde) e Anais (púrpura).
+- Cantoneiras e Molduras Heráldicas em Filigrana:
+  Aplicação de cantoneiras góticas em SVG e adornos com flor-de-lis nos modais e caixas de crônica, enriquecendo o relevo físico de manuscrito medieval.
+- Calibração de Desktop para 680px:
+  Coluna central ampliada para 680px no desktop com molduras de filigrana gótica e iluminação quente de tochas.
+
+FRENTE 3 — VISUALIZADORES GRÁFICOS VETORIAIS SOB DEMANDA:
+- Radar de Virtudes da Alma em Octógono SVG:
+  Gráfico vetorial de teia dos 8 atributos cardeais (Força, Destreza, Intelecto, Carisma, Beleza, Saúde, Fé e Sorte) desenhado dinamicamente com círculos concêntricos e vértices dourados iluminados, acessível ao clicar no avatar do HUD ou na Ficha de Herói.
+- Mini-Diorama Feudal Procedural:
+  Ilustração vetorial senhorial no topo da aba de Feudos, onde o torreão, muralhas, aldeia campesina e estandartes se transformam dinamicamente conforme os níveis de Defesa, Prosperidade e Lealdade do senhorio.
+
+FRENTE 4 — RETRATOS PROCEDURAIS EXPANDIDOS & AROS ESTAMENTAIS:
+- Aros Estamentais Dinâmicos:
+  As molduras dos retratos agora expressam visualmente o estamento social da personagem: aro de ferro martelado para plebeus, bronze polido para artesãos/classe média, prata e ouro com gemas para nobres e coroa régia radiante para a realeza.
+- Fundos Temáticos por Ofício:
+  Fundos de cena procedural nos retratos refletindo a ocupação (forja, vitrais góticos, acampamento de guerra, salão do trono e florestas).
+
+FRENTE 5 — MICRO-INTERAÇÕES & DRAMA NARRATIVO (< 350ms):
+- Fissura Tátil no Selo Régio:
+  Ao carimbar o Selo Régio para avançar o ano, uma rápida animação de estalo luminoso e fissura na cera (sealCrackAnim) confere resposta física instantânea.
+- Efeito Memento Mori no Falecimento:
+  Ao morrer, a tela dessatura instantaneamente para tons de cinza e carvão acompanhada de uma vinheta sombria antes da revelação do epitáfio e panteão.
 ======================================================================
 
 VERSÃO 4.3.1 — PATCH DE INTEGRIDADE, SUCESSÃO EQUÂNIME & REFINAMENTO TÁTIL:

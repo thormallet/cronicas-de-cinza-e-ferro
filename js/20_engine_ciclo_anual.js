@@ -16,6 +16,12 @@ Object.assign(Engine, {
       return;
     }
 
+    const sealBtn = document.getElementById("btn-next-year") || document.querySelector(".seal-btn");
+    if (sealBtn) {
+      sealBtn.classList.add("seal-cracking");
+      setTimeout(() => sealBtn.classList.remove("seal-cracking"), 320);
+    }
+
     SoundFX.play("wax_seal");
     if (this.ensureStateIntegrity) this.ensureStateIntegrity();
     else this.ensureVigorFields();

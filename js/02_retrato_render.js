@@ -29,6 +29,9 @@ function renderRetrato(person, sizeClass = "") {
 
   // Moldura conforme Estamento / Riqueza / Título
   const sClass = person.socialClass || "plebeu";
+  const estateRimClass = sClass === "nobre"
+    ? ((person.nobleTitleLevel && person.nobleTitleLevel >= 4) ? "estate-rim-realeza" : "estate-rim-nobre")
+    : (sClass === "media" ? "estate-rim-media" : "estate-rim-plebeu");
   const jobCode = person.job || (person.jobTitle ? person.jobTitle.toLowerCase() : "crianca");
   const isNoble = sClass === "nobre" || !!person.nobleTitle;
   let frameClass = "frame-wood";
@@ -244,7 +247,7 @@ function renderRetrato(person, sizeClass = "") {
   const faceShapePath = PORTRAIT_DATA.facePaths[dna.faceShape % PORTRAIT_DATA.facePaths.length];
 
   return `
-    <div class="avatar-portrait ${frameClass} ${sizeClass}" style="background:radial-gradient(circle at 50% 28%, ${trimColor}44, ${secondaryGarb} 88%)">
+    <div class="avatar-portrait ${frameClass} ${sizeClass} ${estateRimClass}" style="background:radial-gradient(circle at 50% 28%, ${trimColor}44, ${secondaryGarb} 88%)">
       <svg class="portrait-svg" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
         <g transform="${scaleTransform}" style="transform-origin: 40px 45px">
           ${hairBackSVG}

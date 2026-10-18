@@ -1,7 +1,14 @@
 /* ============================================================================
-   [CCF v4.3] — 07_desktop.css
-   Layout Desktop (≥1200px): Molduras Nobres, Colunas e Ergonomia Avançada
+   [CCF v4.4] — 07_desktop.css
+   Layout Desktop: Molduras Nobres, Colunas e Ergonomia Avançada
    ============================================================================ */
+
+@media (min-width: 900px) {
+  #app-shell {
+    max-width: 680px;
+    box-shadow: 0 0 0 2px var(--border-dark), 0 0 80px rgba(0, 0, 0, 0.98), 0 0 25px rgba(212, 163, 62, 0.15);
+  }
+}
 
 @media (min-width: 1200px) {
   /* 1. SHELL CENTRALIZADO MAX-WIDTH 1360px */

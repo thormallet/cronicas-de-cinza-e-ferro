@@ -229,12 +229,17 @@ Object.assign(UI, {
         ${logHtml}
       `;
 
-      document.getElementById("ev-choices").innerHTML = st.choices.map((c, idx) => `
-        <button type="button" class="choice-btn" onclick="window.Engine.resolveSpecialTrialChoice(${idx})">
-          <span>${Engine.formatText(c.label)} <small style="opacity:0.8">(${c.attr.toUpperCase()})</small></span>
-          <span>&#10148;</span>
-        </button>
-      `).join("");
+      const trialChoicesEl = document.getElementById("ev-choices");
+      if (trialChoicesEl) {
+        trialChoicesEl.className = "choices-list choices-grid-2col";
+        const isSingleTrial = st.choices.length === 1;
+        trialChoicesEl.innerHTML = st.choices.map((c, idx) => `
+          <button type="button" class="choice-btn ${isSingleTrial ? 'span-full' : ''}" onclick="window.Engine.resolveSpecialTrialChoice(${idx})">
+            <span>${Engine.formatText(c.label)} <small style="opacity:0.8">(${c.attr.toUpperCase()})</small></span>
+            <span>&#10148;</span>
+          </button>
+        `).join("");
+      }
       return;
     }
 
@@ -287,12 +292,17 @@ Object.assign(UI, {
 
     const choiceClass = isQTE ? "choice-btn qte-choice" : "choice-btn";
     const choiceIcon = isQTE ? "⚡" : "\u2694";
-    document.getElementById("ev-choices").innerHTML = ev.choices.map((c, idx) => `
-      <button type="button" class="${choiceClass}" onclick="window.Engine.resolveEventChoice(${idx})">
-        <span>${choiceIcon} ${Engine.formatText(c.label)}</span>
-        <span>&#10148;</span>
-      </button>
-    `).join("");
+    const choicesEl = document.getElementById("ev-choices");
+    if (choicesEl) {
+      choicesEl.className = "choices-list choices-grid-2col";
+      const isSingleChoice = ev.choices && ev.choices.length === 1;
+      choicesEl.innerHTML = ev.choices.map((c, idx) => `
+        <button type="button" class="${choiceClass} ${isSingleChoice ? 'span-full' : ''}" onclick="window.Engine.resolveEventChoice(${idx})">
+          <span>${choiceIcon} ${Engine.formatText(c.label)}</span>
+          <span>&#10148;</span>
+        </button>
+      `).join("");
+    }
 
     if (isQTE) {
       const startTime = Date.now();
@@ -360,5 +370,21 @@ Object.assign(UI, {
         </div>
       </div>
     `;
+  },
+
+  openRadarModal() {
+    if (!STATE) return;
+    const modal = document.getElementById("radar-modal-backdrop");
+    const cont = document.getElementById("radar-svg-container");
+    if (!modal || !cont) return;
+    if (window.Utils && typeof Utils.renderOctagonRadarSVG === "function") {
+      cont.innerHTML = Utils.renderOctagonRadarSVG(STATE.attrs);
+    }
+    modal.classList.add("active");
+  },
+
+  closeRadarModal() {
+    const modal = document.getElementById("radar-modal-backdrop");
+    if (modal) modal.classList.remove("active");
   }
 });

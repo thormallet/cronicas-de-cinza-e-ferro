@@ -355,6 +355,7 @@ Object.assign(UI, {
       const tObj = Engine.getNobleTitleObj(lvl);
       document.getElementById("fief-panel-title").textContent = `🏰 Governação de ${playerNobleTitle} — Casa ${STATE.surname}`;
       document.getElementById("fief-title-badge").textContent = `${playerNobleTitle} (Grau ${lvl}/5 • +${tObj ? tObj.bonusIncome : 0} Ouro/ano)`;
+      if (Engine.renderFief) Engine.renderFief();
 
       const realmStab = Engine.getRealmStability ? Engine.getRealmStability() : 50;
       const stabBadge = document.getElementById("fief-stability-badge");

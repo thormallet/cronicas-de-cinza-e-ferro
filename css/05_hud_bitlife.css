@@ -561,3 +561,82 @@
   border-color: #ef4444;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85), 0 0 12px rgba(239, 68, 68, 0.35);
 }
+
+/* ============================================================================
+   FITAS MARCADORAS DE SEDA (RIBBON BOOKMARKS) — CÓDICE MEDIEVAL
+   ============================================================================ */
+.ribbon-dock {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.45rem;
+  padding: 0 0.5rem;
+  margin-top: -2px;
+  z-index: 8;
+  position: relative;
+}
+
+.ribbon-bookmark {
+  background: #4a1924;
+  border: 1px solid var(--border-gold);
+  border-top: none;
+  color: #fcebd2;
+  padding: 0.35rem 0.65rem 0.55rem;
+  font-family: var(--font-serif);
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 0 0 4px 4px;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), 50% 100%, 0 calc(100% - 6px));
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.75);
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), filter 0.18s ease;
+}
+
+.ribbon-bookmark:hover {
+  transform: translateY(3px);
+  filter: brightness(1.2);
+}
+
+.ribbon-bookmark:active {
+  transform: translateY(1px);
+}
+
+.ribbon-bookmark.rib-rel  { background: linear-gradient(180deg, #781919 0%, #450c0c 100%); }
+.ribbon-bookmark.rib-oficio { background: linear-gradient(180deg, #8c600b 0%, #4d3302 100%); }
+.ribbon-bookmark.rib-act { background: linear-gradient(180deg, #1b3d5c 0%, #0d2236 100%); }
+.ribbon-bookmark.rib-inv { background: linear-gradient(180deg, #1e5233 0%, #0c2b19 100%); }
+.ribbon-bookmark.rib-hist{ background: linear-gradient(180deg, #4d1c4a 0%, #290a27 100%); }
+
+/* FISSURA NO SELO RÉGIO (320ms GPU) */
+@keyframes sealCrackAnim {
+  0% { transform: scale(1); filter: brightness(1); }
+  35% { transform: scale(0.91); filter: brightness(1.35) drop-shadow(0 0 16px rgba(255, 215, 0, 0.9)); }
+  70% { transform: scale(1.05); filter: brightness(1.15); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+.seal-cracking {
+  animation: sealCrackAnim 0.32s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* MEMENTO MORI RÁPIDO */
+.memento-mori-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10005;
+  background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.1) 25%, rgba(10,5,3,0.92) 100%);
+  opacity: 0;
+  transition: opacity 0.32s ease-out;
+}
+
+body.memento-mori-active .memento-mori-vignette {
+  opacity: 1;
+}
+
+body.memento-mori-active #app-shell {
+  filter: grayscale(85%) contrast(110%);
+  transition: filter 0.32s ease-out;
+}

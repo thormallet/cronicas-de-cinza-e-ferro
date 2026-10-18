@@ -17,7 +17,12 @@ Object.assign(UI, {
   renderHud() {
     if (!STATE) return;
     const av = document.getElementById("hud-avatar");
-    if (av) av.innerHTML = Utils.renderPortraitHTML(STATE);
+    if (av) {
+      av.innerHTML = Utils.renderPortraitHTML(STATE);
+      av.style.cursor = "pointer";
+      av.onclick = () => window.UI.openRadarModal();
+      av.title = "Clique para abrir o Octógono das Virtudes";
+    }
     const nm = document.getElementById("hud-name");
     if (nm) nm.innerHTML = `${Utils.renderCrestHTML(STATE.surname)}<span>${STATE.name}</span>`;
 

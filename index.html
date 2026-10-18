@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#120c08">
-<title>Crônicas de Cinza e Ferro — v4.3.1</title>
+<title>Crônicas de Cinza e Ferro — v4.4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Eczar:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -82,6 +82,10 @@
       <path d="M21,23 C24,13 56,13 59,23 Z" fill="#7d1515" stroke="#2e0707" stroke-width="1.2"/>
       <path d="M58,21 L65,26 M58,23 L63,29" stroke="#7d1515" stroke-width="2.2" stroke-linecap="round"/>
     </symbol>
+    <symbol id="pt-corner-filigree" viewBox="0 0 24 24">
+      <path d="M2,2 L14,2 C10,4 6,8 6,14 L6,22 L2,22 Z M7,7 C9,5 12,4 16,4 M4,16 C5,12 4,9 7,7" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      <circle cx="4" cy="4" r="1.5" fill="currentColor"/>
+    </symbol>
   </defs>
 </svg>
 
@@ -89,17 +93,21 @@
 <!-- OVERLAY DE EFEITOS CURTOS (NASCIMENTO, CASAMENTO, MORTE) -->
 <div id="fx-stage-overlay"><div id="fx-stage-emblem" class="fx-emblem">✨</div></div>
 
-<!-- CARTÃO DE EVENTO NARRATIVO ANUAL -->
+<!-- CARTÃO DE EVENTO NARRATIVO ANUAL (ZERO-SCROLL MOBILE BITLIFE) -->
 <div id="event-popup-backdrop" class="custom-dialog-backdrop">
   <div id="event-popup" class="custom-dialog event-popup" role="dialog" aria-modal="true" aria-labelledby="ev-title">
-    <div id="ev-art" class="dialog-art" aria-hidden="true">📜</div>
     <div class="ev-head">
-      <h3 id="ev-title">Evento</h3>
-      <span id="ev-year-badge" class="badge gold">Ano</span>
+      <div id="ev-art" class="ev-medallion" aria-hidden="true">📜</div>
+      <div style="flex:1;min-width:0">
+        <h3 id="ev-title">Evento</h3>
+        <span id="ev-year-badge" class="badge gold">Ano</span>
+      </div>
     </div>
-    <p id="ev-desc"></p>
-    <div id="ev-qte-box"></div>
-    <div id="ev-choices" class="choices-list"></div>
+    <div class="ev-body-wrap">
+      <p id="ev-desc"></p>
+      <div id="ev-qte-box"></div>
+    </div>
+    <div id="ev-choices" class="choices-list choices-grid-2col"></div>
   </div>
 </div>
 
@@ -147,6 +155,23 @@
   </div>
 </div>
 
+<!-- MODAL DO RADAR DE VIRTUDES (OCTÓGONO MEDIEVAL) -->
+<div id="radar-modal-backdrop" class="custom-dialog-backdrop" style="z-index:10002">
+  <div class="custom-dialog radar-dialog" role="dialog" aria-modal="true">
+    <div class="ev-head" style="margin-bottom:0.75rem">
+      <div class="ev-medallion" style="background:radial-gradient(circle, #2d1a3b 0%, #120c08 100%)">⚜️</div>
+      <div style="flex:1;text-align:left">
+        <h3 style="margin:0;font-size:1.15rem;color:var(--gold-radiant)">Octógono das Virtudes da Alma</h3>
+        <span class="badge gold">Ficha Estamental e Perfil Psíquico</span>
+      </div>
+    </div>
+    <div id="radar-svg-container" style="display:flex;justify-content:center;align-items:center;margin:0.5rem 0"></div>
+    <div class="custom-dialog-buttons" style="margin-top:0.75rem">
+      <button type="button" class="primary" onclick="window.UI.closeRadarModal()">Contemplar e Retornar</button>
+    </div>
+  </div>
+</div>
+
 <!-- CARTÃO DE AVISO / CONFIRMAÇÃO -->
 <div id="dialog-backdrop" class="custom-dialog-backdrop" style="z-index:10000">
   <div class="custom-dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
@@ -175,13 +200,32 @@
 <!-- SHELL DO APP: COLUNA ÚNICA CENTRAL (MOBILE-FIRST) -->
 <div id="app-shell">
 
+<!-- DOCK DE FITAS MARCADORAS DE SEDA (RIBBON BOOKMARKS) -->
+<nav id="ribbon-dock" class="ribbon-dock" aria-label="Navegação Rápida do Códice">
+  <button type="button" class="ribbon-bookmark rib-rel" title="Relações & Família" onclick="window.UI.openSheet('tab-relacoes')">
+    <span class="rib-icon">👑</span><span class="rib-label">Relações</span>
+  </button>
+  <button type="button" class="ribbon-bookmark rib-oficio" title="Ofícios & Corporações" onclick="window.UI.openSheet('tab-oficios')">
+    <span class="rib-icon">⚒️</span><span class="rib-label">Ofícios</span>
+  </button>
+  <button type="button" class="ribbon-bookmark rib-act" title="Atividades" onclick="window.UI.openSheet('tab-atividades')">
+    <span class="rib-icon">📜</span><span class="rib-label">Ações</span>
+  </button>
+  <button type="button" class="ribbon-bookmark rib-inv" title="Inventário & Mercado" onclick="window.UI.openSheet('tab-inventario')">
+    <span class="rib-icon">🎒</span><span class="rib-label">Bens</span>
+  </button>
+  <button type="button" class="ribbon-bookmark rib-hist" title="Crônica & Histórico" onclick="window.UI.openSheet('tab-historico')">
+    <span class="rib-icon">🏛️</span><span class="rib-label">Anais</span>
+  </button>
+</nav>
+
 <!-- CABEÇALHO GLOBAL (MENU / CRIAÇÃO / MORTE) — NO JOGO É SUBSTITUÍDO PELO HUD -->
 <header id="app-header">
   <div class="brand-box">
     <div class="brand-crest">👑</div>
     <div>
       <h1>Crônicas de Cinza e Ferro</h1>
-      <span class="royal-subtitle">⚜ Edição Feudos &amp; Dinastias · v4.3.1 ⚜</span>
+      <span class="royal-subtitle">⚜ Edição Feudos &amp; Dinastias · v4.4 ⚜</span>
     </div>
   </div>
   <div style="display:flex;gap:0.35rem;align-items:center">
@@ -654,7 +698,7 @@
       <input type="file" id="import-input" style="display:none" accept=".json" onchange="window.Storage.importSave(event)">
       <button type="button" onclick="window.UI.showScreen('screen-menu')">🏰 Menu</button>
     </div>
-    <p class="cfg-version">Crônicas de Cinza e Ferro - Edição Feudos &amp; Dinastias<br>v4.3.1 — Patch de Integridade, Sucessão Equânime &amp; Micro-interações</p>
+    <p class="cfg-version">Crônicas de Cinza e Ferro - Edição Feudos &amp; Dinastias<br>v4.4 — O Grande Códice Gótico &amp; Pop-ups Zero-Scroll</p>
   </div>
 </div>
 
