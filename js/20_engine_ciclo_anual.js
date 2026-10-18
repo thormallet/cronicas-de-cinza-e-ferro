@@ -17,7 +17,8 @@ Object.assign(Engine, {
     }
 
     SoundFX.play("wax_seal");
-    this.ensureVigorFields();
+    if (this.ensureStateIntegrity) this.ensureStateIntegrity();
+    else this.ensureVigorFields();
     STATE.usedItemUidsThisYear = [];
     STATE.age++;
     STATE.year++;
@@ -279,6 +280,10 @@ Object.assign(Engine, {
       }
       finDetail += ` => ${sign}${fin.net} Ouro.`;
       this.addLog(finDetail);
+      if (window.UI && typeof UI.spawnFloatingStat === "function") {
+        const hudGoldEl = document.getElementById("hud-gold");
+        UI.spawnFloatingStat(`${sign}${fin.net} 🪙`, fin.net >= 0 ? "gold" : "bad", hudGoldEl);
+      }
       if (STATE.gold < 0) {
         STATE.debt += Math.abs(STATE.gold) + 5;
         STATE.gold = 0;

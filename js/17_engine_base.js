@@ -183,6 +183,44 @@ const Engine = {
     }
   },
 
+  ensureStateIntegrity(state = STATE) {
+    if (!state) return;
+    state.visitedCities = Array.isArray(state.visitedCities) ? state.visitedCities : [state.currentCityId || "valois_capital"];
+    state.visitedKingdoms = Array.isArray(state.visitedKingdoms) ? state.visitedKingdoms : [state.kingdom || "valois"];
+    state.travelCount = state.travelCount || 0;
+    state.itemInstances = Array.isArray(state.itemInstances) ? state.itemInstances : [];
+    state.inventory = Array.isArray(state.inventory) ? state.inventory : [];
+    state.usedItemUidsThisYear = Array.isArray(state.usedItemUidsThisYear) ? state.usedItemUidsThisYear : [];
+    state.activityYearCount = (state.activityYearCount && typeof state.activityYearCount === "object") ? state.activityYearCount : {};
+    state.pendingBirthQueue = Array.isArray(state.pendingBirthQueue) ? state.pendingBirthQueue : [];
+    state.pregnancies = Array.isArray(state.pregnancies) ? state.pregnancies : [];
+    state.designatedHeirId = state.designatedHeirId || null;
+    state.successionLaw = state.successionLaw || "primogenitura";
+    state.abandonedChildrenCount = state.abandonedChildrenCount || 0;
+    state.flags = Array.isArray(state.flags) ? state.flags : [];
+    state.history = Array.isArray(state.history) ? state.history : [];
+    state.log = Array.isArray(state.log) ? state.log : [];
+    state.scars = Array.isArray(state.scars) ? state.scars : [];
+    state.duelsWon = state.duelsWon || 0;
+
+    if (state.socialClass === "nobre") {
+      if (!state.fief || typeof state.fief !== "object") {
+        state.fief = { prosperity: 55, loyalty: 60, defense: 50, influence: 50, peasantry: 60 };
+      } else {
+        if (state.fief.prosperity === undefined) state.fief.prosperity = 55;
+        if (state.fief.loyalty === undefined) state.fief.loyalty = 60;
+        if (state.fief.defense === undefined) state.fief.defense = 50;
+        if (state.fief.influence === undefined) state.fief.influence = 50;
+        if (state.fief.peasantry === undefined) state.fief.peasantry = 60;
+      }
+    }
+
+    if (typeof this.ensureVigorFields === "function") {
+      this.ensureVigorFields();
+    }
+    return state;
+  },
+
   consumeVigor(amount, label = "Ação") {
     this.ensureVigorFields();
     if ((STATE.vigor || 0) < amount) {

@@ -349,6 +349,7 @@ Object.assign(Engine, {
       }
 
       case "train_child": {
+        if (npc.role !== "Filho" && npc.role !== "Filha") return;
         if (!requireVigor(5)) return;
         npc.affinity = Utils.clamp(npc.affinity + 12, -100, 100);
         npc.attrs.forca = Math.min(100, npc.attrs.forca + 7);
@@ -361,6 +362,7 @@ Object.assign(Engine, {
       }
 
       case "pass_wisdom": {
+        if (npc.role !== "Filho" && npc.role !== "Filha") return;
         if (!requireVigor(4)) return;
         npc.affinity = Utils.clamp(npc.affinity + 15, -100, 100);
         npc.attrs.intelecto = Math.min(100, npc.attrs.intelecto + 9);
@@ -488,7 +490,10 @@ Object.assign(Engine, {
           UI.notify("Afinidade Insuficiente", "É necessário ao menos 40 de Afinidade para estabelecer uma ligação amorosa fixa.");
           return;
         }
-        npc.role = "Amor";
+        npc.isLover = true;
+        if (npc.role !== "Colega de Ofício") {
+          npc.role = "Amor";
+        }
         npc.memory = `Tornou-se seu amante fixo sob juramentos secretos no ano ${STATE.year}.`;
         SoundFX.play("love");
         this.addLog(`🌹 PAIXÃO JURADA: Você e **${npc.name}** firmaram um pacto amoroso fixo (-4 Vigor). A chama arde nos encontros reservados!`, "good");
@@ -500,7 +505,10 @@ Object.assign(Engine, {
         if (!requireVigor(3)) return;
         SoundFX.play("click");
         const lowAff = (npc.affinity || 0) < 0;
-        npc.role = lowAff ? "Rival" : "Conhecido";
+        npc.isLover = false;
+        if (npc.role !== "Colega de Ofício") {
+          npc.role = lowAff ? "Rival" : "Conhecido";
+        }
         npc.affinity = Utils.clamp(npc.affinity - 25, -100, 100);
         npc.memory = `Rompeu a ligação de amantes com você no ano ${STATE.year}.`;
         this.addLog(`💔 ROMPIMENTO: Você rompeu definitivamente a ligação romântica com **${npc.name}** (-3 Vigor, -25 Afinidade).`, "bad");
@@ -508,6 +516,7 @@ Object.assign(Engine, {
       }
 
       case "legitimize_child": {
+        if (npc.role !== "Filho" && npc.role !== "Filha") return;
         const cost = 80;
         if (STATE.gold < cost) {
           UI.notify("Ouro Insuficiente", `A legitimação chancelar perante a Sé e a Coroa custa ${cost} Ouro.`);
@@ -541,6 +550,7 @@ Object.assign(Engine, {
       }
 
       case "abandon_child": {
+        if (npc.role !== "Filho" && npc.role !== "Filha") return;
         if (npc.age >= 16) {
           UI.notify("Maior de Idade", "Apenas crianças menores de 16 anos podem ser entregues a um mosteiro ou orfanato.");
           return;

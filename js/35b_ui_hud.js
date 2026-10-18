@@ -111,6 +111,46 @@ Object.assign(UI, {
   setModalArt(id, emoji) {
     const el = document.getElementById(id);
     if (el) el.textContent = emoji || "📜";
+  },
+
+  spawnFloatingStat(text, type = "gold", targetEl = null) {
+    if (typeof document === "undefined") return;
+    const shell = document.getElementById("app-shell") || document.body;
+    let x, y;
+
+    if (targetEl && targetEl.getBoundingClientRect) {
+      const rect = targetEl.getBoundingClientRect();
+      const shellRect = shell.getBoundingClientRect();
+      x = (rect.left + rect.width / 2) - shellRect.left;
+      y = rect.top - shellRect.top;
+    } else {
+      const hudGold = document.getElementById("hud-gold") || document.getElementById("st-gold");
+      if (hudGold && hudGold.getBoundingClientRect) {
+        const rect = hudGold.getBoundingClientRect();
+        const shellRect = shell.getBoundingClientRect();
+        x = (rect.left + rect.width / 2) - shellRect.left;
+        y = rect.bottom - shellRect.top + 6;
+      } else {
+        x = shell.clientWidth / 2;
+        y = 70;
+      }
+    }
+
+    const pill = document.createElement("div");
+    pill.className = `stat-floating-pill ${type}`;
+    pill.style.left = `${Math.round(x)}px`;
+    pill.style.top = `${Math.round(y)}px`;
+    pill.setAttribute("role", "status");
+    pill.setAttribute("aria-live", "polite");
+    pill.innerHTML = text;
+
+    shell.appendChild(pill);
+
+    setTimeout(() => {
+      if (pill.parentElement) {
+        pill.parentElement.removeChild(pill);
+      }
+    }, 1600);
   }
 });
 
@@ -120,3 +160,76 @@ document.addEventListener("keydown", e => {
   if (document.querySelector(".custom-dialog-backdrop.active")) return;
   if (document.querySelector(".sheet.active")) UI.closeSheets();
 });
+
+/* GESTOS TOUCH NATIVOS (SWIPE & PULL-DOWN) — BitLife Medieval */
+if (typeof window !== "undefined") {
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const gameScreen = document.getElementById("screen-game");
+    if (!gameScreen) return;
+
+    gameScreen.addEventListener("touchstart", (e) => {
+      if (!e.touches || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      touchStartTime = Date.now();
+    }, { passive: true });
+
+    gameScreen.addEventListener("touchend", (e) => {
+      if (!e.changedTouches || e.changedTouches.length !== 1) return;
+      const t = e.changedTouches[0];
+      const deltaX = t.clientX - touchStartX;
+      const deltaY = t.clientY - touchStartY;
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+      const dt = Date.now() - touchStartTime;
+
+      if (dt > 750) return;
+
+      const modalActive = document.querySelector(".custom-dialog-backdrop.active, #event-popup-backdrop.active");
+      if (modalActive) return;
+
+      const activeSheet = document.querySelector(".sheet.active");
+
+      // 1. Pull-down vertical para baixo (>= 70px) em bottom sheet ativa
+      if (activeSheet && deltaY >= 70 && absY > absX * 1.3) {
+        const sheetBody = activeSheet.querySelector(".sheet-body");
+        if (!sheetBody || sheetBody.scrollTop <= 10) {
+          UI.closeSheets();
+          return;
+        }
+      }
+
+      // 2. Swipe horizontal (>= 60px) alternando abas na ordem cíclica
+      if (absX >= 60 && absX > absY * 1.3) {
+        const tabsCycle = ["tab-cronica", "tab-relacoes", "tab-oficios", "tab-atividades", "tab-inventario", "tab-historico"];
+        let currentTabId = "tab-cronica";
+        if (activeSheet) {
+          currentTabId = activeSheet.id;
+        }
+
+        const currentIdx = tabsCycle.indexOf(currentTabId);
+        if (currentIdx !== -1) {
+          let nextIdx;
+          if (deltaX < 0) {
+            nextIdx = (currentIdx + 1) % tabsCycle.length;
+          } else {
+            nextIdx = (currentIdx - 1 + tabsCycle.length) % tabsCycle.length;
+          }
+
+          const nextTabId = tabsCycle[nextIdx];
+          if (nextTabId === "tab-cronica") {
+            UI.closeSheets();
+          } else {
+            UI.openSheet(nextTabId);
+          }
+        }
+      }
+    }, { passive: true });
+  });
+}
+

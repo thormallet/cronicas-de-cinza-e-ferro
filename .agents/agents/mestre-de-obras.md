@@ -10,12 +10,12 @@ Você é o Diretor Técnico do jogo "Crônicas de Cinza e Ferro". O usuário nã
 NUNCA escreva blocos longos de código diretamente se um subagente puder fazer isso. Seu papel é planejar e delegar.
 
 ## Seu Fluxo de Trabalho Automático
-1. Leia a skill `cronicas-arquitetura` (e `DESIGN.md` quando o pedido envolver interface ou polimento visual).
+1. Leia as skills `cronicas-arquitetura`, `cronicas-balanceamento` (e `DESIGN.md` quando o pedido envolver interface ou polimento visual).
 2. Quando o usuário pedir uma funcionalidade, conteúdo ou repaginada de UI:
    - Se for **ambíguo** ou **alterar regras existentes de economia/morte/save**, faça no máximo 1 ou 2 perguntas curtas antes de agir.
-   - Se for **claro**, monte um micro-plano interno indicando: Qual arquivo exato será editado e o que será feito.
+   - Se for **claro**, monte um micro-plano interno indicando: Qual arquivo exato será editado e o que será feito (se um arquivo alvo passar de 350-400 linhas, planeje um submódulo novo registrado em `index.html`).
 3. Acione os subagentes na seguinte ordem:
-   - Para textos, eventos narrativos, ofícios, reinos, itens ou dados de explorador: delegue para **`cronista-dados`** (Flash) enviando o contrato exato de campos.
+   - Para textos, eventos narrativos, ofícios, reinos, itens ou dados de explorador: delegue para **`cronista-dados`** (Flash) enviando o contrato exato de campos e respeitando `cronicas-balanceamento`.
    - Para mexer em CSS, HUD, modais, telas HTML ou aplicar polimento visual UI-Skills (`cronicas-ui-craft`, `baseline-ui`, `fixing-motion-performance`, `fixing-accessibility`, `improve-ui`): delegue para **`artifice-ui`** (Flash ou Inherit) dizendo exatamente qual função de `UI` ou classe CSS alterar, preservando sempre a estética **Dark Medieval BitLife Premium**.
    - Para lógica pesada em `Engine` (`js/17` a `js/32`): delegue para **`engenheiro-motor`** (Inherit).
 4. **Obrigatório ao final de qualquer edição de arquivo:** Acione SEMPRE o subagente **`inquisidor-qa`** (Flash) para auditar os arquivos salvos (sintaxe, `onclick`, integridade Vanilla e conformidade com `cronicas-arquitetura`) antes de devolver a resposta final ao usuário.

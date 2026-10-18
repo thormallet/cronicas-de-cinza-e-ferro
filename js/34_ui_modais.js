@@ -93,7 +93,7 @@ Object.assign(UI, {
     document.getElementById("npc-modal-ap").textContent = `${STATE.vigor}/${STATE.maxVigor}`;
 
     const phase = Engine.getPhase();
-    const isFamilyBlood = ["Pai","Mãe","Irmão/Irmã","Filho"].includes(npc.role);
+    const isFamilyBlood = ["Pai","Mãe","Irmão/Irmã","Filho","Filha"].includes(npc.role);
     const hasSpouse = STATE.npcs.some(n => n.role === "Cônjuge" && n.alive);
     const buttons = [];
 
@@ -138,7 +138,7 @@ Object.assign(UI, {
         }
       }
 
-      if (npc.role === "Filho") {
+      if (npc.role === "Filho" || npc.role === "Filha") {
         if (npc.isBastard || npc.legitimacy === "bastardo_reconhecido") {
           buttons.push({ id: "legitimize_child", icon: "📜", title: "Legitimar Filho de Sangue", sub: "-80 Ouro | Transforma em herdeiro legítimo pleno perante a Sé", primary: true });
         }
@@ -150,7 +150,7 @@ Object.assign(UI, {
         }
       }
 
-      if (phase === "Velhice" && (npc.role === "Filho" || npc.age < STATE.age - 15)) {
+      if (phase === "Velhice" && (npc.role === "Filho" || npc.role === "Filha" || npc.age < STATE.age - 15)) {
         buttons.push({ id: "pass_wisdom", icon: "🕯️", title: "Transmitir Sabedoria de Ancião", sub: "-4 Vigor | Legado de Intelecto, Sorte e +Honra", primary: true });
       }
 
@@ -162,7 +162,7 @@ Object.assign(UI, {
         buttons.push({ id: "make_peace", icon: "🕊️", title: "Propor Paz & Compensação", sub: "-15 Ouro | Tenta encerrar a vendeta (+Honra)" });
       }
 
-      if (!["Pai","Mãe","Filho","Cônjuge"].includes(npc.role) && STATE.age >= 14) {
+      if (!["Pai","Mãe","Filho","Filha","Cônjuge"].includes(npc.role) && STATE.age >= 14) {
         buttons.push({ id: "confront", icon: "👊", title: "Intimidar & Humilhar", sub: "-6 Vigor | Impõe temor (+Rep), mas gera Rival vingativo" });
         if (STATE.age >= 16 && npc.age >= 16) {
           buttons.push({ id: "duel", icon: "⚔️", title: "Desafiar para Duelo Mortal", sub: "-10 Vigor | Combate singular (Risco de Vendeta da Casa)" });
@@ -328,7 +328,7 @@ Object.assign(UI, {
     const nJobLabel = n.jobTitle || (n.age < 12 ? "Sem Ofício" : "Sem Cargo");
 
     let childExtraHtml = "";
-    if (n.alive && n.role === "Filho") {
+    if (n.alive && (n.role === "Filho" || n.role === "Filha")) {
       const isBastard = !!(n.isBastard || n.legitimacy === "bastardo_reconhecido");
       const bastBadge = isBastard ? `<span class="badge bad">Bastardo</span>` : `<span class="badge good">Legítimo</span>`;
       let childBtns = [];

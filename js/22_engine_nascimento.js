@@ -120,7 +120,8 @@ Object.assign(Engine, {
       const partner = STATE.npcs.find(n => n.id === preg.partnerId);
       for (let i = 0; i < babyCount; i++) {
         const childSex = Math.random() < 0.5 ? "M" : "F";
-        const child = Utils.genNPC("Filho", 0, childSex, STATE.surname, STATE.socialClass);
+        const childRole = childSex === "F" ? "Filha" : "Filho";
+        const child = Utils.genNPC(childRole, 0, childSex, STATE.surname, STATE.socialClass);
         child.nobleTitleLevel = 0;
         child.nobleTitle = "";
         child.appearance = inheritChildAppearance(STATE, partner || STATE, childSex, child.id);

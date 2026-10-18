@@ -58,6 +58,7 @@ const Storage = {
     SoundFX.play("click");
     CONFIG.activeSlot = slotIdx;
     STATE = slots[slotIdx];
+    if (window.Engine && Engine.ensureStateIntegrity) Engine.ensureStateIntegrity(STATE);
     UI.showScreen("screen-game");
     document.getElementById("log-container").innerHTML = "";
     UI.renderAll();
@@ -112,6 +113,7 @@ const Storage = {
         if (data.achievements) SafeStorage.setItem(this.KEY_ACHIEVEMENTS, JSON.stringify(data.achievements));
         if (data.state) {
           STATE = data.state;
+          if (window.Engine && Engine.ensureStateIntegrity) Engine.ensureStateIntegrity(STATE);
           UI.showScreen("screen-game");
           document.getElementById("log-container").innerHTML = "";
           UI.renderAll();

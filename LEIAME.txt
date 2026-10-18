@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 4.3 (Overhaul Visual & Engenharia UI-Skills)
+Crônicas de Cinza e Ferro — Versão 4.3.1 (Patch de Integridade, Sucessão Equânime & Micro-interações)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,42 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 4.3.1 — PATCH DE INTEGRIDADE, SUCESSÃO EQUÂNIME & REFINAMENTO TÁTIL:
+======================================================================
+FRENTE 1 — INTEGRIDADE E RETROCOMPATIBILIDADE TOTAL DE SAVES (Engine.ensureStateIntegrity):
+- Higienização Profunda ao Carregar e Importar:
+  A introdução de Engine.ensureStateIntegrity() garante que saves antigos ou incompletos sejam saneados ao serem carregados (loadSlot) ou importados (importSave), bem como a cada virada de ano (advanceYear).
+- Inicialização de 18 Campos Críticos:
+  Garante arrays e estruturas válidas para visitedCities, visitedKingdoms, itemInstances, inventory, usedItemUidsThisYear, activityYearCount, pendingBirthQueue, pregnancies, designatedHeirId, successionLaw, abandonedChildrenCount, flags, history, log, scars, duelsWon e feudos aristocráticos (fief com prosperidade, lealdade, defesa, influência e campesinato).
+
+FRENTE 2 — SUCESSÃO EQUÂNIME E RECONHECIMENTO DE FILHAS:
+- Nomenclatura e Papel Dinâmico ao Nascer:
+  Em resolveChildbirth, rebentos femininos agora recebem expressamente o papel "Filha", enquanto masculinos recebem "Filho".
+- Isonomia em Interações Familiares e Dinásticas:
+  Todas as ações de tutoria (treinar talento, passar sabedoria, legitimar bastardo, deserdar) e painéis de relacionamento reconhecem plenamente filhas.
+- Direitos Sucessórios Iguais:
+  A busca por herdeiros elegíveis (getEligibleHeirs) e a designação de herdeiro (setDesignatedHeir) tratam filhos e filhas com igualdade de direito, respeitando as leis feudais de primogenitura, partilha e herdeiro designado.
+
+FRENTE 3 — CARREIRA PRESERVADA DO HERDEIRO ADULTO:
+- Continuidade Profissional na Transição Sucessória:
+  Ao assumir a sucessão com um herdeiro adulto (>= 16 anos), o protagonista não é mais resetado compulsoriamente para o ofício "Criança".
+- Herança de Ofício e Posto:
+  O motor agora busca o ofício prévio do herdeiro ou um ofício compatível com seu estamento social e gênero, mantendo seu posto e progressão de carreira.
+
+FRENTE 4 — AMANTES E COLEGAS DE OFÍCIO:
+- Preservação da Função Profissional:
+  Colegas de ofício que se tornam amantes agora recebem a flag isLover = true, mantendo seu papel principal como "Colega de Ofício" e evitando que desapareçam das opções de interação da corporação.
+- Filtro Abrangente na Aba de Amantes:
+  A lista de amantes na interface e nas conquistas agora reconhece tanto personagens com role "Amor" quanto colegas com isLover ativo.
+
+FRENTE 5 — MICRO-INTERAÇÕES DE DOPAMINA & GESTOS TOUCH NATIVOS:
+- Floating Stat Pills GPU (BitLife Medieval):
+  Implementação de UI.spawnFloatingStat com animações na GPU (floatStatPill) disparadas no balanço anual de ouro e eventos de impacto patrimonial.
+- Gestos Touch Nativos:
+  Suporte a Pull-down vertical para fechamento ergonômico de bottom sheets e Swipe horizontal cíclico para alternar entre as abas da crônica, relações, ofícios, atividades, inventário e histórico.
+
 ======================================================================
 
 VERSÃO 4.3 — OVERHAUL VISUAL PROFUNDO & ENGENHARIA UI-SKILLS:

@@ -12,7 +12,7 @@ Object.assign(Engine, {
   },
 
   setDesignatedHeir(childId) {
-    const child = STATE.npcs.find(n => n.id === childId && n.role === "Filho" && n.alive && !n.abandoned);
+    const child = STATE.npcs.find(n => n.id === childId && (n.role === "Filho" || n.role === "Filha") && n.alive && !n.abandoned);
     if (!child) return;
     STATE.designatedHeirId = childId;
     SoundFX.play("bells");
@@ -23,7 +23,7 @@ Object.assign(Engine, {
 
   getEligibleHeirs() {
     if (!STATE || !Array.isArray(STATE.npcs)) return [];
-    const children = STATE.npcs.filter(n => n.role === "Filho" && n.alive && !n.abandoned);
+    const children = STATE.npcs.filter(n => (n.role === "Filho" || n.role === "Filha") && n.alive && !n.abandoned);
     const law = STATE.successionLaw || "primogenitura";
 
     if (law === "designada") {
@@ -134,6 +134,40 @@ Object.assign(Engine, {
 
     let heirJob = "crianca";
     let heirJobRank = 0;
+
+    if (heir.age >= 16) {
+      let foundJob = null;
+      if (heir.jobId) {
+        foundJob = DATA.jobs.find(j => j.id === heir.jobId);
+      }
+      if (!foundJob && heir.jobTitle && !heir.jobTitle.includes("Criança") && !heir.jobTitle.includes("Sem Ofício")) {
+        foundJob = DATA.jobs.find(j => j.id !== "crianca" && (
+          heir.jobTitle.toLowerCase().includes(j.name.toLowerCase()) ||
+          (Array.isArray(j.ranks) && j.ranks.some(r => heir.jobTitle.toLowerCase().includes(r.toLowerCase())))
+        ));
+      }
+
+      if (foundJob && (foundJob.tiers || []).includes(STATE.socialClass)) {
+        heirJob = foundJob.id;
+        if (Array.isArray(foundJob.ranks) && heir.jobTitle) {
+          const rIdx = foundJob.ranks.findIndex(r => heir.jobTitle.toLowerCase().includes(r.toLowerCase()));
+          heirJobRank = rIdx >= 0 ? rIdx : 0;
+        } else {
+          heirJobRank = 0;
+        }
+      } else {
+        const compJobs = DATA.jobs.filter(j =>
+          j.id !== "crianca" &&
+          !j.titular &&
+          (j.tiers || []).includes(STATE.socialClass) &&
+          (!j.gender || j.gender === "any" || j.gender === heir.sex)
+        );
+        if (compJobs.length > 0) {
+          heirJob = compJobs[0].id;
+          heirJobRank = 0;
+        }
+      }
+    }
 
     STATE = {
       generation: STATE.generation + 1,

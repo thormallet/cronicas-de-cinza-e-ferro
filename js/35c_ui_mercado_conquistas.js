@@ -307,7 +307,7 @@ Object.assign(UI, {
 
   renderLoversList() {
     if (!STATE) return;
-    const lovers = STATE.npcs.filter(n => n.alive && n.role === "Amor");
+    const lovers = STATE.npcs.filter(n => n.alive && (n.role === "Amor" || n.isLover));
     const cntEl = document.getElementById("cnt-amantes");
     if (cntEl) cntEl.textContent = lovers.length;
 
@@ -368,7 +368,7 @@ Object.assign(UI, {
 
     let designatedHeirSelect = "";
     if (curLaw === "designada") {
-      const eligibleChildren = STATE.npcs.filter(n => n.role === "Filho" && n.alive && !n.abandoned);
+      const eligibleChildren = STATE.npcs.filter(n => (n.role === "Filho" || n.role === "Filha") && n.alive && !n.abandoned);
       const heirOptions = eligibleChildren.map(c => {
         const sel = c.id === STATE.designatedHeirId ? "selected" : "";
         const bastTag = c.isBastard ? " [Bastardo]" : "";

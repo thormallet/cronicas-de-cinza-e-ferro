@@ -449,7 +449,7 @@ Object.assign(UI, {
       }).join("");
     }
 
-    const famMembers = STATE.npcs.filter(n => n.alive && ["Pai","Mãe","Irmão/Irmã","Cônjuge","Filho"].includes(n.role));
+    const famMembers = STATE.npcs.filter(n => n.alive && ["Pai","Mãe","Irmão/Irmã","Cônjuge","Filho","Filha"].includes(n.role));
     document.getElementById("family-list").innerHTML = famMembers.length === 0
       ? `<p style="color:var(--text-muted)">Nenhum familiar próximo vivo no momento.</p>`
       : famMembers.map(n => this.renderPersonCard(n)).join("");

@@ -8,7 +8,9 @@ description: Mapa de arquitetura, regras de escopo global, contrato estético DE
 1. **PROIBIDO APAGAR LÓGICA EXISTENTE:** Ao editar um arquivo diretamente, use ferramentas de substituição cirúrgica (diff/replace). NUNCA reescreva um arquivo inteiro omitindo funções antigas ou deixando comentários `// ... resto do código`.
 2. **ESCOPO GLOBAL CLÁSSICO (ZERO-BUILD):** Sem `import` ou `export`, sem JSX/React e sem classes utilitárias de Tailwind. Tudo usa `Object.assign(Alvo, { ... })` e roda direto no navegador via `index.html`.
 3. **LIMITE DE 250 LINHAS:** Nenhum arquivo JS novo pode passar de ~250 linhas. Se crescer além disso, divida em submódulos registrados no `index.html` antes de `js/36_inicializacao.js`.
-4. **RETROCOMPATIBILIDADE DE SAVE:** Todo campo novo em `STATE` exige inicialização em `Creator.startGame()` (`js/16_criador.js`) E função `Engine.ensure...()` para não quebrar saves antigos.
+4. **RETROCOMPATIBILIDADE DE SAVE & INTEGRIDADE:** Todo campo novo em `STATE` exige:
+   - Inicialização em `Creator.startGame()` (`js/16_criador.js`).
+   - Inclusão no validador central `Engine.ensureStateIntegrity()` (`js/17_engine_base.js`), invocado obrigatoriamente em `Storage.loadSlot()`, `Storage.importSave()` e `Engine.advanceYear()` para que saves de qualquer versão anterior inicializem com arrays e objetos íntegros.
 
 ## Regras Inegociáveis de Engenharia de Interface (Compatibilização UI-Skills)
 5. **CONTRATO ESTÉTICO & FACHADA SAGRADA (`DESIGN.md` & `css/01_base.css`):**

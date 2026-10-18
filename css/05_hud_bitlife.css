@@ -488,3 +488,76 @@
   .nav-ico { font-size: 1.65rem; }
   .nav-lbl { font-size: 0.65rem; }
 }
+
+/* ============================================================================
+   MICRO-INTERAÇÕES DE DOPAMINA — FLOATING STAT PILLS (Dark Medieval BitLife)
+   ============================================================================ */
+@keyframes floatStatPill {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, 8px, 0) scale(0.85);
+  }
+  15% {
+    opacity: 1;
+    transform: translate3d(-50%, -6px, 0) scale(1.06);
+  }
+  28% {
+    transform: translate3d(-50%, -12px, 0) scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: translate3d(-50%, -34px, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -50px, 0) scale(0.92);
+  }
+}
+
+.stat-floating-pill {
+  position: absolute;
+  pointer-events: none;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: radial-gradient(circle at 50% 30%, #231812 0%, #110b07 100%);
+  border: 1.5px solid var(--border-gold);
+  color: #fff4dc;
+  font-family: var(--font-serif);
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85), 0 0 10px rgba(212, 163, 62, 0.25);
+  will-change: transform, opacity;
+  animation: floatStatPill 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  white-space: nowrap;
+}
+
+.stat-floating-pill.gold {
+  color: var(--gold-radiant);
+  border-color: var(--gold-bright);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85), 0 0 12px rgba(229, 183, 70, 0.45);
+}
+
+.stat-floating-pill.good,
+.stat-floating-pill.hp,
+.stat-floating-pill.health {
+  color: var(--good-bright);
+  border-color: var(--good);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85), 0 0 12px rgba(74, 222, 128, 0.35);
+}
+
+.stat-floating-pill.honor {
+  color: #93c5fd;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85), 0 0 12px rgba(147, 197, 253, 0.35);
+}
+
+.stat-floating-pill.bad {
+  color: #fca5a5;
+  border-color: #ef4444;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85), 0 0 12px rgba(239, 68, 68, 0.35);
+}
