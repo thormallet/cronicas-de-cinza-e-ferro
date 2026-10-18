@@ -565,6 +565,17 @@
 /* ============================================================================
    FITAS MARCADORAS DE SEDA (RIBBON BOOKMARKS) — CÓDICE MEDIEVAL
    ============================================================================ */
+@media (max-width: 600px) {
+  #ribbon-dock {
+    display: none !important;
+  }
+}
+@media (min-width: 601px) {
+  #ribbon-dock {
+    display: flex;
+  }
+}
+
 .ribbon-dock {
   display: flex;
   justify-content: center;

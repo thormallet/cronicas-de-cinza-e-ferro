@@ -212,6 +212,11 @@ Object.assign(UI, {
       `;
     }).join("");
 
+    const fichaRadarSlot = document.getElementById("ficha-radar-slot");
+    if (fichaRadarSlot && window.Utils && typeof Utils.renderOctagonRadarSVG === "function" && STATE) {
+      fichaRadarSlot.innerHTML = Utils.renderOctagonRadarSVG(STATE.attrs);
+    }
+
     const livingAll = STATE.npcs.filter(n => n.alive);
     document.getElementById("cnt-rel").textContent = livingAll.length;
     document.getElementById("cnt-inv").textContent = Array.isArray(STATE.itemInstances) ? STATE.itemInstances.length : STATE.inventory.length;

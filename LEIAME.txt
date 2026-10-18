@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 4.4 (O Grande Códice Gótico & Pop-ups Zero-Scroll)
+Crônicas de Cinza e Ferro — Versão 4.4.1 (Edição Mercador — Patch Corretivo & Refinamentos Mobile)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,39 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 4.4.1 — PATCH CORRETIVO EDIÇÃO MERCADOR & REFINAMENTOS MOBILE:
+======================================================================
+FRENTE 1 — IDENTIDADE E ALINHAMENTO DA EDIÇÃO MERCADOR:
+- Unificação Oficial de Nomenclatura:
+  Removidas todas as menções incorretas a "Edição Feudos & Dinastias". A versão 4 é oficialmente designada como "Edição Mercador — Tronos, Comarcas & Linhagens" (v4.4.1), unificada no index.html, título da aba, hero banner e rodapé de configurações.
+
+FRENTE 2 — HARMONIZAÇÃO DE TÍTULOS NOBILIÁRQUICOS & HERANÇA DINÁSTICA:
+- Simetria Nobre dos Pais:
+  Na criação de personagem nobre (js/16_criador.js), pai e mãe passam a partilhar compulsoriamente a mesma patente nobiliárquica de seu feudo/dinastia (ex: Duque & Duquesa, Conde & Condessa, Barão & Baronesa), eliminando desníveis artificiais entre os cônjuges.
+- Título e Nível de Herdeiro Transmitido ao Protagonista e Irmãos:
+  O protagonista e seus irmãos passam a herdar o status nobiliárquico familiar desde o nascimento (nobleTitle: "Herdeiro(a) de [Pai]" e nobleTitleLevel correspondente), assegurando reconhecimento aristocrático imediato.
+
+FRENTE 3 — REFINAMENTOS MOBILE & CONTENÇÃO DE VIEWPORT (ZERO SCROLL LATERAL):
+- Eliminação do Deslocamento Lateral no Celular:
+  Corrigido bug crítico em _activateChip (js/33_ui_nucleo.js) onde o scrollIntoView nativo deslocava todo o documento horizontalmente ao clicar na subaba esquerda, gerando um vazio negro. Substituído por rolagem relativa restrita ao container pai (parent.scrollBy).
+- Contenção Estrita de Viewport:
+  Aplicado overflow-x: hidden !important e max-width: 100vw em html, body e containers estruturais (css/01_base.css), além de quebra de linha em badges (white-space: normal, word-break: break-word) e min-width: 0 em cartões de NPCs (css/02_layout.css).
+- Marcadores de Seda (Ribbons) Restritos ao Desktop:
+  O dock de fitas marcadoras (#ribbon-dock) agora é visível exclusivamente no Desktop (min-width: 601px). Em telas mobile (max-width: 600px), as fitas são ocultadas para manter o HUD inferior limpo e sem duplicação de comandos.
+
+FRENTE 4 — REORGANIZAÇÃO DE POP-UPS & MODAL DE CONQUISTAS:
+- Alinhamento Vertical Unificado das Opções de Eventos:
+  Substituído o layout em grade 2x2 por uma coluna vertical limpa e alinhada (.choices-list), com botões compactos e uniformes (42px min-height), garantindo leitura fluida e preservação de espaço no celular.
+- Rodapé Estático no Menu de Conquistas:
+  No modal de conquistas (#achievements-modal), a rolagem foi isolada exclusivamente na lista interna (#achievements-list). O rodapé e o botão "Fechar Conquistas" permanecem 100% estáticos e livres de barras de rolagem ou elementos móveis sobrepostos.
+
+FRENTE 5 — INTEGRAÇÃO E ACESSIBILIDADE DO RADAR OCTOGONAL DE ATRIBUTOS:
+- Radar Integrado Diretamente à Ficha do Personagem:
+  O gráfico octogonal da alma do jogador agora é renderizado diretamente dentro da aba da Ficha (#ficha-radar-slot), abaixo das aptidões corporais e mentais.
+- Modo Comparativo em Audiências com NPCs:
+  Ao abrir o diálogo de qualquer NPC, é exibido um radar octogonal comparativo dual (Dourado para o Jogador vs Azul Tracejado para o NPC) com legenda e tabela de deltas numéricos acessíveis (+X / -X), permitindo avaliação tática instantânea das virtudes do interlocutor.
 ======================================================================
 
 VERSÃO 4.4 — O GRANDE CÓDICE GÓTICO & POP-UPS ZERO-SCROLL:

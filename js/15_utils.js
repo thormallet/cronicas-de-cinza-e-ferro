@@ -133,16 +133,16 @@ const Utils = {
   },
 
   /* ============================================================================
-     RADAR DE VIRTUDES EM OCTÓGONO SVG (CCF v4.4)
+     RADAR DE VIRTUDES EM OCTÓGONO SVG (COMPARÁVEL & ACESSÍVEL — CCF v4.4.1)
      ============================================================================ */
-  renderOctagonRadarSVG(attrs = {}) {
+  renderOctagonRadarSVG(playerAttrs = {}, compareAttrs = null, compareName = "NPC") {
     const keys = ["forca", "destreza", "intelecto", "carisma", "beleza", "saude", "fe", "sorte"];
     const labels = ["Força", "Destreza", "Intelecto", "Carisma", "Beleza", "Saúde", "Fé", "Sorte"];
     const icons = ["⚔️", "🏹", "🧠", "🎭", "✨", "❤️", "🙏", "🍀"];
-    const cx = 130, cy = 130, r = 85;
+    const cx = 130, cy = 130, r = 78;
     const count = keys.length;
 
-    // Gerar círculos concêntricos de referência (25%, 50%, 75%, 100%)
+    // Círculos concêntricos de referência (25%, 50%, 75%, 100%)
     let gridPolys = "";
     [0.25, 0.5, 0.75, 1.0].forEach(level => {
       const pts = [];
@@ -153,10 +153,10 @@ const Utils = {
       gridPolys += `<polygon points="${pts.join(" ")}" fill="none" stroke="rgba(212,163,62,${level === 1.0 ? "0.45" : "0.18"})" stroke-width="${level === 1.0 ? "1.5" : "1"}"/>`;
     });
 
-    // Eixos radiais e rótulos
     let axes = "";
     let labelsSvg = "";
-    const dataPoints = [];
+    const pPoints = [];
+    const cPoints = [];
 
     for (let i = 0; i < count; i++) {
       const angle = (Math.PI * 2 * i / count) - (Math.PI / 2);
@@ -164,37 +164,84 @@ const Utils = {
       const ey = cy + r * Math.sin(angle);
       axes += `<line x1="${cx}" y1="${cy}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="rgba(212,163,62,0.22)" stroke-width="1"/>`;
 
-      const val = Utils.clamp(attrs[keys[i]] || 20, 5, 100);
-      const valRatio = val / 100;
-      const vx = cx + r * valRatio * Math.cos(angle);
-      const vy = cy + r * valRatio * Math.sin(angle);
-      dataPoints.push(`${vx.toFixed(1)},${vy.toFixed(1)}`);
+      // Jogador
+      const pVal = Utils.clamp(playerAttrs[keys[i]] || 20, 5, 100);
+      const pRatio = pVal / 100;
+      pPoints.push(`${(cx + r * pRatio * Math.cos(angle)).toFixed(1)},${(cy + r * pRatio * Math.sin(angle)).toFixed(1)}`);
 
-      // Posição do rótulo
-      const lx = cx + (r + 20) * Math.cos(angle);
-      const ly = cy + (r + 20) * Math.sin(angle);
+      // NPC Comparado (se houver)
+      if (compareAttrs) {
+        const cVal = Utils.clamp(compareAttrs[keys[i]] || 20, 5, 100);
+        const cRatio = cVal / 100;
+        cPoints.push(`${(cx + r * cRatio * Math.cos(angle)).toFixed(1)},${(cy + r * cRatio * Math.sin(angle)).toFixed(1)}`);
+      }
+
+      // Rótulos externos
+      const lx = cx + (r + 18) * Math.cos(angle);
+      const ly = cy + (r + 18) * Math.sin(angle);
       labelsSvg += `
-        <text x="${lx.toFixed(1)}" y="${(ly + 4).toFixed(1)}" font-family="var(--font-serif)" font-size="9" font-weight="700" fill="#fcebd2" text-anchor="middle">
-          ${icons[i]} ${val}
+        <text x="${lx.toFixed(1)}" y="${(ly + 4).toFixed(1)}" font-family="var(--font-serif)" font-size="8.5" font-weight="700" fill="#fcebd2" text-anchor="middle">
+          ${icons[i]} ${labels[i]}
         </text>
       `;
     }
 
+    // Polígono NPC (se houver)
+    let comparePoly = "";
+    if (compareAttrs && cPoints.length) {
+      comparePoly = `
+        <polygon points="${cPoints.join(" ")}" fill="rgba(96, 165, 250, 0.28)" stroke="#60a5fa" stroke-width="2" stroke-linejoin="round" stroke-dasharray="3,2"/>
+        ${cPoints.map(p => `<circle cx="${p.split(",")[0]}" cy="${p.split(",")[1]}" r="3" fill="#93c5fd" stroke="#1d4ed8" stroke-width="1"/>`).join("")}
+      `;
+    }
+
+    // Legenda interativa
+    let legend = "";
+    if (compareAttrs) {
+      legend = `
+        <div style="display:flex;justify-content:center;gap:1.25rem;font-family:var(--font-serif);font-size:0.8rem;font-weight:700;margin-top:0.4rem">
+          <span style="color:var(--gold-bright)">🟡 Você (Linhagem)</span>
+          <span style="color:#60a5fa">🔵 ${compareName}</span>
+        </div>
+      `;
+    }
+
+    // Tabela acessível com valores numéricos para quem não conseguir ler o gráfico
+    const rowsHtml = keys.map((k, i) => {
+      const pVal = Utils.clamp(playerAttrs[k] || 20, 5, 100);
+      const cVal = compareAttrs ? Utils.clamp(compareAttrs[k] || 20, 5, 100) : null;
+      const cDiff = cVal !== null ? (pVal >= cVal ? `<span style="color:#4ade80">(+${pVal - cVal})</span>` : `<span style="color:#ef4444">(${pVal - cVal})</span>`) : "";
+      return `
+        <div style="display:flex;justify-content:space-between;padding:0.2rem 0.45rem;border-bottom:1px solid rgba(212,163,62,0.12);font-size:0.82rem">
+          <span>${icons[i]} <strong>${labels[i]}</strong></span>
+          <span><strong>${pVal}</strong>${compareAttrs ? ` vs ${cVal} ${cDiff}` : ""}</span>
+        </div>
+      `;
+    }).join("");
+
     return `
-      <svg width="270" height="270" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.85))">
-        <defs>
-          <radialGradient id="octGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#d4a33e" stop-opacity="0.38"/>
-            <stop offset="70%" stop-color="#b8860b" stop-opacity="0.18"/>
-            <stop offset="100%" stop-color="#120c08" stop-opacity="0.05"/>
-          </radialGradient>
-        </defs>
-        ${gridPolys}
-        ${axes}
-        <polygon points="${dataPoints.join(" ")}" fill="url(#octGlow)" stroke="var(--gold-bright)" stroke-width="2" stroke-linejoin="round"/>
-        ${dataPoints.map(p => `<circle cx="${p.split(",")[0]}" cy="${p.split(",")[1]}" r="3" fill="#fff4dc" stroke="#b8860b" stroke-width="1.2"/>`).join("")}
-        ${labelsSvg}
-      </svg>
+      <div class="octagon-radar-wrapper" style="width:100%;max-width:320px;margin:0 auto;text-align:center">
+        <svg viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:240px;height:auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.85))">
+          <defs>
+            <radialGradient id="octGlowPlayer" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#d4a33e" stop-opacity="0.45"/>
+              <stop offset="80%" stop-color="#b8860b" stop-opacity="0.18"/>
+              <stop offset="100%" stop-color="#120c08" stop-opacity="0.05"/>
+            </radialGradient>
+          </defs>
+          ${gridPolys}
+          ${axes}
+          ${comparePoly}
+          <polygon points="${pPoints.join(" ")}" fill="url(#octGlowPlayer)" stroke="var(--gold-bright)" stroke-width="2.2" stroke-linejoin="round"/>
+          ${pPoints.map(p => `<circle cx="${p.split(",")[0]}" cy="${p.split(",")[1]}" r="3" fill="#fff4dc" stroke="#b8860b" stroke-width="1.2"/>`).join("")}
+          ${labelsSvg}
+        </svg>
+        ${legend}
+        <div style="margin-top:0.55rem;background:rgba(20,13,8,0.75);border:1px solid var(--border-gold);border-radius:8px;padding:0.35rem 0.5rem;text-align:left">
+          <div style="font-family:var(--font-serif);font-size:0.75rem;font-weight:700;color:var(--gold-radiant);margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.5px">Valores das Virtudes</div>
+          ${rowsHtml}
+        </div>
+      </div>
     `;
   },
 

@@ -153,9 +153,19 @@ const Creator = {
       });
     }
 
-    const father = Utils.genNPC("Pai", Utils.rand(22, 38), "M", surname, sClass, null, null, kingdom);
-    const mother = Utils.genNPC("Mãe", Utils.rand(20, 34), "F", surname, sClass, null, null, kingdom);
-    const sibling = Utils.genNPC("Irmão/Irmã", Utils.rand(1, 5), null, surname, sClass, null, null, kingdom);
+    let familyTitleObj = null;
+    if (sClass === "nobre") {
+      const kNob = (DATA.kingdomNobility && DATA.kingdomNobility[kingdom]) ? DATA.kingdomNobility[kingdom] : null;
+      const titlesPool = (kNob && Array.isArray(kNob.titles)) ? kNob.titles : DATA.nobleTitles;
+      familyTitleObj = Utils.pick(titlesPool);
+    }
+
+    const fatherTitle = familyTitleObj ? familyTitleObj.titleM : null;
+    const motherTitle = familyTitleObj ? familyTitleObj.titleF : null;
+    const father = Utils.genNPC("Pai", Utils.rand(22, 38), "M", surname, sClass, null, fatherTitle, kingdom);
+    const mother = Utils.genNPC("Mãe", Utils.rand(20, 34), "F", surname, sClass, null, motherTitle, kingdom);
+    const siblingTitle = familyTitleObj ? (Math.random() < 0.5 ? `Herdeiro de ${familyTitleObj.titleM}` : `Herdeira de ${familyTitleObj.titleF}`) : null;
+    const sibling = Utils.genNPC("Irmão/Irmã", Utils.rand(1, 5), null, surname, sClass, null, siblingTitle, kingdom);
     [father, mother, sibling].forEach(fam => {
       fam.cityId = birthCity.id;
       fam.birthCityId = birthCity.id;
@@ -222,7 +232,8 @@ const Creator = {
       completedGuilds: [],
       expelledEcclesiastical: false,
       careerChanges: 0,
-      nobleTitleLevel: 0,
+      nobleTitleLevel: familyTitleObj ? familyTitleObj.level : 0,
+      nobleTitle: familyTitleObj ? (sex === "M" ? `Herdeiro de ${familyTitleObj.titleM}` : `Herdeira de ${familyTitleObj.titleF}`) : "",
       nobleDemeritTurns: 0,
       fief: { prosperity: 55, loyalty: 60, defense: 50, influence: 50, peasantry: 60 },
       visibleJobIds: [],

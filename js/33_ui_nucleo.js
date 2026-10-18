@@ -83,9 +83,16 @@ const UI = {
 
   _activateChip(btn) {
     if (!btn || !btn.parentElement) return;
-    btn.parentElement.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    const parent = btn.parentElement;
+    parent.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
-    try { btn.scrollIntoView({ block: "nearest", inline: "center" }); } catch (e) { /* navegador sem suporte */ }
+    // Rolar apenas o container de chips horizontalmente, NUNCA a janela inteira do navegador
+    try {
+      const parentRect = parent.getBoundingClientRect();
+      const btnRect = btn.getBoundingClientRect();
+      const offset = (btnRect.left - parentRect.left) - (parent.clientWidth / 2) + (btn.clientWidth / 2);
+      parent.scrollBy({ left: offset, behavior: "smooth" });
+    } catch (e) { /* fallback sem scroll */ }
   },
 
   switchRelSubTab(panelId, btn) {

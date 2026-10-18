@@ -92,6 +92,11 @@ Object.assign(UI, {
     Engine.ensureVigorFields();
     document.getElementById("npc-modal-ap").textContent = `${STATE.vigor}/${STATE.maxVigor}`;
 
+    const compSlot = document.getElementById("npc-radar-compare-slot");
+    if (compSlot && window.Utils && typeof Utils.renderOctagonRadarSVG === "function") {
+      compSlot.innerHTML = Utils.renderOctagonRadarSVG(STATE.attrs, npc.attrs, npc.name);
+    }
+
     const phase = Engine.getPhase();
     const isFamilyBlood = ["Pai","Mãe","Irmão/Irmã","Filho","Filha"].includes(npc.role);
     const hasSpouse = STATE.npcs.some(n => n.role === "Cônjuge" && n.alive);
@@ -231,10 +236,9 @@ Object.assign(UI, {
 
       const trialChoicesEl = document.getElementById("ev-choices");
       if (trialChoicesEl) {
-        trialChoicesEl.className = "choices-list choices-grid-2col";
-        const isSingleTrial = st.choices.length === 1;
+        trialChoicesEl.className = "choices-list";
         trialChoicesEl.innerHTML = st.choices.map((c, idx) => `
-          <button type="button" class="choice-btn ${isSingleTrial ? 'span-full' : ''}" onclick="window.Engine.resolveSpecialTrialChoice(${idx})">
+          <button type="button" class="choice-btn" onclick="window.Engine.resolveSpecialTrialChoice(${idx})">
             <span>${Engine.formatText(c.label)} <small style="opacity:0.8">(${c.attr.toUpperCase()})</small></span>
             <span>&#10148;</span>
           </button>
@@ -294,10 +298,9 @@ Object.assign(UI, {
     const choiceIcon = isQTE ? "⚡" : "\u2694";
     const choicesEl = document.getElementById("ev-choices");
     if (choicesEl) {
-      choicesEl.className = "choices-list choices-grid-2col";
-      const isSingleChoice = ev.choices && ev.choices.length === 1;
+      choicesEl.className = "choices-list";
       choicesEl.innerHTML = ev.choices.map((c, idx) => `
-        <button type="button" class="${choiceClass} ${isSingleChoice ? 'span-full' : ''}" onclick="window.Engine.resolveEventChoice(${idx})">
+        <button type="button" class="${choiceClass}" onclick="window.Engine.resolveEventChoice(${idx})">
           <span>${choiceIcon} ${Engine.formatText(c.label)}</span>
           <span>&#10148;</span>
         </button>
