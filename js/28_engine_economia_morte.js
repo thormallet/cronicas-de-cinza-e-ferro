@@ -417,7 +417,7 @@ Object.assign(Engine, {
     if (window.UI && window.UI.notify) UI.notify(it.useLabel || it.name, msg, "coin");
     this.recalculateSocialClassByWealth();
     if (this.checkAchievements) this.checkAchievements();
-    Storage.saveToSlot(STATE.activeSlot || CONFIG.activeSlot);
+    Storage.saveToSlot(CONFIG.activeSlot);
     UI.renderAll();
   },
 
@@ -630,7 +630,7 @@ Object.assign(Engine, {
     const lawObj = (DATA.successionLaws && DATA.successionLaws[STATE.successionLaw]) ? DATA.successionLaws[STATE.successionLaw] : { name: k.law, desc: k.desc };
     document.getElementById("sucession-law-desc").textContent = `Lei de Sucessão Familiar: ${lawObj.name} — ${lawObj.desc}`;
 
-    const eligibleChildren = this.getEligibleHeirs ? this.getEligibleHeirs() : STATE.npcs.filter(n => n.role === "Filho" && n.alive && !n.abandoned);
+    const eligibleChildren = this.getEligibleHeirs ? this.getEligibleHeirs() : STATE.npcs.filter(n => (n.role === "Filho" || n.role === "Filha") && n.alive && !n.abandoned);
     const heirsBox = document.getElementById("heirs-list");
 
     if (eligibleChildren.length === 0) {

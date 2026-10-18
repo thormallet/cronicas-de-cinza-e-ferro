@@ -119,7 +119,7 @@ const Engine = {
     if (STATE.duelsWon === undefined) STATE.duelsWon = 0;
     if (STATE.bargainsWon === undefined) STATE.bargainsWon = 0;
     if (STATE.bankerProfits === undefined) STATE.bankerProfits = 0;
-    if (!Array.isArray(STATE.usedItemUidsEsteAno || STATE.usedItemUidsThisYear)) STATE.usedItemUidsThisYear = [];
+    if (!Array.isArray(STATE.usedItemUidsThisYear)) STATE.usedItemUidsThisYear = [];
 
     /* Sincronização retrocompatível de inventário e instâncias de bens */
     if (Array.isArray(STATE.inventory)) {

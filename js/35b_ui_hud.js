@@ -159,11 +159,23 @@ Object.assign(UI, {
   }
 });
 
-/* ESC fecha o painel aberto (se nenhum modal estiver sobreposto) */
-document.addEventListener("keydown", e => {
-  if (e.key !== "Escape") return;
-  if (document.querySelector(".custom-dialog-backdrop.active")) return;
-  if (document.querySelector(".sheet.active")) UI.closeSheets();
+/* ESC fecha modais ativos ou o painel aberto */
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    const modalActive = document.querySelector(".custom-dialog-backdrop.active, #event-popup-backdrop.active");
+    if (modalActive) {
+      if (UI.closeNPCModal) UI.closeNPCModal();
+      if (UI.closeAchievementsModal) UI.closeAchievementsModal();
+      if (UI.closeRadarModal) UI.closeRadarModal();
+      if (UI.closeDialog) UI.closeDialog();
+      return;
+    }
+    const activeSheet = document.querySelector(".sheet.active");
+    if (activeSheet && UI.closeSheets) {
+      UI.closeSheets();
+      return;
+    }
+  }
 });
 
 /* GESTOS TOUCH NATIVOS (SWIPE & PULL-DOWN) — BitLife Medieval */

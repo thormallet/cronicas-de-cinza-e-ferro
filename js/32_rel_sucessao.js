@@ -65,6 +65,8 @@ Object.assign(Engine, {
       inheritedGold = Math.floor(STATE.gold * ratio);
     }
 
+    const activeLoanTotal = (STATE.activeLoans || []).reduce((acc, l) => acc + (l.remaining || 0), 0);
+    const inheritedUnlinkedDebt = Math.max(0, (STATE.debt || 0) - activeLoanTotal);
     const inheritedDebt = STATE.debt || 0;
     const inheritedRep = Math.round((STATE.reputation || 0) * 0.5);
     const prevName = STATE.name;
@@ -175,7 +177,7 @@ Object.assign(Engine, {
       isDead: false,
       name: heir.name,
       sex: heir.sex,
-      surname: heir.surname || STATE.surname,
+      surname: STATE.surname,
       appearance: heir.appearance || getOrCreateAppearanceDNA(heir),
       scars: heir.scars || [],
       age: heir.age,
@@ -204,6 +206,7 @@ Object.assign(Engine, {
       job: heirJob,
       gold: inheritedGold,
       debt: inheritedDebt,
+      unlinkedDebt: inheritedUnlinkedDebt,
       reputation: inheritedRep,
       honor: 50,
       hp: heir.attrs ? heir.attrs.saude : 50,
@@ -250,6 +253,11 @@ Object.assign(Engine, {
     Engine.ensureColleagues();
     if (this.checkAchievements) this.checkAchievements();
     Storage.saveToSlot(CONFIG.activeSlot);
+    if (typeof document !== "undefined") {
+      document.body.classList.remove("memento-mori-active");
+      const vig = document.getElementById("memento-vignette");
+      if (vig && vig.parentNode) vig.parentNode.removeChild(vig);
+    }
     UI.showScreen("screen-game");
     UI.renderAll();
   }

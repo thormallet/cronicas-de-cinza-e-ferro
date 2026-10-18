@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 4.4.1 (Edição Mercador — Patch Corretivo & Refinamentos Mobile)
+Crônicas de Cinza e Ferro — Versão 4.4.2 (Edição Mercador — Patch de Integridade Financeira, Genealogia & Acessibilidade)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,39 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 4.4.2 — PATCH DE INTEGRIDADE FINANCEIRA, GENEALOGIA & ACESSIBILIDADE:
+======================================================================
+FRENTE 1 — INTEGRIDADE FINANCEIRA E SUCESSÃO DE DÍVIDAS:
+- Preservação de Dívidas Históricas e Não-Bancárias:
+  No método succeedWithHeir (js/32_rel_sucessao.js) e no motor bancário (js/28b_engine_banco_40.js), foi introduzida a variável unlinkedDebt para blindar dívidas contraídas via eventos, agiotagem de taverna e multas senhoriais. Ao passar de geração, a virada de ano não anula mais essas dívidas, somando-as harmonicamente aos empréstimos formais da banca.
+- Correção de Salvamento ao Usar Bens:
+  Em useItemInstance (js/28_engine_economia_morte.js), a gravação de slot foi padronizada para CONFIG.activeSlot, eliminando o risco de gravações em chave indefinida (ccf_save_undefined).
+
+FRENTE 2 — GENEALOGIA E LINHAGEM HISTÓRICA:
+- Blindagem do Sobrenome da Casa Fundadora:
+  Na sucessão por herdeira feminina casada, a chefia da dinastia agora retém o patronímico e brasão original da Casa (surname: STATE.surname), impedindo que a linhagem seja descaracterizada pelo sobrenome do cônjuge.
+- Equidade no Fallback de Herdeiros em Falecimento:
+  Em die() (js/28_engine_economia_morte.js), o fallback de identificação de herdeiros passou a aceitar tanto "Filho" quanto "Filha", evitando falsas extinções de linhagem no caso de herdeiras mulheres legítimas.
+
+FRENTE 3 — REGRAS DE SIMULAÇÃO E VIAGENS:
+- Bloqueio de Viagens no Negativo:
+  Em travelToCity e travelToKingdom (js/27c_engine_viagens.js), viagens terrestres e marítimas agora verificam o saldo de ouro antes da partida. Se o jogador não possuir fundos para a passagem, a viagem é bloqueada com notificação de fundos insuficientes.
+- Normalização de Filtro de Metrópoles em Eventos:
+  Em matchesLocality (js/21_engine_eventos.js), foi unificado o suporte a eventos cadastrados com cityTiers (array) ou cityTier (string individual), impedindo que eventos palacianos exclusivos de capitais disparem em aldeias rurais.
+- Unificação de Variáveis de Uso Anual de Itens:
+  Substituída a menção legada usedItemUidsEsteAno por usedItemUidsThisYear em js/17_engine_base.js.
+
+FRENTE 4 — ACESSIBILIDADE, CSS MOBILE & TECLADO:
+- Fechamento Global via Tecla Escape:
+  Adicionado ouvinte global de keydown em js/33_ui_nucleo.js para a tecla "Escape", permitindo fechar instantaneamente modais ativos (NPC, Conquistas, Radar, Diálogos) ou recolher painéis (sheets).
+- Eliminação do Nó Zumbi Memento Mori:
+  Tanto na sucessão quanto ao trocar de tela em showScreen, o elemento DOM #memento-vignette é removido com segurança da árvore do documento, evitando persistência indesejada do filtro de luto.
+- Rolagem Suave de Chips (.sub-tabs-bar) em Telas Ultra-Estreitas:
+  Adicionadas regras CSS com -webkit-overflow-scrolling: touch e barra oculta para evitar quebras ou compressão de rótulos em visores de 320px a 360px.
+- Conformidade Acessível (aria-label):
+  Atribuídos rótulos textuais acessíveis a todos os botões iconográficos de alternância de som, digitação e tema no index.html.
 ======================================================================
 
 VERSÃO 4.4.1 — PATCH CORRETIVO EDIÇÃO MERCADOR & REFINAMENTOS MOBILE:

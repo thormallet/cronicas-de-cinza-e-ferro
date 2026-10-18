@@ -48,7 +48,7 @@ Object.assign(Engine, {
       penaltyType: cred.penaltyRisk || 0.15
     });
 
-    STATE.debt = STATE.activeLoans.reduce((sum, l) => sum + (l.balance || 0), 0);
+    STATE.debt = STATE.activeLoans.reduce((sum, l) => sum + (l.balance || 0), 0) + (STATE.unlinkedDebt || 0);
     SoundFX.play("coin");
     const collatMsg = collatInst ? ` (Garantia penhorada: ${this.getItemName(collatInst.id)})` : " (Sem garantia)";
     this.addLog(`📜 CONTRATO DE CRÉDITO: Você tomou ${amount} Ouro com **${cred.name}** a ${(cred.interestRate * 100)}% ao ano${collatMsg}.`, "bad");
@@ -82,7 +82,7 @@ Object.assign(Engine, {
       this.addLog(`🪙 AMORTIZAÇÃO: Você pagou ${amountToPay} Ouro a **${loan.creditorName}** (Saldo devedor: ${loan.balance} Ouro).`, "good");
     }
 
-    STATE.debt = STATE.activeLoans.reduce((sum, l) => sum + (l.balance || 0), 0);
+    STATE.debt = STATE.activeLoans.reduce((sum, l) => sum + (l.balance || 0), 0) + (STATE.unlinkedDebt || 0);
     Storage.saveToSlot(CONFIG.activeSlot);
     UI.renderAll();
   },
@@ -169,7 +169,8 @@ Object.assign(Engine, {
         }
       });
       STATE.activeLoans = STATE.activeLoans.filter(l => l.balance > 0);
-      STATE.debt = STATE.activeLoans.reduce((sum, l) => sum + (l.balance || 0), 0);
+      const loanDebt = (STATE.activeLoans || []).reduce((acc, l) => acc + (l.balance || l.remaining || 0), 0);
+      STATE.debt = loanDebt + (STATE.unlinkedDebt || 0);
     }
 
     /* 2. Carteira de investimentos bancários concedidos pelo jogador */

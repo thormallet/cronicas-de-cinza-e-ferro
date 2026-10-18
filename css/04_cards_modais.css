@@ -590,3 +590,22 @@
   font-size: 4.5rem;
   filter: drop-shadow(0 0 30px var(--gold-bright)) drop-shadow(0 8px 18px #000);
 }
+
+/* ============================================================================
+   SUB-TABS BAR — ROLAGEM SUAVE SEM QUEBRAS (CCF v4.4.2)
+   ============================================================================ */
+.sub-tabs-bar {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-bottom: 2px;
+}
+.sub-tabs-bar::-webkit-scrollbar {
+  display: none;
+}

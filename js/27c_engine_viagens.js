@@ -159,8 +159,8 @@ Object.assign(Engine, {
     }
     if (STATE.gold < goldCost) {
       UI.closeDialog();
-      UI.notify("Ouro Insuficiente", `Os custos de comitiva, estalagens e pedágios até ${destCity.name} somam ${goldCost} Ouro.`);
-      return;
+      UI.notify("🪙 Fundos Insuficientes", "Você não possui moedas suficientes para custear a passagem e provisões desta viagem.", "fail");
+      return false;
     }
 
     const mode = this.getTravelModeObj();
@@ -217,8 +217,8 @@ Object.assign(Engine, {
     }
     if (STATE.gold < gCost) {
       UI.closeDialog();
-      UI.notify("Ouro Insuficiente", `A travessia de fronteiras, salvo-condutos e passagens até ${targetK.name} exige ${gCost} Ouro.`);
-      return;
+      UI.notify("🪙 Fundos Insuficientes", "Você não possui moedas suficientes para custear a passagem e provisões desta viagem.", "fail");
+      return false;
     }
 
     const mode = this.getTravelModeObj();

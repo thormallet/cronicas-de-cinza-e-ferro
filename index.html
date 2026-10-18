@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#120c08">
-<title>Crônicas de Cinza e Ferro — Edição Mercador · v4.4.1</title>
+<title>Crônicas de Cinza e Ferro — Edição Mercador · v4.4.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Eczar:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -226,7 +226,7 @@
     <div class="brand-crest">👑</div>
     <div>
       <h1>Crônicas de Cinza e Ferro</h1>
-      <span class="royal-subtitle">⚜ Edição Mercador · v4.4.1 ⚜</span>
+      <span class="royal-subtitle">⚜ Edição Mercador · v4.4.2 ⚜</span>
     </div>
   </div>
   <div style="display:flex;gap:0.35rem;align-items:center">
@@ -439,7 +439,7 @@
     <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
   </div>
   <div class="sheet-body">
-    <div class="chips">
+    <div class="chips sub-tabs-bar">
       <button type="button" class="tab-btn active" onclick="window.UI.switchRelSubTab('sub-rel-fam', this)">🩸 Sangue &amp; Cônjuge</button>
       <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-amantes', this)">🌹 Amantes (<span id="cnt-amantes">0</span>)</button>
       <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-amigos', this)">🤝 Amigos (<span id="cnt-friends">0</span>)</button>
@@ -533,7 +533,7 @@
       <div id="perf-actions" class="actions-panel"></div>
     </div>
 
-    <div class="chips">
+    <div class="chips sub-tabs-bar">
       <button type="button" class="tab-btn active" onclick="window.UI.switchJobSubTab('sub-job-oficios', this)">⚒️ Ofícios (<span id="cnt-sub-jobs">0</span>)</button>
       <button type="button" class="tab-btn" onclick="window.UI.switchJobSubTab('sub-job-guildas', this)">🏛️ Guildas (<span id="cnt-sub-guilds">0</span>)</button>
     </div>
@@ -575,7 +575,7 @@
     <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
   </div>
   <div class="sheet-body">
-    <div class="chips" id="inv-sub-chips">
+    <div class="chips sub-tabs-bar" id="inv-sub-chips">
       <button type="button" class="tab-btn active" onclick="window.UI.switchInvSubTab('sub-inv-posses', this)">📦 Posses (<span id="cnt-inv-tab">0</span>)</button>
       <button type="button" class="tab-btn" onclick="window.UI.switchInvSubTab('sub-inv-mercado', this)">🛒 Mercado de Bens</button>
       <button type="button" class="tab-btn" onclick="window.UI.switchInvSubTab('sub-inv-banco', this)">🏛️ Casa Bancária &amp; Usura</button>
@@ -598,7 +598,7 @@
       <div class="card">
         <h3>🛒 Mercado Regional &amp; Mercadores</h3>
         <p class="sheet-hint">Os preços variam conforme a região e a conjuntura do ano. Negocie com mercadores para obter descontos vantajosos.</p>
-        <div class="chips market-category-chips" style="margin-bottom:0.75rem">
+        <div class="chips sub-tabs-bar market-category-chips" style="margin-bottom:0.75rem">
           <button type="button" class="tab-btn active" onclick="window.UI.setMarketCategoryFilter('todos', this)">Todos</button>
           <button type="button" class="tab-btn" onclick="window.UI.setMarketCategoryFilter('imovel', this)">Imóveis</button>
           <button type="button" class="tab-btn" onclick="window.UI.setMarketCategoryFilter('transporte', this)">Transporte</button>
@@ -691,16 +691,16 @@
   </div>
   <div class="sheet-body">
     <div class="cfg-list">
-      <button type="button" id="btn-sound" onclick="window.SoundFX.toggle()">🔊 Som: ON</button>
-      <button type="button" id="btn-typewriter" onclick="window.UI.toggleTypewriter()">✒️ Digitação: OFF</button>
-      <button type="button" id="btn-theme" onclick="window.UI.toggleTheme()">☀️ Tema: Claro</button>
+      <button type="button" id="btn-sound" aria-label="Alternar som do jogo" onclick="window.SoundFX.toggle()">🔊 Som: ON</button>
+      <button type="button" id="btn-typewriter" aria-label="Alternar animação de texto" onclick="window.UI.toggleTypewriter()">✒️ Digitação: OFF</button>
+      <button type="button" id="btn-theme" aria-label="Alternar tema visual" onclick="window.UI.toggleTheme()">☀️ Tema: Claro</button>
       <button type="button" onclick="window.UI.openAchievementsModal()">🏆 Conquistas da Linhagem</button>
       <button type="button" onclick="window.Storage.exportSave()">💾 Exportar</button>
       <button type="button" onclick="document.getElementById('import-input').click()">📂 Importar</button>
       <input type="file" id="import-input" style="display:none" accept=".json" onchange="window.Storage.importSave(event)">
       <button type="button" onclick="window.UI.showScreen('screen-menu')">🏰 Menu</button>
     </div>
-    <p class="cfg-version">Crônicas de Cinza e Ferro - Edição Mercador<br>v4.4.1 — Patch Corretivo &amp; Refinamentos Mobile</p>
+    <p class="cfg-version">Crônicas de Cinza e Ferro - Edição Mercador<br>v4.4.2 — Integridade Financeira, Genealogia &amp; Acessibilidade</p>
   </div>
 </div>
 

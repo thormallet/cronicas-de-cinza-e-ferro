@@ -121,7 +121,11 @@ const UI = {
   },
 
   showScreen(id) {
-    if (id !== "screen-death" && typeof document !== "undefined") document.body.classList.remove("memento-mori-active");
+    if (id !== "screen-death" && typeof document !== "undefined") {
+      document.body.classList.remove("memento-mori-active");
+      const vig = document.getElementById("memento-vignette");
+      if (vig && vig.parentNode) vig.parentNode.removeChild(vig);
+    }
     SoundFX.play("click");
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     const screenEl = document.getElementById(id);
@@ -389,4 +393,20 @@ if (typeof window !== "undefined") {
   if (window.addEventListener) {
     window.addEventListener("resize", _handleViewportBreakpoint);
   }
+}
+
+/* CONTROLE GLOBAL DA TECLA ESCAPE */
+if (typeof window !== "undefined") {
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const topDialog = document.querySelector(".custom-dialog-backdrop.active, #event-popup-backdrop.active, #achievements-modal-backdrop.active, #radar-modal-backdrop.active, #child-name-backdrop.active");
+      if (topDialog) {
+        topDialog.classList.remove("active");
+        return;
+      }
+      if (document.querySelector(".sheet.active")) {
+        UI.closeSheets();
+      }
+    }
+  });
 }

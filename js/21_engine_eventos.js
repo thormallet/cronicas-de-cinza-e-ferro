@@ -48,7 +48,8 @@ Object.assign(Engine, {
     const curCity = this.getCityObj ? this.getCityObj(STATE.currentCityId, STATE.kingdom) : { tier: "capital" };
     const matchesLocality = (ev) => {
       const kOk = !ev.kingdoms || ev.kingdoms.includes(STATE.kingdom);
-      const tOk = !ev.cityTiers || ev.cityTiers.includes(curCity.tier);
+      const tiers = Array.isArray(ev.cityTiers) ? ev.cityTiers : (ev.cityTier ? [ev.cityTier] : null);
+      const tOk = !tiers || tiers.includes(curCity.tier);
       return kOk && tOk;
     };
 
