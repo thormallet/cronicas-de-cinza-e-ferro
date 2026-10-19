@@ -472,83 +472,64 @@ Object.assign(UI, {
     if (window.SoundFX) SoundFX.play("click");
     const backdrop = document.getElementById("timeline-modal-backdrop");
     if (!backdrop) return;
-    const content = document.getElementById("timeline-content");
-    if (!content) return;
-
-    let dynasty = [];
-    try {
-      if (window.Storage && Storage.getDynasty) {
-        dynasty = Storage.getDynasty() || [];
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
-    let html = "";
-    if (dynasty.length === 0 && (!window.STATE || !STATE.name)) {
-      html = `<div style="text-align:center;padding:2rem;color:var(--text-muted)">Nenhuma crônica dinástica registrada ainda. Os anais de sua Casa começarão com sua primeira grande jornada.</div>`;
-    } else {
-      html += `<div style="display:flex;flex-direction:column;gap:1rem;position:relative;padding-left:0.5rem">`;
-
-      // Passado: Memoriais dos antepassados
-      dynasty.forEach((d, idx) => {
-        const crest = (window.Utils && Utils.renderCrestHTML) ? Utils.renderCrestHTML(d.surname || d.name) : "⚜️";
-        const tagsHtml = (Array.isArray(d.legacyTags) && d.legacyTags.length > 0)
-          ? `<div style="margin-top:0.4rem;display:flex;gap:0.3rem;flex-wrap:wrap">` +
-            d.legacyTags.map(t => `<span class="badge gold" style="font-size:0.75rem;padding:0.15rem 0.4rem" title="${t.desc || ''}">${t.icon || '⚜️'} ${t.name || t.id}</span>`).join("") +
-            `</div>`
-          : "";
-
-        html += `
-          <div style="background:var(--panel-inner);border:1.5px solid var(--border-gold);border-left:5px solid var(--gold-bright);border-radius:12px;padding:0.85rem 1rem;box-shadow:0 4px 12px rgba(0,0,0,0.6)">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem">
-              <span class="badge gold">${d.generation || (idx + 1)}ª Geração</span>
-              <span style="font-size:0.82rem;color:var(--text-muted)">${d.years || ""} (${d.age || "?"} anos)</span>
-            </div>
-            <div style="margin-top:0.35rem;font-size:1.05rem;font-weight:700;font-family:var(--font-serif);color:var(--gold-radiant);display:flex;align-items:center;gap:0.35rem">
-              ${crest} <span>${d.name}</span>
-            </div>
-            <div style="font-size:0.85rem;color:var(--text);margin-top:0.25rem">
-              ${d.job || "Chefe de Família"} • ${d.kingdom || "Dez Reinos"}
-            </div>
-            <div style="font-size:0.82rem;color:var(--text-muted);margin-top:0.2rem">
-              🪙 Ouro Acumulado: ${d.gold || 0} • <em>${d.cause || "Falecimento natural"}</em>
-            </div>
-            ${tagsHtml}
+    const contentEl = document.getElementById("timeline-content");
+    const isPlaying = window.STATE && STATE.surname;
+    
+    if (contentEl) {
+      if (isPlaying) {
+        // Modo em jogo: exibe o soberano vivo e APENAS os antepassados da Casa atual
+        const allPast = window.Storage && Storage.getPastLives ? Storage.getPastLives() : [];
+        const dynastyPast = allPast.filter(l => l.surname && l.surname.toLowerCase() === STATE.surname.toLowerCase());
+        
+        contentEl.innerHTML = `
+          <div style="margin-bottom:1rem;background:linear-gradient(135deg,#2a1f14,#140d08);border:2px solid var(--gold-bright);border-radius:12px;padding:0.85rem 1rem">
+            <span class="badge gold">👑 Soberano Atual</span>
+            <h4 style="margin:0.25rem 0;color:var(--gold-radiant)">Casa ${STATE.surname} — ${STATE.name}</h4>
+            <div style="font-size:0.85rem;color:var(--text-muted)">${STATE.generation}ª Geração | ${STATE.age} anos | ${STATE.job} (${STATE.kingdom || "Valois"}) | ${STATE.gold} 🪙</div>
+          </div>
+          <div class="timeline-tree" style="position:relative;padding-left:1.5rem;border-left:2px solid var(--border-gold)">
+            ${dynastyPast.length === 0 ? `<p style="color:var(--text-muted);font-size:0.88rem">Nenhum antepassado falecido nesta dinastia ainda. Você é o fundador da linhagem!</p>` : dynastyPast.map(life => `
+              <div class="timeline-node" style="position:relative;margin-bottom:1.25rem">
+                <div style="position:absolute;left:-1.95rem;top:2px;width:14px;height:14px;border-radius:50%;background:var(--gold-bright);border:2px solid #140e0a;box-shadow:0 0 8px var(--gold-glow)"></div>
+                <div style="background:rgba(23,17,12,0.9);border:1.5px solid var(--border-gold);border-radius:10px;padding:0.65rem 0.85rem">
+                  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
+                    <strong style="color:var(--gold-bright)">${life.name} (${life.generation}ª Ger.)</strong>
+                    <span class="badge gold">${life.years || `${life.age} anos`}</span>
+                  </div>
+                  <div style="font-size:0.82rem;margin-top:0.25rem;color:var(--text-muted)">
+                    <span>👑 ${life.job} (${life.kingdom}) | 🪙 ${life.gold} Ouro</span><br>
+                    <span>Causa: ${life.cause}</span>
+                  </div>
+                </div>
+              </div>
+            `).join("")}
           </div>
         `;
-      });
-
-      // Presente: Soberano atual em STATE (se houver jogo ativo)
-      if (window.STATE && STATE.name) {
-        const curCrest = (window.Utils && Utils.renderCrestHTML) ? Utils.renderCrestHTML(STATE.surname || STATE.name) : "⚜️";
-        const curJob = (window.Engine && Engine.getJobTitle) ? Engine.getJobTitle() : (STATE.jobTitle || "Sem Ofício");
-        const kObj = (window.DATA && DATA.kingdoms) ? DATA.kingdoms.find(k => k.id === STATE.kingdom) : null;
-        const kName = kObj ? kObj.name : (STATE.kingdom || "");
-
-        html += `
-          <div style="background:linear-gradient(135deg, rgba(45,30,15,0.95), rgba(20,12,8,0.98));border:2px solid var(--gold-bright);border-left:6px solid var(--gold-radiant);border-radius:12px;padding:1rem;box-shadow:0 0 16px rgba(229,183,70,0.25)">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem">
-              <span class="badge gold" style="font-weight:700">👑 ${STATE.generation || (dynasty.length + 1)}ª Geração · ATUAL</span>
-              <span class="badge good">${STATE.age} anos · Ano ${STATE.year}</span>
+      } else {
+        // Modo Menu Inicial: agrupa por Dinastias separadas
+        const allPast = window.Storage && Storage.getPastLives ? Storage.getPastLives() : [];
+        if (allPast.length === 0) {
+          contentEl.innerHTML = `<p style="text-align:center;padding:2rem;color:var(--text-muted)">Nenhuma dinastia registrada no códice ainda.</p>`;
+        } else {
+          const map = {};
+          allPast.forEach(l => {
+            const dyn = l.surname || "Linhagem Sem Nome";
+            if (!map[dyn]) map[dyn] = [];
+            map[dyn].push(l);
+          });
+          contentEl.innerHTML = Object.entries(map).map(([dyn, members]) => `
+            <div style="margin-bottom:1.5rem;background:rgba(23,17,12,0.95);border:1.5px solid var(--border-gold);border-radius:12px;padding:0.75rem 1rem">
+              <h4 style="color:var(--gold-radiant);margin-bottom:0.5rem">⚜️ Casa ${dyn} (${members.length} Governantes)</h4>
+              ${members.map(m => `
+                <div style="font-size:0.84rem;padding:0.35rem 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+                  <strong>${m.generation}ª Ger. — ${m.name}</strong> (${m.years || `${m.age} anos`}): ${m.job} | ${m.cause}
+                </div>
+              `).join("")}
             </div>
-            <div style="margin-top:0.45rem;font-size:1.15rem;font-weight:700;font-family:var(--font-serif);color:#ffffff;display:flex;align-items:center;gap:0.35rem">
-              ${curCrest} <span>${STATE.name}</span>
-            </div>
-            <div style="font-size:0.88rem;color:var(--gold-bright);margin-top:0.3rem">
-              ${curJob} • ${kName}
-            </div>
-            <div style="font-size:0.84rem;color:var(--text-muted);margin-top:0.25rem">
-              🪙 Fortuna Atual: ${STATE.gold || 0} 🪙 | ⚔️ Honra: ${STATE.honor || 50} | ⚜️ Status: ${STATE.socialClass === 'nobre' ? 'Nobreza' : (STATE.socialClass === 'media' ? 'Classe Média' : 'Plebeu')}
-            </div>
-          </div>
-        `;
+          `).join("");
+        }
       }
-
-      html += `</div>`;
     }
-
-    content.innerHTML = html;
     backdrop.classList.add("active");
   },
 

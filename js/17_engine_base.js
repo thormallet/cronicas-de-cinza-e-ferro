@@ -446,5 +446,170 @@ const Engine = {
       .replace(/\{guard\}/g, lex.guard || "guarda local")
       .replace(/\{fisco\}/g, lex.fisco || "coletor de impostos")
       .replace(/\{name\}/g, STATE.name);
+  },
+
+  devAddGold(qty = 1000) {
+    if (!STATE) return;
+    STATE.gold = (STATE.gold || 0) + qty;
+    SoundFX.play("coins");
+    this.addLog(`⚡ [MODO DEUS] +${qty} Ouro adicionados ao tesouro.`, "good");
+    UI.renderAll();
+  },
+
+  devSetAttrs(val = 100) {
+    if (!STATE || !STATE.attrs) return;
+    Object.keys(STATE.attrs).forEach(k => { STATE.attrs[k] = val; });
+    STATE.vigor = 100;
+    STATE.maxVigor = 100;
+    STATE.hp = val;
+    STATE.maxHp = val;
+    this.addLog(`⚡ [MODO DEUS] Todos os atributos e vigor definidos para ${val}.`, "good");
+    UI.renderAll();
+  },
+
+  devMaxArmy() {
+    if (!STATE) return;
+    this.ensureStateIntegrity();
+    STATE.army = { levies: 500, archers: 250, knights: 100, siege: 10, morale: 100, supplies: 100, readiness: 100 };
+    if (this.unlockAchievement) this.unlockAchievement("conq_senhor_exercito");
+    this.addLog(`⚡ [MODO DEUS] Exército máximo mobilizado (500 Levas, 250 Arqueiros, 100 Cavaleiros)!`, "good");
+    UI.renderAll();
+  },
+
+  devTriggerWar() {
+    if (!STATE) return;
+    const enemy = STATE.kingdom === "teutonia" ? "valois" : "teutonia";
+    STATE.activeWar = { enemyKingdom: enemy, yearStarted: STATE.year, warScore: 0, turnsRemaining: 3, cause: "Guerra Forçada pelo Criador" };
+    SoundFX.play("war_horn");
+    this.addLog(`⚡ [MODO DEUS] Guerra Continental iniciada contra ${enemy.toUpperCase()}!`, "bad");
+    UI.notify("⚔️ Modo Deus: Guerra!", `Conflito deflagrado contra ${enemy.toUpperCase()}`, "fail");
+    UI.renderAll();
+  },
+
+  devWinWar() {
+    if (!STATE || !STATE.activeWar) return;
+    STATE.activeWar.warScore = 5;
+    STATE.activeWar.turnsRemaining = 1;
+    this.advanceYear();
+  },
+
+  devGrantRelics() {
+    if (!STATE) return;
+    if (!STATE.itemInstances) STATE.itemInstances = [];
+    STATE.itemInstances.push({ id: "lamina_ancestral_valenca", uid: "relic_" + Date.now(), state: "novo" });
+    STATE.itemInstances.push({ id: "codice_hermetico", uid: "relic_" + (Date.now() + 1), state: "novo" });
+    STATE.itemInstances.push({ id: "armadura_torneio", uid: "relic_" + (Date.now() + 2), state: "novo" });
+    STATE.itemInstances.push({ id: "espada_montante", uid: "relic_" + (Date.now() + 3), state: "novo" });
+    STATE.flags = STATE.flags || [];
+    if (!STATE.flags.includes("Portador da Lâmina Ancestral")) STATE.flags.push("Portador da Lâmina Ancestral");
+    if (this.unlockAchievement) this.unlockAchievement("conq_reliquia_ancestral");
+    this.addLog(`⚡ [MODO DEUS] Relíquias sagradas e armas lendárias concedidas ao espólio!`, "good");
+    UI.renderAll();
+  },
+
+  devUnlockAllAchievements() {
+    if (!window.Storage || !Storage.unlockAchievement) return;
+    (DATA.achievements || []).forEach(a => Storage.unlockAchievement(a.id));
+    this.addLog(`⚡ [MODO DEUS] Todas as conquistas foram desbloqueadas!`, "good");
+    UI.renderAll();
+  },
+
+  devSetClass(sClass) {
+    if (!STATE) return;
+    STATE.socialClass = sClass;
+    if (sClass === "nobre") {
+      if (!STATE.fief || typeof STATE.fief !== "object") {
+        STATE.fief = { prosperity: 55, loyalty: 60, defense: 50, influence: 50, peasantry: 60 };
+      }
+      STATE.nobleTitleLevel = Math.max(1, STATE.nobleTitleLevel || 1);
+    }
+    this.addLog(`⚡ [MODO DEUS] Estamento social alterado para: ${sClass.toUpperCase()}.`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
+  },
+
+  devSetJob(jobId, rankIdx = 0) {
+    if (!STATE) return;
+    const j = (DATA.jobs || []).find(x => x.id === jobId);
+    if (!j) return;
+    STATE.job = jobId;
+    STATE.jobRank = parseInt(rankIdx, 10) || 0;
+    const title = (j.ranks && j.ranks[STATE.jobRank]) ? j.ranks[STATE.jobRank] : j.name;
+    this.addLog(`⚡ [MODO DEUS] Ofício alterado para: ${title}.`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
+  },
+
+  devSetLocation(kingdomId, cityId) {
+    if (!STATE) return;
+    STATE.kingdom = kingdomId;
+    STATE.currentCityId = cityId;
+    STATE.visitedKingdoms = Array.isArray(STATE.visitedKingdoms) ? STATE.visitedKingdoms : [];
+    if (!STATE.visitedKingdoms.includes(kingdomId)) STATE.visitedKingdoms.push(kingdomId);
+    STATE.visitedCities = Array.isArray(STATE.visitedCities) ? STATE.visitedCities : [];
+    if (!STATE.visitedCities.includes(cityId)) STATE.visitedCities.push(cityId);
+    this.addLog(`⚡ [MODO DEUS] Teleportado para: ${cityId.toUpperCase()} (${kingdomId.toUpperCase()}).`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
+  },
+
+  devSetAge(val) {
+    if (!STATE) return;
+    STATE.age = Math.max(0, parseInt(val, 10) || 0);
+    this.addLog(`⚡ [MODO DEUS] Idade definida para ${STATE.age} anos.`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
+  },
+
+  devSetYear(val) {
+    if (!STATE) return;
+    STATE.year = parseInt(val, 10) || 1140;
+    this.addLog(`⚡ [MODO DEUS] Ano definido para ${STATE.year}.`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
+  },
+
+  devSetGold(val) {
+    if (!STATE) return;
+    STATE.gold = Math.max(0, parseInt(val, 10) || 0);
+    this.addLog(`⚡ [MODO DEUS] Tesouro pessoal definido para ${STATE.gold} 🪙.`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
+  },
+
+  devSetDebt(val) {
+    if (!STATE) return;
+    STATE.debt = Math.max(0, parseInt(val, 10) || 0);
+    this.addLog(`⚡ [MODO DEUS] Dívida definida para ${STATE.debt} 🪙.`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
+  },
+
+  devSetHonor(val) {
+    if (!STATE) return;
+    STATE.honor = Utils.clamp(parseInt(val, 10) || 0, 0, 100);
+    this.addLog(`⚡ [MODO DEUS] Honra definida para ${STATE.honor}/100.`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
+  },
+
+  devSetRep(val) {
+    if (!STATE) return;
+    STATE.reputation = Utils.clamp(parseInt(val, 10) || 0, -10, 10);
+    this.addLog(`⚡ [MODO DEUS] Reputação definida para ${STATE.reputation}/10.`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
+  },
+
+  devSetVigor(val) {
+    if (!STATE) return;
+    STATE.vigor = Utils.clamp(parseInt(val, 10) || 0, 0, STATE.maxVigor || 100);
+    this.addLog(`⚡ [MODO DEUS] Vigor definido para ${STATE.vigor}/${STATE.maxVigor}.`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
+  },
+
+  devSetHp(val) {
+    if (!STATE) return;
+    STATE.hp = Utils.clamp(parseInt(val, 10) || 1, 1, STATE.maxHp || 100);
+    this.addLog(`⚡ [MODO DEUS] Saúde definida para ${STATE.hp}/${STATE.maxHp}.`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
+  },
+
+  devSetAttr(attrKey, val) {
+    if (!STATE || !STATE.attrs) return;
+    STATE.attrs[attrKey] = Utils.clamp(parseInt(val, 10) || 0, 0, 100);
+    this.addLog(`⚡ [MODO DEUS] Atributo ${attrKey.toUpperCase()} definido para ${STATE.attrs[attrKey]}.`, "good");
+    if (window.UI && UI.renderAll) UI.renderAll();
   }
 };

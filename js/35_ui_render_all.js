@@ -87,66 +87,36 @@ Object.assign(UI, {
     const honorBar = document.getElementById("st-honor-bar");
     const honorSbar = document.querySelector('.sbar[data-stat="honor"]');
 
-    if (STATE.honor < 30) {
-      if (honorEl) {
-        honorEl.className = "aff-bad";
-        honorEl.style.color = "#ef4444";
-        honorEl.innerHTML = `${STATE.honor} <span class="rep-dishonor-badge" style="color:#ef4444;font-size:0.72rem" title="${honorDegradedLabel}">(${honorDegradedLabel})</span>`;
-      }
-      if (honorBar) {
-        honorBar.className = "stat-fill honor aff-bad";
-        honorBar.style.background = "linear-gradient(90deg, #8a0f0f, #e0392f)";
-      }
-      if (honorSbar) {
-        honorSbar.classList.add("crit");
-        honorSbar.title = `Honra da Casa: ${STATE.honor}/100 — ${honorDegradedLabel}`;
-      }
-    } else {
-      if (honorEl) {
-        honorEl.className = "";
-        honorEl.style.color = "";
-        honorEl.textContent = STATE.honor;
-      }
-      if (honorBar) {
-        honorBar.className = "stat-fill honor";
-        honorBar.style.background = "";
-      }
-      if (honorSbar) {
-        honorSbar.title = `Honra da Casa: ${STATE.honor}/100${honorDegradedLabel ? ` — ${honorDegradedLabel}` : ""}`;
-      }
+    if (honorEl) {
+      honorEl.textContent = STATE.honor;
+      honorEl.className = STATE.honor < 30 ? "aff-bad" : "";
+      honorEl.style.color = STATE.honor < 30 ? "#ef4444" : "";
+    }
+    if (honorBar) {
+      honorBar.className = `stat-fill honor ${STATE.honor < 30 ? "aff-bad" : ""}`;
+      honorBar.style.background = STATE.honor < 30 ? "linear-gradient(90deg, #8a0f0f, #e0392f)" : "";
+    }
+    if (honorSbar) {
+      honorSbar.classList.toggle("crit", STATE.honor < 30);
+      honorSbar.title = `Honra da Casa: ${STATE.honor}/100${honorDegradedLabel ? ` — ${honorDegradedLabel}` : ""}`;
     }
 
     const repEl = document.getElementById("st-rep");
     const repBar = document.getElementById("st-rep-bar");
     const repSbar = document.querySelector('.sbar[data-stat="rep"]');
 
-    if (STATE.reputation < 0) {
-      if (repEl) {
-        repEl.className = "aff-bad";
-        repEl.style.color = "#ef4444";
-        repEl.innerHTML = `${STATE.reputation} <span class="rep-dishonor-badge" style="color:#ef4444;font-size:0.72rem" title="${dishonorLabel}">(${dishonorLabel})</span>`;
-      }
-      if (repBar) {
-        repBar.className = "stat-fill rep aff-bad";
-        repBar.style.background = "linear-gradient(90deg, #8a0f0f, #e0392f)";
-      }
-      if (repSbar) {
-        repSbar.classList.add("crit");
-        repSbar.title = `Reputação: ${STATE.reputation}/10 — ${dishonorLabel}`;
-      }
-    } else {
-      if (repEl) {
-        repEl.className = "";
-        repEl.style.color = "";
-        repEl.textContent = STATE.reputation;
-      }
-      if (repBar) {
-        repBar.className = "stat-fill rep";
-        repBar.style.background = "";
-      }
-      if (repSbar) {
-        repSbar.title = `Reputação: ${STATE.reputation}/10`;
-      }
+    if (repEl) {
+      repEl.textContent = STATE.reputation;
+      repEl.className = STATE.reputation < 0 ? "aff-bad" : "";
+      repEl.style.color = STATE.reputation < 0 ? "#ef4444" : "";
+    }
+    if (repBar) {
+      repBar.className = `stat-fill rep ${STATE.reputation < 0 ? "aff-bad" : ""}`;
+      repBar.style.background = STATE.reputation < 0 ? "linear-gradient(90deg, #8a0f0f, #e0392f)" : "";
+    }
+    if (repSbar) {
+      repSbar.classList.toggle("crit", STATE.reputation < 0);
+      repSbar.title = `Reputação: ${STATE.reputation}/10${dishonorLabel ? ` — ${dishonorLabel}` : ""}`;
     }
 
     const sheetHonorEl = document.getElementById("st-sheet-honor");
@@ -616,13 +586,19 @@ Object.assign(UI, {
     const visC = Array.isArray(STATE.visitedCities) ? STATE.visitedCities.length : 1;
     const visK = Array.isArray(STATE.visitedKingdoms) ? STATE.visitedKingdoms.length : 1;
     const trCount = STATE.travelCount || 0;
-    document.getElementById("history-flags").innerHTML =
-      `<div style="margin-bottom:0.45rem"><strong>🧭 Diário de Exploração:</strong> ` +
-      `<span class="badge gold">${visC}/50 Comarcas</span> <span class="badge gold">${visK}/10 Reinos</span> <span class="badge">${trCount} Jornadas</span></div>` +
-      `<strong>Flags de História Persistentes:</strong> ` +
-      (flags.length ? flags.map(f => `<span class="badge">${f}</span>`).join("") : "Nenhuma");
+    const flagsEl = document.getElementById("history-flags");
+    if (flagsEl) {
+      flagsEl.innerHTML =
+        `<div style="margin-bottom:0.45rem"><strong>🧭 Diário de Exploração:</strong> ` +
+        `<span class="badge gold">${visC}/50 Comarcas</span> <span class="badge gold">${visK}/10 Reinos</span> <span class="badge">${trCount} Jornadas</span></div>` +
+        `<strong>Flags de História Persistentes:</strong> ` +
+        (flags.length ? flags.map(f => `<span class="badge">${f}</span>`).join("") : "Nenhuma");
+    }
     const hist = Array.isArray(STATE.history) ? STATE.history : [];
-    document.getElementById("full-history-list").innerHTML = hist.slice().reverse().map(h => `<div>• ${this.fmtLog(h)}</div>`).join("");
+    const histEl = document.getElementById("full-history-list");
+    if (histEl) {
+      histEl.innerHTML = hist.slice().reverse().map(h => `<div>• ${this.fmtLog(h)}</div>`).join("");
+    }
 
     if (STATE.pendingChild) {
       const childBackdrop = document.getElementById("child-name-backdrop");

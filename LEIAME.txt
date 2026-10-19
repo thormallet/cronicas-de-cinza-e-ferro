@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 5.0 (Edição Marcial — Aço, Estandartes & Glória Dinástica)
+Crônicas de Cinza e Ferro — Versão 5.0.2 (Edição Marcial — Patch Corretivo & Ergonomia Visual)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,48 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 5.0.2 — PATCH CORRETIVO EDIÇÃO MARCIAL & REFINAMENTOS ERGONÔMICOS:
+======================================================================
+FRENTE 1 — ACESSIBILIDADE E RETRATIBILIDADE DE ABAS NO DESKTOP:
+- Abertura Suave da Ficha do Personagem:
+  O clique no retrato do personagem no HUD agora abre instantaneamente a Ficha de Aptidões (#sheet-ficha) em desktop, deslizando como uma nobre gaveta lateral pelo lado esquerdo da tela.
+- Fechamento Total e Desobstrução do HUD:
+  Removidas as travas de fechamento em desktop. O botão de fechar [✕], o clique fora dos painéis ou a tecla Escape fecham perfeitamente qualquer gaveta lateral, mantendo o feed da crônica livre e o botão de Configurações (⚙️) sempre acessível no canto superior direito.
+
+FRENTE 2 — ALINHAMENTO MILIMÉTRICO DAS BARRAS DE STATUS DO HUD:
+- Simetria Tabular Rigorosa (BitLife HUD):
+  As barras de Honra e Reputação foram alinhadas geometricamente com as barras de Saúde e Vigor. O container tabular agora preserva colunas simétricas com larguras e preenchimentos idênticos, reservando os títulos honoríficos e alertas de infâmia para os tooltips e a ficha detalhada.
+
+FRENTE 3 — INTEGRAÇÃO DAS FITAS MARCADORAS DE SEDA:
+- Fitas Ancoradas Diretamente no Códice:
+  O dock de fitas (#ribbon-dock) foi realocado para o topo interno do contêiner de jogo, eliminando a faixa preta descolada e fazendo com que as flâmulas de seda pareçam penduradas organicamente na pergaminharia do HUD.
+======================================================================
+
+VERSÃO 5.0.1 — PATCH CORRETIVO EDIÇÃO MARCIAL & REFINAMENTOS ERGONÔMICOS:
+======================================================================
+FRENTE 1 — CORREÇÃO VISUAL DO CÓDICE DE CONQUISTAS:
+- Chips de Categoria 100% Visíveis e Arejados:
+  Substituída a estrutura de chips do modal de conquistas por um contêiner flex com rolagem horizontal oculta, altura mínima calibrada (38px) e padding generoso. Os botões de filtro (Todas, Marciais, Dinastia, Riqueza e Gerais) agora são legíveis, táteis e confortáveis em qualquer resolução.
+
+FRENTE 2 — LINHA DO TEMPO DINÂMICA ISOLADA POR DINASTIA:
+- Filtragem Genealógica Autêntica:
+  No modal de Linha do Tempo da Dinastia (openTimelineModal), a visualização durante a gameplay agora filtra estritamente os antepassados da Casa do jogador atual, exibindo o soberano vivo no topo da árvore com moldura dourada e conectando cronologicamente apenas os seus ancestrais legítimos. No Menu Inicial, o panteão é agrupado em seções independentes por Dinastia, eliminando qualquer mistura desordenada entre famílias de campanhas diferentes.
+
+FRENTE 3 — REFINAMENTOS DO HUD DESKTOP (TELA ÚNICA & ABAS RETRÁTEIS):
+- Abas Laterais Totalmente Retráteis:
+  Eliminada a divisão rígida de 3 colunas fixas do desktop. A Ficha do Personagem (#sheet-ficha) e as demais abas (.sheet) foram convertidas em elegantes gavetas deslizantes que abrem exclusivamente quando solicitadas (clique no avatar ou nas fitas do topo) e recolhem-se com animação suave, mantendo o feed da crônica centralizado e com foco total na narrativa.
+- Botão de Avançar Ano Alargado em Retângulo Nobre:
+  No desktop (>= 601px), o Selo Régio circular foi redesenhado como uma imponente placa retangular de 280px x 56px com moldura dourada, ícone e tipografia nobre em caixa alta ("AVANÇAR ANO"), integrando-se perfeitamente à base da tela.
+- Ocultação das Fitas Marcadoras Fora do Jogo:
+  O dock de fitas suspensas (#ribbon-dock) agora fica estritamente oculto nas telas de Menu Inicial, Criação de Personagem e Morte, surgindo apenas durante a sessão de jogo ativa.
+
+FRENTE 4 — REORGANIZAÇÃO DAS ABAS DE JOGO:
+- Remoção Definitiva da Aba de Anais:
+  O marcador de fita "Anais" e o botão redundante da barra inferior foram completamente extintos, visto que seu papel histórico foi absorvido e aprimorado pela Linha do Tempo Dinâmica do Menu.
+- Estatuto de Sucessão da Casa Rebaixado para Relações:
+  A gestão das leis de sucessão (primogenitura, partilha, etc.) e a designação do herdeiro oficial foram realocadas para uma sub-aba dedicada em Relações (👑 Sucessão da Casa), unificando os laços familiares e dinásticos no mesmo painel.
 ======================================================================
 
 VERSÃO 5.0 — EDIÇÃO MARCIAL: AÇO, ESTANDARTES & GLÓRIA DINÁSTICA:

@@ -175,6 +175,7 @@ const Creator = {
 
     STATE = {
       generation: 1,
+      lineageId: "lin_" + Date.now(),
       alive: true,
       isDead: false,
       name, sex, surname,

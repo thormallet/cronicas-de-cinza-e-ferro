@@ -79,11 +79,39 @@ const Storage = {
     } catch (e) { return []; }
   },
 
+  getPastLives() {
+    return this.getDynasty();
+  },
+
   recordPastLife(record) {
+    if (!record) return;
+    record.slotId = (record.slotId !== undefined) ? record.slotId : (window.CONFIG ? CONFIG.activeSlot : 0);
+    record.dynasty = record.dynasty || record.surname || ((typeof STATE !== "undefined" && STATE) ? STATE.surname : "Desconhecida");
     const list = this.getDynasty();
     list.unshift(record);
     SafeStorage.setItem(this.KEY_DYNASTY, JSON.stringify(list.slice(0, 50)));
     UI.renderMenuSlots();
+  },
+
+  getPastLivesForDynasty(surname, slotId) {
+    const all = this.getPastLives();
+    if (!surname && slotId === undefined) return all;
+    return all.filter(l => {
+      if (surname && l.surname && l.surname.toLowerCase() === surname.toLowerCase()) return true;
+      if (slotId !== undefined && l.slotId === slotId) return true;
+      return false;
+    });
+  },
+
+  getAllDynasties() {
+    const all = this.getPastLives();
+    const map = {};
+    all.forEach(l => {
+      const dyn = l.surname || "Desconhecida";
+      if (!map[dyn]) map[dyn] = [];
+      map[dyn].push(l);
+    });
+    return map;
   },
 
   exportSave() {

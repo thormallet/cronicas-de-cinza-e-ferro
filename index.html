@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#120c08">
-<title>Crônicas de Cinza e Ferro — Edição Marcial · v5.0</title>
+<title>Crônicas de Cinza e Ferro — Edição Marcial · v5.0.2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Eczar:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -208,13 +208,13 @@
       <h3 style="margin:0;font-size:1.15rem">🏆 Conquistas da Linhagem</h3>
       <span id="achievements-progress-badge" class="badge gold">0/20 Desbloqueadas</span>
     </div>
-    <div id="achievements-filter-bar" class="sub-tabs-bar" style="margin:0.6rem 0 0.8rem">
-      <button type="button" class="chip-btn active" onclick="window.UI.setAchievementFilter('todas', this)">Todas</button>
-      <button type="button" class="chip-btn" onclick="window.UI.setAchievementFilter('marcial', this)">⚔️ Marciais</button>
-      <button type="button" class="chip-btn" onclick="window.UI.setAchievementFilter('dinastia', this)">👑 Dinastia</button>
-      <button type="button" class="chip-btn" onclick="window.UI.setAchievementFilter('riqueza', this)">🪙 Riqueza</button>
-      <button type="button" class="chip-btn" onclick="window.UI.setAchievementFilter('geral', this)">📜 Gerais</button>
-    </div>
+      <div id="achievements-filter-bar" style="display:flex;gap:0.45rem;overflow-x:auto;padding:0.4rem 0.2rem;margin:0.5rem 0 0.8rem;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex-wrap:nowrap">
+        <button type="button" class="chip-btn active" style="min-height:38px;padding:0.4rem 0.85rem;font-size:0.85rem;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;border-radius:8px" onclick="window.UI.setAchievementFilter('todas', this)">Todas</button>
+        <button type="button" class="chip-btn" style="min-height:38px;padding:0.4rem 0.85rem;font-size:0.85rem;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;border-radius:8px" onclick="window.UI.setAchievementFilter('marcial', this)">⚔️ Marciais</button>
+        <button type="button" class="chip-btn" style="min-height:38px;padding:0.4rem 0.85rem;font-size:0.85rem;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;border-radius:8px" onclick="window.UI.setAchievementFilter('dinastia', this)">👑 Dinastia</button>
+        <button type="button" class="chip-btn" style="min-height:38px;padding:0.4rem 0.85rem;font-size:0.85rem;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;border-radius:8px" onclick="window.UI.setAchievementFilter('riqueza', this)">🪙 Riqueza</button>
+        <button type="button" class="chip-btn" style="min-height:38px;padding:0.4rem 0.85rem;font-size:0.85rem;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;border-radius:8px" onclick="window.UI.setAchievementFilter('geral', this)">📜 Gerais</button>
+      </div>
     <div id="achievements-list" class="stack-list" style="overflow-y:auto;overflow-x:hidden;flex:1;min-height:0;padding-right:0.25rem"></div>
     <div class="custom-dialog-buttons achievements-footer">
       <button type="button" class="primary" onclick="window.UI.closeAchievementsModal()">Fechar Conquistas</button>
@@ -225,32 +225,13 @@
 <!-- SHELL DO APP: COLUNA ÚNICA CENTRAL (MOBILE-FIRST) -->
 <div id="app-shell">
 
-<!-- DOCK DE FITAS MARCADORAS DE SEDA (RIBBON BOOKMARKS) -->
-<nav id="ribbon-dock" class="ribbon-dock" aria-label="Navegação Rápida do Códice">
-  <button type="button" class="ribbon-bookmark rib-rel" title="Relações & Família" onclick="window.UI.openSheet('tab-relacoes')">
-    <span class="rib-icon">👑</span><span class="rib-label">Relações</span>
-  </button>
-  <button type="button" class="ribbon-bookmark rib-oficio" title="Ofícios & Corporações" onclick="window.UI.openSheet('tab-oficios')">
-    <span class="rib-icon">⚒️</span><span class="rib-label">Ofícios</span>
-  </button>
-  <button type="button" class="ribbon-bookmark rib-act" title="Atividades" onclick="window.UI.openSheet('tab-atividades')">
-    <span class="rib-icon">📜</span><span class="rib-label">Ações</span>
-  </button>
-  <button type="button" class="ribbon-bookmark rib-inv" title="Inventário & Mercado" onclick="window.UI.openSheet('tab-inventario')">
-    <span class="rib-icon">🎒</span><span class="rib-label">Bens</span>
-  </button>
-  <button type="button" class="ribbon-bookmark rib-hist" title="Crônica & Histórico" onclick="window.UI.openSheet('tab-historico')">
-    <span class="rib-icon">🏛️</span><span class="rib-label">Anais</span>
-  </button>
-</nav>
-
 <!-- CABEÇALHO GLOBAL (MENU / CRIAÇÃO / MORTE) — NO JOGO É SUBSTITUÍDO PELO HUD -->
 <header id="app-header">
   <div class="brand-box">
     <div class="brand-crest">👑</div>
     <div>
       <h1>Crônicas de Cinza e Ferro</h1>
-      <span class="royal-subtitle">⚜ Edição Marcial · v5.0 ⚜</span>
+      <span class="royal-subtitle">⚜ Edição Marcial · v5.0.2 ⚜</span>
     </div>
   </div>
   <div style="display:flex;gap:0.35rem;align-items:center">
@@ -280,6 +261,7 @@
       <h3>🏛️ Panteão de Dinastias e Vidas Passadas</h3>
       <div id="dynasty-gallery" class="slot-list" style="max-height:220px;overflow-y:auto"></div>
     </div>
+    <div style="text-align:center;margin-top:1.5rem"><button type="button" class="chip-btn" style="opacity:0.35;font-size:0.72rem;padding:0.2rem 0.5rem" onclick="window.UI.openDevGodMode()">⚜️ [DEV TOOLS]</button></div>
   </div>
 </section>
 
@@ -349,6 +331,22 @@
 <section id="screen-game" class="screen">
   <div class="game-app">
 
+    <!-- DOCK DE FITAS MARCADORAS DE SEDA (RIBBON BOOKMARKS) -->
+    <nav id="ribbon-dock" class="ribbon-dock" aria-label="Navegação Rápida do Códice">
+      <button type="button" class="ribbon-bookmark rib-rel" title="Relações &amp; Família" onclick="window.UI.openSheet('tab-relacoes')">
+        <span class="rib-icon">👑</span><span class="rib-label">Relações</span>
+      </button>
+      <button type="button" class="ribbon-bookmark rib-oficio" title="Ofícios &amp; Corporações" onclick="window.UI.openSheet('tab-oficios')">
+        <span class="rib-icon">⚒️</span><span class="rib-label">Ofícios</span>
+      </button>
+      <button type="button" class="ribbon-bookmark rib-act" title="Atividades" onclick="window.UI.openSheet('tab-atividades')">
+        <span class="rib-icon">📜</span><span class="rib-label">Ações</span>
+      </button>
+      <button type="button" class="ribbon-bookmark rib-inv" title="Inventário &amp; Mercado" onclick="window.UI.openSheet('tab-inventario')">
+        <span class="rib-icon">🎒</span><span class="rib-label">Bens</span>
+      </button>
+    </nav>
+
     <!-- HUD SUPERIOR: RETRATO, NOME, IDADE/ANO, OFÍCIO, OURO, LOCAL, ENGRENAGEM -->
     <div id="hud-top-bar" class="hud">
       <div class="hud-main">
@@ -415,7 +413,6 @@
         <button type="button" id="btn-next-year" class="seal-btn" aria-label="Avançar Ano" title="Avançar Ano" onclick="window.Engine.advanceYear()"><span class="seal-ico">⏳</span><span class="seal-lbl">Avançar Ano</span></button>
         <div class="nav-side">
           <button type="button" class="nav-btn" aria-label="Bens e Mercado" title="Bens, Posses & Mercado" onclick="window.UI.switchTab('tab-inventario', this)"><span class="nav-ico">⚖️</span><span class="nav-lbl">Bens</span><span class="nav-count" id="cnt-inv">0</span></button>
-          <button type="button" class="nav-btn" aria-label="Anais e Linhagem" title="Anais, Linhagem & Histórico" onclick="window.UI.switchTab('tab-historico', this)"><span class="nav-ico">🏛️</span><span class="nav-lbl">Anais</span></button>
           <button type="button" id="tab-btn-reino" class="nav-btn" aria-label="Gestão do Reino" title="Gestão do Reino" style="display:none" onclick="window.UI.switchTab('tab-reino', this)"><span class="nav-ico">🏰</span><span class="nav-lbl">Reino</span></button>
         </div>
       </nav>
@@ -474,6 +471,7 @@
       <button type="button" id="tab-btn-rel-corte" class="tab-btn" style="display:none" onclick="window.UI.switchRelSubTab('sub-rel-corte-real', this)">👑 Corte (<span id="cnt-court">0</span>)</button>
       <button type="button" id="tab-btn-rel-oficio" class="tab-btn" style="display:none" onclick="window.UI.switchRelSubTab('sub-rel-oficio', this)">⚒️ Guilda / Ofício (<span id="cnt-colleagues">0</span>)</button>
       <button type="button" class="tab-btn" onclick="window.UI.switchRelSubTab('sub-rel-memoriam', this)">🕯️ In Memoriam (<span id="cnt-memoriam">0</span>)</button>
+      <button type="button" class="tab-btn chip-btn" onclick="window.UI.switchRelSubTab('rel-sucessao', this)">👑 Sucessão da Casa</button>
     </div>
 
     <p class="sheet-hint">Suas opções mudam conforme a idade e o papel social. Toda ação tem consequências reais sobre honra, ciúmes, alianças e vingança.</p>
@@ -530,6 +528,14 @@
     <div id="sub-rel-memoriam" class="rel-sub-panel" style="display:none">
       <h4>Memorial dos que Partiram (In Memoriam)</h4>
       <div id="memoriam-list" class="people-grid"></div>
+    </div>
+
+    <div id="rel-sucessao" class="rel-sub-panel" style="display:none">
+      <div class="card" style="margin-bottom:0.75rem">
+        <h4>👑 Estatuto de Sucessão &amp; Herança da Casa</h4>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin:0.25rem 0 0.65rem">Defina a lei de herança da dinastia e designe seu herdeiro oficial entre os filhos legítimos ou bastardos.</p>
+        <div id="succession-law-section"><div id="succession-law-box"></div></div>
+      </div>
     </div>
   </div>
 </div>
@@ -660,25 +666,6 @@
   </div>
 </div>
 
-<!-- SHEET: ANAIS E LINHAGEM -->
-<div id="tab-historico" class="tab-content sheet" role="dialog" aria-label="Anais e Linhagem">
-  <div class="sheet-head">
-    <h3>🏛️ Anais &amp; Linhagem</h3>
-    <button type="button" class="sheet-close" aria-label="Fechar painel" onclick="window.UI.closeSheets()">✕</button>
-  </div>
-  <div class="sheet-body">
-    <div class="card" id="succession-law-card">
-      <h3>👑 Estatuto de Sucessão da Casa</h3>
-      <div id="succession-law-box"></div>
-    </div>
-    <div class="card">
-      <h3>Anais da Casa, Flags de Destino e Crônica Completa</h3>
-      <div id="history-flags" style="margin-bottom:0.8rem"></div>
-      <div id="full-history-list" class="history-list"></div>
-    </div>
-  </div>
-</div>
-
 <!-- SHEET: FICHA DO PERSONAGEM E APTIDÕES (TOQUE NO RETRATO) -->
 <div id="sheet-ficha" class="sheet" role="dialog" aria-label="Ficha do Personagem">
   <div class="sheet-head">
@@ -726,8 +713,9 @@
       <button type="button" onclick="document.getElementById('import-input').click()">📂 Importar</button>
       <input type="file" id="import-input" style="display:none" accept=".json" onchange="window.Storage.importSave(event)">
       <button type="button" onclick="window.UI.showScreen('screen-menu')">🏰 Menu</button>
+      <button type="button" class="chip-btn" style="opacity:0.45;font-size:0.75rem;margin-top:0.6rem" onclick="window.UI.openDevGodMode()">⚡ Modo Deus (Criador)</button>
     </div>
-    <p class="cfg-version">Crônicas de Cinza e Ferro - Edição Marcial<br>v5.0 — Aço, Estandartes &amp; Glória Dinástica</p>
+    <p class="cfg-version">Crônicas de Cinza e Ferro<br>v5.0.2 — Patch Corretivo Edição Marcial</p>
   </div>
 </div>
 
@@ -751,6 +739,167 @@
 
     <div class="custom-dialog-buttons" style="position:static;padding:0;background:none;border:none;box-shadow:none">
       <button type="button" id="btn-strike-qte" class="primary" style="min-height:50px;font-size:1.1rem;font-weight:700" onclick="window.UI.strikeDuelQTE()">⚔️ DESFERIR GOLPE!</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: MODO DEUS DEV (Patch 5.0.2) -->
+<div id="dev-godmode-modal" class="custom-dialog-backdrop" style="z-index:99999" role="dialog" aria-modal="true" aria-label="Modo Deus Dev">
+  <div class="custom-dialog" style="max-width:580px;width:95vw;max-height:88vh;display:flex;flex-direction:column">
+    <div class="custom-dialog-header">
+      <span class="custom-dialog-icon">⚡</span>
+      <div>
+        <h3>Modo Deus — Painel do Criador (v5.0.2)</h3>
+        <small style="color:var(--text-muted)">Controle Absoluto de Estado, Carreira, Local e Guerra</small>
+      </div>
+    </div>
+    <div style="flex:1;min-height:0;overflow-y:auto;padding:0.75rem 0.5rem;display:flex;flex-direction:column;gap:0.85rem">
+      
+      <!-- 1. Identidade & Estamento -->
+      <fieldset style="border:1px solid var(--border-gold);border-radius:6px;padding:0.6rem">
+        <legend style="color:var(--gold-bright);font-weight:700;font-size:0.85rem">👑 Identidade, Idade &amp; Estamento</legend>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;margin-bottom:0.45rem">
+          <div>
+            <label style="font-size:0.75rem">Estamento:</label>
+            <select id="dev-sel-class" class="inp" onchange="window.Engine.devSetClass(this.value)">
+              <option value="plebeu">Plebeu (Povo)</option>
+              <option value="media">Burguês / Homem Livre</option>
+              <option value="nobre">Nobreza de Sangue</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.75rem">Idade:</label>
+            <div style="display:flex;gap:0.25rem">
+              <input type="number" id="dev-inp-age" class="inp" min="0" max="120" style="width:70px">
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetAge(document.getElementById('dev-inp-age').value)">OK</button>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.45rem;align-items:center">
+          <label style="font-size:0.75rem">Ano do Senhor:</label>
+          <input type="number" id="dev-inp-year" class="inp" min="800" max="2000" style="width:90px">
+          <button type="button" class="chip-btn" onclick="window.Engine.devSetYear(document.getElementById('dev-inp-year').value)">Definir Ano</button>
+        </div>
+      </fieldset>
+
+      <!-- 2. Carreira & Ofício -->
+      <fieldset style="border:1px solid var(--border-gold);border-radius:6px;padding:0.6rem">
+        <legend style="color:var(--gold-bright);font-weight:700;font-size:0.85rem">⚒️ Carreira &amp; Ofício</legend>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;margin-bottom:0.45rem">
+          <div>
+            <label style="font-size:0.75rem">Ofício:</label>
+            <select id="dev-sel-job" class="inp"></select>
+          </div>
+          <div>
+            <label style="font-size:0.75rem">Grau / Posto:</label>
+            <select id="dev-sel-rank" class="inp"></select>
+          </div>
+        </div>
+        <button type="button" class="chip-btn" style="width:100%" onclick="window.Engine.devSetJob(document.getElementById('dev-sel-job').value, document.getElementById('dev-sel-rank').value)">Aplicar Ofício &amp; Posto</button>
+      </fieldset>
+
+      <!-- 3. Localidade Geográfica -->
+      <fieldset style="border:1px solid var(--border-gold);border-radius:6px;padding:0.6rem">
+        <legend style="color:var(--gold-bright);font-weight:700;font-size:0.85rem">📍 Localidade Geográfica</legend>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;margin-bottom:0.45rem">
+          <div>
+            <label style="font-size:0.75rem">Reino:</label>
+            <select id="dev-sel-kingdom" class="inp"></select>
+          </div>
+          <div>
+            <label style="font-size:0.75rem">Cidade / Feudo:</label>
+            <select id="dev-sel-city" class="inp"></select>
+          </div>
+        </div>
+        <button type="button" class="chip-btn" style="width:100%" onclick="window.Engine.devSetLocation(document.getElementById('dev-sel-kingdom').value, document.getElementById('dev-sel-city').value)">Teleportar Imediatamente</button>
+      </fieldset>
+
+      <!-- 4. Recursos & Vitalidade -->
+      <fieldset style="border:1px solid var(--border-gold);border-radius:6px;padding:0.6rem">
+        <legend style="color:var(--gold-bright);font-weight:700;font-size:0.85rem">💰 Recursos, Vitalidade &amp; Moral</legend>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;margin-bottom:0.45rem">
+          <div>
+            <label style="font-size:0.75rem">Ouro:</label>
+            <div style="display:flex;gap:0.25rem">
+              <input type="number" id="dev-inp-gold" class="inp" style="width:80px">
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetGold(document.getElementById('dev-inp-gold').value)">Set</button>
+              <button type="button" class="chip-btn" onclick="window.Engine.devAddGold(1000)">+1k</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.75rem">Dívida:</label>
+            <div style="display:flex;gap:0.25rem">
+              <input type="number" id="dev-inp-debt" class="inp" style="width:80px">
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetDebt(document.getElementById('dev-inp-debt').value)">Set</button>
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetDebt(0)">Zerar</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.75rem">Vigor (0-100):</label>
+            <div style="display:flex;gap:0.25rem">
+              <input type="number" id="dev-inp-vigor" class="inp" style="width:70px">
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetVigor(document.getElementById('dev-inp-vigor').value)">Set</button>
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetVigor(100)">100%</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.75rem">Saúde (1-100):</label>
+            <div style="display:flex;gap:0.25rem">
+              <input type="number" id="dev-inp-hp" class="inp" style="width:70px">
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetHp(document.getElementById('dev-inp-hp').value)">Set</button>
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetHp(100)">100%</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.75rem">Honra (0-100):</label>
+            <div style="display:flex;gap:0.25rem">
+              <input type="number" id="dev-inp-honor" class="inp" style="width:70px">
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetHonor(document.getElementById('dev-inp-honor').value)">Set</button>
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetHonor(100)">100</button>
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.75rem">Reputação (-10 a 10):</label>
+            <div style="display:flex;gap:0.25rem">
+              <input type="number" id="dev-inp-rep" class="inp" style="width:70px">
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetRep(document.getElementById('dev-inp-rep').value)">Set</button>
+              <button type="button" class="chip-btn" onclick="window.Engine.devSetRep(10)">+10</button>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 5. Atributos -->
+      <fieldset style="border:1px solid var(--border-gold);border-radius:6px;padding:0.6rem">
+        <legend style="color:var(--gold-bright);font-weight:700;font-size:0.85rem">💪 Atributos Pessoais</legend>
+        <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:0.45rem;margin-bottom:0.45rem">
+          <div><label style="font-size:0.72rem">Força:</label><input type="number" id="dev-inp-attr-forca" class="inp" onchange="window.Engine.devSetAttr('forca', this.value)"></div>
+          <div><label style="font-size:0.72rem">Destreza:</label><input type="number" id="dev-inp-attr-destreza" class="inp" onchange="window.Engine.devSetAttr('destreza', this.value)"></div>
+          <div><label style="font-size:0.72rem">Intelecto:</label><input type="number" id="dev-inp-attr-intelecto" class="inp" onchange="window.Engine.devSetAttr('intelecto', this.value)"></div>
+          <div><label style="font-size:0.72rem">Carisma:</label><input type="number" id="dev-inp-attr-carisma" class="inp" onchange="window.Engine.devSetAttr('carisma', this.value)"></div>
+          <div><label style="font-size:0.72rem">Fé:</label><input type="number" id="dev-inp-attr-fe" class="inp" onchange="window.Engine.devSetAttr('fe', this.value)"></div>
+          <div><label style="font-size:0.72rem">Sorte:</label><input type="number" id="dev-inp-attr-sorte" class="inp" onchange="window.Engine.devSetAttr('sorte', this.value)"></div>
+        </div>
+        <button type="button" class="chip-btn" style="width:100%" onclick="window.Engine.devSetAttrs(100)">Todos os Atributos em 100</button>
+      </fieldset>
+
+      <!-- 6. Ações Marciais, Exército &amp; Guerra -->
+      <fieldset style="border:1px solid var(--border-gold);border-radius:6px;padding:0.6rem">
+        <legend style="color:var(--gold-bright);font-weight:700;font-size:0.85rem">⚔️ Militar, Guerra &amp; Conquistas</legend>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.45rem">
+          <button type="button" class="chip-btn" onclick="window.Engine.devMaxArmy()">⚔️ Exército Máximo (500+)</button>
+          <button type="button" class="chip-btn" onclick="window.Engine.devGrantRelics()">✨ Ganhar Todas as Relíquias</button>
+          <button type="button" class="chip-btn" onclick="window.Engine.devTriggerWar()">🚩 Deflagrar Guerra Continental</button>
+          <button type="button" class="chip-btn" onclick="window.Engine.devWinWar()">🏆 Vencer Guerra Imediata</button>
+          <button type="button" class="chip-btn" onclick="window.Engine.negotiatePeaceTreaty()">🕊️ Selar Paz Diplomática</button>
+          <button type="button" class="chip-btn" onclick="window.Engine.grantBattlefieldNobility()">⚜️ Sagrar Nobreza</button>
+          <button type="button" class="chip-btn" style="grid-column:span 2" onclick="window.Engine.devUnlockAllAchievements()">🏆 Desbloquear Todas as Conquistas</button>
+        </div>
+      </fieldset>
+
+    </div>
+    <div class="custom-dialog-buttons" style="position:static;padding:0.6rem 0;background:none;border:none">
+      <button type="button" class="primary" onclick="window.UI.closeDevGodMode()">Fechar Painel Dev</button>
     </div>
   </div>
 </div>

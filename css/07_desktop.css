@@ -45,96 +45,50 @@
   #menu-slots .slot-item, #dynasty-gallery .slot-item { margin-bottom: 0; }
   #menu-slots .slot-item button { width: auto; flex: 1; }
 
-  /* 2. COLUNA ESQUERDA: #sheet-ficha sempre visível (300px) */
-  body.in-game #sheet-ficha {
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: auto;
-    width: 300px;
-    transform: none;
-    visibility: visible;
-    border-radius: 0;
-    border-top: none;
-    border-right: 3px solid var(--border-gold);
-    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.4);
-    z-index: 10;
-    transition: none;
-  }
-  body.in-game #sheet-ficha .sheet-close,
-  body.in-game #sheet-ficha .sheet-head::before { display: none; }
-  body.in-game #sheet-ficha .sheet-body {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    padding: 0.75rem 0.9rem 1.2rem;
-  }
-  body.in-game #sheet-ficha #st-hero-header {
-    flex-direction: column;
-    text-align: center;
-    padding: 0.75rem 0.5rem;
-    gap: 0.5rem;
-  }
-  body.in-game #sheet-ficha .avatar-portrait.lg { width: 92px; height: 92px; }
-  body.in-game #sheet-ficha #st-attrs { gap: 0.45rem; }
-  body.in-game #sheet-ficha .attr-line-head { font-size: 0.85rem; }
-
-  /* 3. COLUNA DIREITA: SHEETS DOCADOS (440px) */
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) {
+  /* ABAS LATERAIS TOTALMENTE RETRÁTEIS NO DESKTOP */
+  body.in-game .sheet {
+    position: fixed;
     top: 0;
     bottom: 0;
     right: 0;
     left: auto;
-    width: 440px;
+    width: 460px;
+    max-width: 90vw;
     border-radius: 0;
     border-top: none;
     border-left: 3px solid var(--border-gold);
-    transform: none;
+    transform: translateX(100%);
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
-    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.4);
-    z-index: 10;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
+    box-shadow: -6px 0 24px rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease, visibility 0.2s ease;
   }
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config).active {
+
+  body.in-game #sheet-ficha {
+    right: auto;
+    left: 0;
+    border-left: none;
+    border-right: 3px solid var(--border-gold);
+    transform: translateX(-100%);
+    box-shadow: 6px 0 24px rgba(0, 0, 0, 0.7);
+  }
+
+  body.in-game .sheet.active {
+    transform: translateX(0);
     visibility: visible;
     opacity: 1;
     pointer-events: auto;
   }
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .sheet-close,
-  body.in-game .sheet:not(#sheet-config) .sheet-head::before { display: none; }
-  body.in-game .sheet:not(#sheet-config) .sheet-head { border-radius: 0; }
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .sheet-body {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-  }
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .people-grid {
-    grid-template-columns: 1fr;
-    width: 100%;
-  }
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .stack-list,
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .act-groups,
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .card,
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .person-card,
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .npc-card,
-  body.in-game .sheet:not(#sheet-ficha):not(#sheet-config) .item-card { width: 100%; }
 
-  /* 4. CENTRO: HUD, FEED E DOCK COM MARGENS INTELIGENTES */
+  /* Centro permanece limpo e focado */
   body.in-game .hud,
   body.in-game .feed-wrap,
   body.in-game .dock {
-    margin-left: 300px;
-    margin-right: 0;
-    transition: margin-right 0.2s ease;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
-  body.in-game.sheet-open .hud,
-  body.in-game.sheet-open .feed-wrap,
-  body.in-game.sheet-open .dock { margin-right: 440px; }
-  body.in-game:not(.sheet-open) .hud,
-  body.in-game:not(.sheet-open) .feed-wrap,
-  body.in-game:not(.sheet-open) .dock { margin-right: 0; }
 
   /* Viagens em grade de 2 colunas no desktop */
   .travel-grid {

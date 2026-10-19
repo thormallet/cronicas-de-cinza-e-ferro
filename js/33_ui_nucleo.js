@@ -139,21 +139,11 @@ const UI = {
     }
     if (id === "screen-menu") this.renderMenuSlots();
 
-    if (isGame) {
-      if (this.isDesktop()) {
-        this.openSheet("tab-atividades", true);
-      } else {
-        this.closeSheets(true);
-      }
-    } else {
-      this.closeSheets(true);
-    }
+    this.closeSheets(true);
   },
 
   /* PAINÉIS "BOTTOM SHEET": abre/fecha por id; a navegação inferior usa switchTab */
   openSheet(id, silent) {
-    if (this.isDesktop() && id === "sheet-ficha") return;
-
     const sheet = document.getElementById(id);
     if (!sheet) return;
 
@@ -205,15 +195,6 @@ const UI = {
   },
 
   closeSheets(silent) {
-    if (this.isDesktop() && document.body.classList.contains("in-game")) {
-      const cfg = document.getElementById("sheet-config");
-      if (cfg && cfg.classList.contains("active")) {
-        if (!silent) SoundFX.play("click");
-        cfg.classList.remove("active");
-        document.body.classList.remove("config-open");
-      }
-      return;
-    }
     if (!silent && document.querySelector(".sheet.active")) SoundFX.play("click");
     document.querySelectorAll(".sheet.active").forEach(s => s.classList.remove("active"));
     document.body.classList.remove("sheet-open");
@@ -225,9 +206,6 @@ const UI = {
     const target = document.getElementById(tabId);
     if (!target) return;
     if (tabId === "tab-cronica" || target.classList.contains("active")) {
-      if (this.isDesktop() && document.body.classList.contains("in-game")) {
-        return;
-      }
       this.closeSheets();
       return;
     }
@@ -360,6 +338,96 @@ const UI = {
       div.innerHTML = this.fmtLog(entry.text);
       box.scrollTop = box.scrollHeight;
     }
+  },
+
+  openDevGodMode() {
+    const pwd = prompt("Insira a chave do Mestre Construtor (Dev):");
+    if (pwd === "ccf501") {
+      this.populateDevPanel();
+      const modal = document.getElementById("dev-godmode-modal");
+      if (modal) modal.classList.add("active");
+    } else if (pwd !== null) {
+      alert("Acesso Negado: Chave incorreta.");
+    }
+  },
+
+  populateDevPanel() {
+    if (!STATE) return;
+    const selClass = document.getElementById("dev-sel-class");
+    if (selClass) selClass.value = STATE.socialClass || "plebeu";
+
+    const inpAge = document.getElementById("dev-inp-age");
+    if (inpAge) inpAge.value = STATE.age || 0;
+
+    const inpYear = document.getElementById("dev-inp-year");
+    if (inpYear) inpYear.value = STATE.year || 1140;
+
+    const inpGold = document.getElementById("dev-inp-gold");
+    if (inpGold) inpGold.value = STATE.gold || 0;
+
+    const inpDebt = document.getElementById("dev-inp-debt");
+    if (inpDebt) inpDebt.value = STATE.debt || 0;
+
+    const inpVigor = document.getElementById("dev-inp-vigor");
+    if (inpVigor) inpVigor.value = STATE.vigor !== undefined ? STATE.vigor : 100;
+
+    const inpHp = document.getElementById("dev-inp-hp");
+    if (inpHp) inpHp.value = STATE.hp !== undefined ? STATE.hp : 100;
+
+    const inpHonor = document.getElementById("dev-inp-honor");
+    if (inpHonor) inpHonor.value = STATE.honor !== undefined ? STATE.honor : 50;
+
+    const inpRep = document.getElementById("dev-inp-rep");
+    if (inpRep) inpRep.value = STATE.reputation !== undefined ? STATE.reputation : 0;
+
+    // Preenche Select de Ofícios
+    const selJob = document.getElementById("dev-sel-job");
+    const selRank = document.getElementById("dev-sel-rank");
+    if (selJob && DATA.jobs) {
+      selJob.innerHTML = DATA.jobs.map(j => `<option value="${j.id}" ${j.id === STATE.job ? "selected" : ""}>${j.name} (${j.category || "comum"})</option>`).join("");
+      const updateRanks = () => {
+        const curJob = DATA.jobs.find(j => j.id === selJob.value);
+        if (curJob && Array.isArray(curJob.ranks)) {
+          selRank.innerHTML = curJob.ranks.map((r, idx) => `<option value="${idx}" ${idx === (STATE.jobRank || 0) ? "selected" : ""}>Grau ${idx + 1}: ${r}</option>`).join("");
+        } else {
+          selRank.innerHTML = `<option value="0">Grau Único</option>`;
+        }
+      };
+      selJob.onchange = updateRanks;
+      updateRanks();
+    }
+
+    // Preenche Select de Reinos e Cidades
+    const selKingdom = document.getElementById("dev-sel-kingdom");
+    const selCity = document.getElementById("dev-sel-city");
+    if (selKingdom && DATA.kingdoms) {
+      const kList = Array.isArray(DATA.kingdoms) ? DATA.kingdoms : Object.values(DATA.kingdoms);
+      selKingdom.innerHTML = kList.map(k => `<option value="${k.id}" ${k.id === STATE.kingdom ? "selected" : ""}>${k.name}</option>`).join("");
+      const updateCities = () => {
+        const kId = selKingdom.value;
+        const cList = (DATA.cities && DATA.cities[kId]) || (kList.find(k => k.id === kId) && kList.find(k => k.id === kId).cities) || [];
+        if (cList.length > 0) {
+          selCity.innerHTML = cList.map(c => `<option value="${c.id}" ${c.id === STATE.currentCityId ? "selected" : ""}>${c.name} (${c.tier || c.type || "vila"})</option>`).join("");
+        } else {
+          selCity.innerHTML = `<option value="">Padrão</option>`;
+        }
+      };
+      selKingdom.onchange = updateCities;
+      updateCities();
+    }
+
+    // Preenche Atributos
+    if (STATE.attrs) {
+      ["forca", "destreza", "intelecto", "carisma", "fe", "sorte"].forEach(attr => {
+        const el = document.getElementById(`dev-inp-attr-${attr}`);
+        if (el) el.value = STATE.attrs[attr] !== undefined ? STATE.attrs[attr] : 50;
+      });
+    }
+  },
+
+  closeDevGodMode() {
+    const modal = document.getElementById("dev-godmode-modal");
+    if (modal) modal.classList.remove("active");
   }
 };
 if (typeof window !== "undefined") window.UI = UI;
@@ -373,15 +441,7 @@ if (typeof window !== "undefined") {
     const isDesk = UI.isDesktop();
     if (isDesk === _wasDesktopState) return;
     _wasDesktopState = isDesk;
-    if (isDesk) {
-      if (document.body && document.body.classList.contains("in-game")) {
-        const hasRightActive = Array.from(document.querySelectorAll(".sheet.active"))
-          .some(s => s.id !== "sheet-ficha" && s.id !== "sheet-config");
-        if (!hasRightActive) {
-          UI.openSheet("tab-atividades", true);
-        }
-      }
-    } else {
+    if (!isDesk) {
       UI.closeSheets(true);
     }
   };
@@ -395,11 +455,16 @@ if (typeof window !== "undefined") {
   }
 }
 
-/* CONTROLE GLOBAL DA TECLA ESCAPE */
+/* CONTROLE GLOBAL DE ATALHOS DE TECLADO (ESCAPE E MODO DEUS) */
 if (typeof window !== "undefined") {
   window.addEventListener("keydown", (e) => {
+    if (e.ctrlKey && e.shiftKey && (e.key === "D" || e.key === "d")) {
+      e.preventDefault();
+      UI.openDevGodMode();
+      return;
+    }
     if (e.key === "Escape") {
-      const topDialog = document.querySelector(".custom-dialog-backdrop.active, #event-popup-backdrop.active, #achievements-modal-backdrop.active, #radar-modal-backdrop.active, #child-name-backdrop.active");
+      const topDialog = document.querySelector(".custom-dialog-backdrop.active, #event-popup-backdrop.active, #achievements-modal-backdrop.active, #radar-modal-backdrop.active, #child-name-backdrop.active, #dev-godmode-modal.active");
       if (topDialog) {
         topDialog.classList.remove("active");
         return;
