@@ -319,6 +319,8 @@ Object.assign(UI, {
     const hasNobleTitle = STATE.socialClass === "nobre" && (STATE.nobleTitleLevel || 0) >= 1;
     const tabBtnReino = document.getElementById("tab-btn-reino");
     if (tabBtnReino) tabBtnReino.style.display = hasNobleTitle ? "inline-block" : "none";
+    const ribBtnReino = document.getElementById("rib-btn-reino");
+    if (ribBtnReino) ribBtnReino.style.display = hasNobleTitle ? "inline-flex" : "none";
     const tabReinoEl = document.getElementById("tab-reino");
     if (!hasNobleTitle && tabReinoEl && tabReinoEl.classList.contains("active")) {
       this.switchTab("tab-oficios");

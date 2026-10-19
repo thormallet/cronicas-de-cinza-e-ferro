@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 5.0.2 (Edição Marcial — Patch Corretivo & Ergonomia Visual)
+Crônicas de Cinza e Ferro — Versão 5.0.3 (Edição Marcial — Patch Corretivo & Ergonomia Visual)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,27 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 5.0.3 — PATCH CORRETIVO EDIÇÃO MARCIAL & ESTABILIDADE DO CÓDICE:
+======================================================================
+FRENTE 1 — ESTABILIDADE DO CICLO ANUAL & BLINDAGEM DE EVENTOS E QTE:
+- Blindagem nos Filtros de Eventos:
+  Corrigida a verificação defensiva nos filtros de catálogo em js/21_engine_eventos.js e padronização dos esquemas de eventos em js/13_eventos_catalogo.js. O avanço de ano (advanceYear) agora prossegue suavemente com sorteio de eventos, provações táticas e acionamento de duelos QTE sem interrupções.
+
+FRENTE 2 — ACESSIBILIDADE INTEGRAL DA FICHA E DO REINO NO DESKTOP:
+- Resolução de Especificidade de Seletores CSS:
+  Em css/07_desktop.css, a regra de abertura da Ficha do Personagem (#sheet-ficha.active) agora sobrepõe com prioridade máxima o deslocamento inicial, garantindo que o clique na moldura/avatar do herói no HUD abra a gaveta lateral de aptidões fluidamente no desktop.
+- Fita Marcadora da Gestão Feudal:
+  Adicionada a fita de seda do Reino (#rib-btn-reino) no dock superior (#ribbon-dock), sincronizada dinamicamente com a posse de titularidade nobre e com estilização púrpura nobre.
+
+FRENTE 3 — HARMONIA E SIMETRIA NA NAVEGAÇÃO MOBILE:
+- Rebalanceamento Perfeito da Navbar Inferior:
+  Reorganizada a distribuição dos botões ao redor do Selo Régio central: 2 botões à esquerda (Relações e Ofícios) e 2 botões à direita (Atividades e Bens, com o botão contextual de Reino para nobres titulados). As legendas agora possuem largura flexível e elipse protetora para evitar encavalamento de textos.
+
+FRENTE 4 — ACOPLAMENTO NOBRE DO DOCK DE FITAS:
+- Eliminação Definitiva da Faixa Preta:
+  O contêiner das fitas marcadoras (#ribbon-dock) foi encapsulado diretamente dentro do topo do HUD (#hud-top-bar), repousando diretamente sobre a pergaminharia iluminada sem gerar faixas escuras vazias acima da interface.
 ======================================================================
 
 VERSÃO 5.0.2 — PATCH CORRETIVO EDIÇÃO MARCIAL & REFINAMENTOS ERGONÔMICOS:

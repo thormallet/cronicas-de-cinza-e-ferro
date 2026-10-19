@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#120c08">
-<title>Crônicas de Cinza e Ferro — Edição Marcial · v5.0.2</title>
+<title>Crônicas de Cinza e Ferro — Edição Marcial · v5.0.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Eczar:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -231,7 +231,7 @@
     <div class="brand-crest">👑</div>
     <div>
       <h1>Crônicas de Cinza e Ferro</h1>
-      <span class="royal-subtitle">⚜ Edição Marcial · v5.0.2 ⚜</span>
+      <span class="royal-subtitle">⚜ Edição Marcial · v5.0.3 ⚜</span>
     </div>
   </div>
   <div style="display:flex;gap:0.35rem;align-items:center">
@@ -331,24 +331,26 @@
 <section id="screen-game" class="screen">
   <div class="game-app">
 
-    <!-- DOCK DE FITAS MARCADORAS DE SEDA (RIBBON BOOKMARKS) -->
-    <nav id="ribbon-dock" class="ribbon-dock" aria-label="Navegação Rápida do Códice">
-      <button type="button" class="ribbon-bookmark rib-rel" title="Relações &amp; Família" onclick="window.UI.openSheet('tab-relacoes')">
-        <span class="rib-icon">👑</span><span class="rib-label">Relações</span>
-      </button>
-      <button type="button" class="ribbon-bookmark rib-oficio" title="Ofícios &amp; Corporações" onclick="window.UI.openSheet('tab-oficios')">
-        <span class="rib-icon">⚒️</span><span class="rib-label">Ofícios</span>
-      </button>
-      <button type="button" class="ribbon-bookmark rib-act" title="Atividades" onclick="window.UI.openSheet('tab-atividades')">
-        <span class="rib-icon">📜</span><span class="rib-label">Ações</span>
-      </button>
-      <button type="button" class="ribbon-bookmark rib-inv" title="Inventário &amp; Mercado" onclick="window.UI.openSheet('tab-inventario')">
-        <span class="rib-icon">🎒</span><span class="rib-label">Bens</span>
-      </button>
-    </nav>
-
     <!-- HUD SUPERIOR: RETRATO, NOME, IDADE/ANO, OFÍCIO, OURO, LOCAL, ENGRENAGEM -->
     <div id="hud-top-bar" class="hud">
+      <!-- DOCK DE FITAS MARCADORAS DE SEDA (RIBBON BOOKMARKS) -->
+      <nav id="ribbon-dock" class="ribbon-dock" aria-label="Navegação Rápida do Códice">
+        <button type="button" class="ribbon-bookmark rib-rel" title="Relações &amp; Família" onclick="window.UI.openSheet('tab-relacoes')">
+          <span class="rib-icon">👑</span><span class="rib-label">Relações</span>
+        </button>
+        <button type="button" class="ribbon-bookmark rib-oficio" title="Ofícios &amp; Corporações" onclick="window.UI.openSheet('tab-oficios')">
+          <span class="rib-icon">⚒️</span><span class="rib-label">Ofícios</span>
+        </button>
+        <button type="button" class="ribbon-bookmark rib-act" title="Atividades" onclick="window.UI.openSheet('tab-atividades')">
+          <span class="rib-icon">📜</span><span class="rib-label">Ações</span>
+        </button>
+        <button type="button" class="ribbon-bookmark rib-inv" title="Inventário &amp; Mercado" onclick="window.UI.openSheet('tab-inventario')">
+          <span class="rib-icon">🎒</span><span class="rib-label">Bens</span>
+        </button>
+        <button type="button" id="rib-btn-reino" class="ribbon-bookmark rib-reino" style="display:none" title="Gestão do Feudo &amp; Reino" onclick="window.UI.openSheet('tab-reino')">
+          <span class="rib-icon">🏰</span><span class="rib-label">Reino</span>
+        </button>
+      </nav>
       <div class="hud-main">
         <button type="button" id="hud-avatar-btn" class="hud-avatar" aria-label="Abrir ficha e aptidões" onclick="window.UI.openSheet('sheet-ficha')"><span id="hud-avatar"></span></button>
         <div class="hud-id">
@@ -405,13 +407,13 @@
       </div>
 
       <nav class="navbar" aria-label="Navegação principal">
-        <div class="nav-side">
-          <button type="button" class="nav-btn" aria-label="Ofícios e Guildas" title="Ofícios e Guildas" onclick="window.UI.switchTab('tab-oficios', this)"><span class="nav-ico">⚜️</span><span class="nav-lbl">Ofícios</span></button>
+        <div class="nav-side nav-side-left">
           <button type="button" class="nav-btn" aria-label="Relações" title="Relações Sociais, Família & Corte" onclick="window.UI.switchTab('tab-relacoes', this)"><span class="nav-ico">👑</span><span class="nav-lbl">Relações</span><span class="nav-count" id="cnt-rel">0</span></button>
-          <button type="button" class="nav-btn" aria-label="Atividades" title="Atividades e Ações" onclick="window.UI.switchTab('tab-atividades', this)"><span class="nav-ico">⚒️</span><span class="nav-lbl">Atividades</span></button>
+          <button type="button" class="nav-btn" aria-label="Ofícios e Guildas" title="Ofícios e Guildas" onclick="window.UI.switchTab('tab-oficios', this)"><span class="nav-ico">⚜️</span><span class="nav-lbl">Ofícios</span></button>
         </div>
         <button type="button" id="btn-next-year" class="seal-btn" aria-label="Avançar Ano" title="Avançar Ano" onclick="window.Engine.advanceYear()"><span class="seal-ico">⏳</span><span class="seal-lbl">Avançar Ano</span></button>
-        <div class="nav-side">
+        <div class="nav-side nav-side-right">
+          <button type="button" class="nav-btn" aria-label="Atividades" title="Atividades e Ações" onclick="window.UI.switchTab('tab-atividades', this)"><span class="nav-ico">⚒️</span><span class="nav-lbl">Atividades</span></button>
           <button type="button" class="nav-btn" aria-label="Bens e Mercado" title="Bens, Posses & Mercado" onclick="window.UI.switchTab('tab-inventario', this)"><span class="nav-ico">⚖️</span><span class="nav-lbl">Bens</span><span class="nav-count" id="cnt-inv">0</span></button>
           <button type="button" id="tab-btn-reino" class="nav-btn" aria-label="Gestão do Reino" title="Gestão do Reino" style="display:none" onclick="window.UI.switchTab('tab-reino', this)"><span class="nav-ico">🏰</span><span class="nav-lbl">Reino</span></button>
         </div>
@@ -715,7 +717,7 @@
       <button type="button" onclick="window.UI.showScreen('screen-menu')">🏰 Menu</button>
       <button type="button" class="chip-btn" style="opacity:0.45;font-size:0.75rem;margin-top:0.6rem" onclick="window.UI.openDevGodMode()">⚡ Modo Deus (Criador)</button>
     </div>
-    <p class="cfg-version">Crônicas de Cinza e Ferro<br>v5.0.2 — Patch Corretivo Edição Marcial</p>
+    <p class="cfg-version">Crônicas de Cinza e Ferro<br>v5.0.3 — Patch Corretivo Edição Marcial</p>
   </div>
 </div>
 

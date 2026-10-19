@@ -322,15 +322,16 @@
 .nav-side {
   flex: 1;
   display: flex;
-  justify-content: space-around;
   align-items: flex-end;
+  justify-content: space-evenly;
+  gap: 0.2rem;
   min-width: 0;
-  gap: 0.15rem;
 }
 
 .nav-btn {
   position: relative;
-  min-width: 48px;
+  min-width: 0;
+  max-width: 68px;
   min-height: 50px;
   padding: 0.25rem 0.2rem;
   flex: 1;
@@ -374,12 +375,13 @@
 .nav-lbl {
   display: block;
   font-family: var(--font-serif);
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
   margin-top: 2px;
 }
 
@@ -622,8 +624,8 @@ body:not(.in-game) #ribbon-dock {
   justify-content: center;
   align-items: flex-start;
   gap: 0.65rem;
-  padding: 0.35rem 0.5rem 0;
-  margin: 0;
+  padding: 0;
+  margin: -0.25rem 0 0.35rem 0;
   z-index: 8;
   position: relative;
   background: transparent;
@@ -661,6 +663,7 @@ body:not(.in-game) #ribbon-dock {
 .ribbon-bookmark.rib-oficio { background: linear-gradient(180deg, #8c600b 0%, #4d3302 100%); }
 .ribbon-bookmark.rib-act { background: linear-gradient(180deg, #1b3d5c 0%, #0d2236 100%); }
 .ribbon-bookmark.rib-inv { background: linear-gradient(180deg, #1e5233 0%, #0c2b19 100%); }
+.ribbon-bookmark.rib-reino { background: linear-gradient(180deg, #5c1868 0%, #300a38 100%); }
 .ribbon-bookmark.rib-hist{ background: linear-gradient(180deg, #4d1c4a 0%, #290a27 100%); }
 
 /* FISSURA NO SELO RÉGIO (320ms GPU) */

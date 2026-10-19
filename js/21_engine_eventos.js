@@ -55,8 +55,8 @@ Object.assign(Engine, {
 
     let pool = DATA.events.filter(ev => {
       if (ev.jobReq && ev.jobReq !== activeJobId) return false;
-      const phaseOk = ev.phase.includes(phase);
-      const classOk = ev.classes.includes("any") || ev.classes.includes(STATE.socialClass);
+      const phaseOk = !ev.phase || !Array.isArray(ev.phase) || ev.phase.includes(phase);
+      const classOk = !ev.classes || !Array.isArray(ev.classes) || ev.classes.includes("any") || ev.classes.includes(STATE.socialClass);
       const notUsed = !STATE.usedEvents.includes(ev.id);
       return phaseOk && classOk && matchesLocality(ev) && notUsed;
     });
@@ -65,8 +65,8 @@ Object.assign(Engine, {
       STATE.usedEvents = [];
       pool = DATA.events.filter(ev =>
         (!ev.jobReq || ev.jobReq === activeJobId) &&
-        ev.phase.includes(phase) &&
-        (ev.classes.includes("any") || ev.classes.includes(STATE.socialClass)) &&
+        (!ev.phase || !Array.isArray(ev.phase) || ev.phase.includes(phase)) &&
+        (!ev.classes || !Array.isArray(ev.classes) || ev.classes.includes("any") || ev.classes.includes(STATE.socialClass)) &&
         matchesLocality(ev)
       );
     }

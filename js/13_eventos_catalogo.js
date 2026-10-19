@@ -94,36 +94,67 @@ DATA.events.push(
   {
     id: "guerra_continental_incursao",
     title: "⚔️ O Estandarte da Guerra Continental",
-    text: "Trombetas ecoam nas colinas! O Soberano declarou guerra contra o reino vizinho. Os preços de mantimentos e ferro dispararam, e mensageiros reais requisitam homens e cavalos para a campanha.",
+    desc: "Trombetas ecoam nas colinas! O Soberano declarou guerra contra o reino vizinho. Os preços de mantimentos e ferro dispararam, e mensageiros reais requisitam homens e cavalos para a campanha.",
+    phase: ["Adulto", "Velhice"],
+    classes: ["any"],
+    scope: "universal",
     tags: ["guerra", "militar"],
-    minAge: 16,
+    icon: "⚔️",
     choices: [
-      { text: "Alistar-se como Soldado de Vanguarda", effect: (s) => { s.honor = Math.min(100, s.honor + 15); s.reputation = Math.min(10, s.reputation + 2); s.vigor = Math.max(0, s.vigor - 20); return "Você marchou com a vanguarda e conquistou renome (+15 Honra, +2 Reputação)!"; } },
-      { text: "Fornecer Provisões e Armas (Lucro de Guerra)", effect: (s) => { s.gold += 80; s.honor = Math.max(0, s.honor - 5); return "Você lucrou abastecendo as tropas da Coroa (+80 Ouro, -5 Honra)."; } },
-      { text: "Buscar Abrigo nos Muros Fortificados", effect: (s) => { s.gold = Math.max(0, s.gold - 25); return "Você pagou tributo de proteção para manter sua família a salvo nos burgos (-25 Ouro)."; } }
+      {
+        label: "Alistar-se na Vanguarda Real",
+        attr: "forca",
+        diff: 55,
+        ok: { honor: 15, rep: 2, vigor: -20, msg: "Você marchou com a vanguarda e conquistou renome (+15 Honra, +2 Reputação)!" },
+        fail: { hp: -15, honor: 5, vigor: -20, msg: "A batalha foi sangrenta; você sobreviveu ferido (-15 Saúde, +5 Honra)." }
+      },
+      {
+        label: "Fornecer Provisões e Armas (Lucro)",
+        attr: "intelecto",
+        diff: 50,
+        ok: { gold: 80, honor: -5, msg: "Você lucrou abastecendo as tropas da Coroa (+80 Ouro, -5 Honra)." },
+        fail: { gold: 25, honor: -8, msg: "Mercadorias foram confiscadas pelos soldados (+25 Ouro, -8 Honra)." }
+      },
+      {
+        label: "Buscar Abrigo nos Muros Fortificados",
+        attr: "sorte",
+        diff: 45,
+        ok: { gold: -25, msg: "Você pagou tributo de proteção e manteve sua família a salvo nos burgos (-25 Ouro)." },
+        fail: { gold: -40, hp: -8, msg: "Salteadores saquearam os arrabaldes durante o cerco (-40 Ouro, -8 Saúde)." }
+      }
     ]
   },
   {
     id: "easteregg_lamina_pedra",
     title: "✨ A Lâmina das Cinzas na Floresta Antiga",
-    text: "Durante uma patrulha nas florestas esquecidas, você encontra um altar de pedra cinzenta cravado com uma lâmina envolta em runas douradas. Diz a lenda que apenas um guerreiro de honra inabalável pode desembainhá-la.",
+    desc: "Durante uma patrulha nas florestas esquecidas, você encontra um altar de pedra cinzenta cravado com uma lâmina envolta em runas douradas. Diz a lenda que apenas um guerreiro de honra inabalável pode desembainhá-la.",
+    phase: ["Adulto", "Velhice"],
+    classes: ["any"],
+    scope: "universal",
     tags: ["easteregg", "reliquia"],
-    minAge: 18,
-    cond: (s) => s.honor >= 65 && s.attrs && s.attrs.forca >= 60,
+    icon: "✨",
     choices: [
       {
-        text: "Empunhar o Punho e Erguer a Lâmina Ancestral",
-        effect: (s) => {
-          if (!s.itemInstances) s.itemInstances = [];
-          s.itemInstances.push({ id: "lamina_ancestral_valenca", uid: "item_" + Date.now(), state: "novo" });
-          s.flags = s.flags || [];
-          s.flags.push("Portador da Lâmina Ancestral");
-          s.honor = Math.min(100, s.honor + 25);
-          s.reputation = 10;
-          return "O metal ressoa como um sino divino! Você empunha a Lâmina Ancestral de Valença! Sua Casa é abençoada para sempre (+25 Honra, Reputação Máxima)!";
+        label: "Empunhar o Punho e Erguer a Lâmina Ancestral",
+        attr: "forca",
+        diff: 60,
+        ok: {
+          honor: 25,
+          rep: 10,
+          msg: "O metal ressoa como um sino divino! Você empunha a Lâmina Ancestral de Valença! (+25 Honra, Reputação Máxima)!"
+        },
+        fail: {
+          hp: -10,
+          msg: "A lâmina permaneceu imóvel na rocha e a energia mística queimou suas mãos (-10 Saúde)."
         }
       },
-      { text: "Ajoelhar e Rezar diante do Santuário", effect: (s) => { s.attrs.fe = Math.min(100, (s.attrs.fe || 50) + 15); return "Você prestou reverência às lendas antigas (+15 Fé)."; } }
+      {
+        label: "Ajoelhar e Rezar diante do Santuário",
+        attr: "fe",
+        diff: 45,
+        ok: { honor: 10, msg: "Você prestou reverência aos antigos mártires (+10 Honra)." },
+        fail: { msg: "Você rezou em silêncio e seguiu seu caminho em paz." }
+      }
     ]
   }
 );
