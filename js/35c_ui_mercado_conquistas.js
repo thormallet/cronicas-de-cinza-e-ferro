@@ -397,11 +397,16 @@ Object.assign(UI, {
     `;
   },
 
-  openAchievementsModal() {
-    if (window.SoundFX) SoundFX.play("click");
-    const backdrop = document.getElementById("achievements-modal-backdrop");
-    if (!backdrop) return;
+  currentAchievementFilter: "todas",
 
+  setAchievementFilter(cat, btn) {
+    if (window.SoundFX) SoundFX.play("click");
+    this.currentAchievementFilter = cat;
+    if (btn) this._activateChip(btn);
+    this.renderAchievementsModal();
+  },
+
+  renderAchievementsModal() {
     const unlocked = window.Storage && Storage.getAchievements ? Storage.getAchievements() : [];
     const allAchievements = DATA.achievements || [];
 
@@ -411,33 +416,144 @@ Object.assign(UI, {
     }
 
     const listEl = document.getElementById("achievements-list");
-    if (listEl) {
-      listEl.innerHTML = allAchievements.map(ach => {
-        const isDone = unlocked.includes(ach.id);
-        const icon = isDone ? (ach.icon || "✨") : "🔒";
-        const statusBadge = isDone ? `<span class="badge gold">✨ Conquistada</span>` : `<span class="badge" style="background:#4b5563">🔒 Bloqueada</span>`;
+    if (!listEl) return;
 
-        return `
-          <div class="item-card" style="margin-bottom:0.5rem;opacity:${isDone ? "1" : "0.68"};border-left-color:${isDone ? "var(--gold-bright)" : "var(--border)"}">
-            <div style="font-size:1.8rem;min-width:38px;text-align:center">${icon}</div>
-            <div style="flex:1">
-              <div style="display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap">
-                <strong style="color:${isDone ? "var(--gold-bright)" : "inherit"}">${ach.name}</strong>
-                ${statusBadge}
-                <span class="badge" style="background:var(--panel-inner)">+${ach.points || 10} pts</span>
-              </div>
-              <small style="color:var(--text-muted);display:block;margin-top:0.2rem">${ach.desc}</small>
-            </div>
-          </div>
-        `;
-      }).join("");
+    const filtered = allAchievements.filter(ach => {
+      if (!this.currentAchievementFilter || this.currentAchievementFilter === "todas") return true;
+      return ach.category === this.currentAchievementFilter;
+    });
+
+    if (filtered.length === 0) {
+      listEl.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text-muted)">Nenhuma conquista nesta categoria.</div>`;
+      return;
     }
 
+    listEl.innerHTML = filtered.map(ach => {
+      const isDone = unlocked.includes(ach.id);
+      const icon = isDone ? (ach.icon || "✨") : "🔒";
+      const catBadge = ach.category ? `<span class="badge" style="text-transform:capitalize">${ach.category}</span>` : "";
+      const statusBadge = isDone ? `<span class="badge gold">✨ Conquistada</span>` : `<span class="badge" style="background:#3d2f26;color:#a89f91">🔒 Bloqueada</span>`;
+
+      return `
+        <div class="achievement-card-v5 ${isDone ? 'unlocked' : ''}" style="opacity:${isDone ? '1' : '0.68'}">
+          <div class="ach-icon">${icon}</div>
+          <div class="ach-info">
+            <div style="display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap;margin-bottom:0.25rem">
+              <div class="ach-title" style="margin-bottom:0">${ach.name}</div>
+              ${statusBadge}
+              ${catBadge}
+              <span class="badge" style="background:var(--panel-inner)">+${ach.points || 10} pts</span>
+            </div>
+            <div class="ach-desc">${ach.desc}</div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  },
+
+  openAchievementsModal() {
+    if (window.SoundFX) SoundFX.play("click");
+    const backdrop = document.getElementById("achievements-modal-backdrop");
+    if (!backdrop) return;
+
+    this.renderAchievementsModal();
     backdrop.classList.add("active");
   },
 
   closeAchievementsModal() {
     const backdrop = document.getElementById("achievements-modal-backdrop");
+    if (backdrop) backdrop.classList.remove("active");
+  },
+
+  /* ==========================================================================
+     LINHA DO TEMPO DA DINASTIA (Edição Marcial 5.0)
+     ========================================================================== */
+  openTimelineModal() {
+    if (window.SoundFX) SoundFX.play("click");
+    const backdrop = document.getElementById("timeline-modal-backdrop");
+    if (!backdrop) return;
+    const content = document.getElementById("timeline-content");
+    if (!content) return;
+
+    let dynasty = [];
+    try {
+      if (window.Storage && Storage.getDynasty) {
+        dynasty = Storage.getDynasty() || [];
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    let html = "";
+    if (dynasty.length === 0 && (!window.STATE || !STATE.name)) {
+      html = `<div style="text-align:center;padding:2rem;color:var(--text-muted)">Nenhuma crônica dinástica registrada ainda. Os anais de sua Casa começarão com sua primeira grande jornada.</div>`;
+    } else {
+      html += `<div style="display:flex;flex-direction:column;gap:1rem;position:relative;padding-left:0.5rem">`;
+
+      // Passado: Memoriais dos antepassados
+      dynasty.forEach((d, idx) => {
+        const crest = (window.Utils && Utils.renderCrestHTML) ? Utils.renderCrestHTML(d.surname || d.name) : "⚜️";
+        const tagsHtml = (Array.isArray(d.legacyTags) && d.legacyTags.length > 0)
+          ? `<div style="margin-top:0.4rem;display:flex;gap:0.3rem;flex-wrap:wrap">` +
+            d.legacyTags.map(t => `<span class="badge gold" style="font-size:0.75rem;padding:0.15rem 0.4rem" title="${t.desc || ''}">${t.icon || '⚜️'} ${t.name || t.id}</span>`).join("") +
+            `</div>`
+          : "";
+
+        html += `
+          <div style="background:var(--panel-inner);border:1.5px solid var(--border-gold);border-left:5px solid var(--gold-bright);border-radius:12px;padding:0.85rem 1rem;box-shadow:0 4px 12px rgba(0,0,0,0.6)">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem">
+              <span class="badge gold">${d.generation || (idx + 1)}ª Geração</span>
+              <span style="font-size:0.82rem;color:var(--text-muted)">${d.years || ""} (${d.age || "?"} anos)</span>
+            </div>
+            <div style="margin-top:0.35rem;font-size:1.05rem;font-weight:700;font-family:var(--font-serif);color:var(--gold-radiant);display:flex;align-items:center;gap:0.35rem">
+              ${crest} <span>${d.name}</span>
+            </div>
+            <div style="font-size:0.85rem;color:var(--text);margin-top:0.25rem">
+              ${d.job || "Chefe de Família"} • ${d.kingdom || "Dez Reinos"}
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-muted);margin-top:0.2rem">
+              🪙 Ouro Acumulado: ${d.gold || 0} • <em>${d.cause || "Falecimento natural"}</em>
+            </div>
+            ${tagsHtml}
+          </div>
+        `;
+      });
+
+      // Presente: Soberano atual em STATE (se houver jogo ativo)
+      if (window.STATE && STATE.name) {
+        const curCrest = (window.Utils && Utils.renderCrestHTML) ? Utils.renderCrestHTML(STATE.surname || STATE.name) : "⚜️";
+        const curJob = (window.Engine && Engine.getJobTitle) ? Engine.getJobTitle() : (STATE.jobTitle || "Sem Ofício");
+        const kObj = (window.DATA && DATA.kingdoms) ? DATA.kingdoms.find(k => k.id === STATE.kingdom) : null;
+        const kName = kObj ? kObj.name : (STATE.kingdom || "");
+
+        html += `
+          <div style="background:linear-gradient(135deg, rgba(45,30,15,0.95), rgba(20,12,8,0.98));border:2px solid var(--gold-bright);border-left:6px solid var(--gold-radiant);border-radius:12px;padding:1rem;box-shadow:0 0 16px rgba(229,183,70,0.25)">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem">
+              <span class="badge gold" style="font-weight:700">👑 ${STATE.generation || (dynasty.length + 1)}ª Geração · ATUAL</span>
+              <span class="badge good">${STATE.age} anos · Ano ${STATE.year}</span>
+            </div>
+            <div style="margin-top:0.45rem;font-size:1.15rem;font-weight:700;font-family:var(--font-serif);color:#ffffff;display:flex;align-items:center;gap:0.35rem">
+              ${curCrest} <span>${STATE.name}</span>
+            </div>
+            <div style="font-size:0.88rem;color:var(--gold-bright);margin-top:0.3rem">
+              ${curJob} • ${kName}
+            </div>
+            <div style="font-size:0.84rem;color:var(--text-muted);margin-top:0.25rem">
+              🪙 Fortuna Atual: ${STATE.gold || 0} 🪙 | ⚔️ Honra: ${STATE.honor || 50} | ⚜️ Status: ${STATE.socialClass === 'nobre' ? 'Nobreza' : (STATE.socialClass === 'media' ? 'Classe Média' : 'Plebeu')}
+            </div>
+          </div>
+        `;
+      }
+
+      html += `</div>`;
+    }
+
+    content.innerHTML = html;
+    backdrop.classList.add("active");
+  },
+
+  closeTimelineModal() {
+    const backdrop = document.getElementById("timeline-modal-backdrop");
     if (backdrop) backdrop.classList.remove("active");
   }
 });

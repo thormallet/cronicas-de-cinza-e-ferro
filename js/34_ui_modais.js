@@ -113,6 +113,8 @@ Object.assign(UI, {
     } else {
       buttons.push({ id: "talk", icon: "💬", title: "Conversar & Sondar", sub: "-3 Vigor | Diálogo franco (pode agradar ou irritar)" });
       buttons.push({ id: "gift", icon: "🎁", title: "Oferecer Presente Fino", sub: "-15 Ouro | Grande ganho de afeição" });
+      buttons.push({ id: "give_money", icon: "🪙", title: "Presentear com Ouro", sub: "-25 Ouro | Eleva afeto e gratidão" });
+      buttons.push({ id: "ask_money", icon: "🤲", title: "Pedir Ajuda Financeira", sub: "-3 Vigor | Requer alta afinidade e lealdade" });
 
       if (!isFamilyBlood && npc.role !== "Cônjuge") {
         buttons.push({ id: "befriend", icon: "🤝", title: "Pedir em Amizade / Aliança", sub: "-4 Vigor | Firma camaradagem (+Reputação)" });
@@ -389,5 +391,89 @@ Object.assign(UI, {
   closeRadarModal() {
     const modal = document.getElementById("radar-modal-backdrop");
     if (modal) modal.classList.remove("active");
+  },
+
+  /* ==========================================================================
+     DUELO QTE COM AGULHA & SWEET SPOT (Edição Marcial 5.0)
+     ========================================================================== */
+  duelAnimFrame: null,
+  duelNeedlePos: 0,
+  duelNeedleDir: 1,
+
+  openDuelQTEModal(qteData) {
+    if (!qteData) return;
+    const modal = document.getElementById("duel-qte-backdrop");
+    if (!modal) return;
+
+    const titleEl = document.getElementById("duel-qte-title");
+    const descEl = document.getElementById("duel-qte-desc");
+    const sweetEl = document.getElementById("duel-qte-sweetspot");
+
+    if (titleEl) {
+      titleEl.textContent = `⚔️ Duelo de Honra contra ${qteData.opponent ? qteData.opponent.name : "Adversário"}`;
+    }
+    if (descEl) {
+      descEl.textContent = `Postura do Rival: ${qteData.oppStance || "Guarda Firme"}. Sincronize o golpe perfeitamente na zona dourada!`;
+    }
+    if (sweetEl) {
+      const left = Math.max(0, qteData.sweetCenter - (qteData.sweetWidth / 2));
+      sweetEl.style.left = `${left}%`;
+      sweetEl.style.width = `${qteData.sweetWidth}%`;
+    }
+
+    modal.classList.add("active");
+    this.startDuelNeedle();
+  },
+
+  startDuelNeedle() {
+    if (this.duelAnimFrame) {
+      cancelAnimationFrame(this.duelAnimFrame);
+      this.duelAnimFrame = null;
+    }
+    this.duelNeedlePos = 0;
+    this.duelNeedleDir = 1;
+    const needle = document.getElementById("duel-qte-needle");
+    const speed = 1.6;
+
+    const step = () => {
+      this.duelNeedlePos += speed * this.duelNeedleDir;
+      if (this.duelNeedlePos >= 100) {
+        this.duelNeedlePos = 100;
+        this.duelNeedleDir = -1;
+      } else if (this.duelNeedlePos <= 0) {
+        this.duelNeedlePos = 0;
+        this.duelNeedleDir = 1;
+      }
+
+      if (needle) {
+        needle.style.left = `${this.duelNeedlePos}%`;
+      }
+      this.duelAnimFrame = requestAnimationFrame(step);
+    };
+
+    this.duelAnimFrame = requestAnimationFrame(step);
+  },
+
+  strikeDuelQTE() {
+    if (this.duelAnimFrame) {
+      cancelAnimationFrame(this.duelAnimFrame);
+      this.duelAnimFrame = null;
+    }
+    const hitPos = this.duelNeedlePos;
+    const modal = document.getElementById("duel-qte-backdrop");
+    if (modal) modal.classList.remove("active");
+
+    if (window.Engine && typeof window.Engine.resolveDuelQTE === "function") {
+      window.Engine.resolveDuelQTE(hitPos, "ataque");
+    }
+  },
+
+  closeModal() {
+    const duelModal = document.getElementById("duel-qte-backdrop");
+    if (duelModal) duelModal.classList.remove("active");
+    if (this.duelAnimFrame) {
+      cancelAnimationFrame(this.duelAnimFrame);
+      this.duelAnimFrame = null;
+    }
   }
 });

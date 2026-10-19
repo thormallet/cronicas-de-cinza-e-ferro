@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#120c08">
-<title>Crônicas de Cinza e Ferro — Edição Mercador · v4.4.2</title>
+<title>Crônicas de Cinza e Ferro — Edição Marcial · v5.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Eczar:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -111,6 +111,23 @@
   </div>
 </div>
 
+<!-- MODAL: LINHA DO TEMPO DA DINASTIA (Edição Marcial 5.0) -->
+<div id="timeline-modal-backdrop" class="custom-dialog-backdrop" style="z-index:9998" role="dialog" aria-modal="true" aria-label="Linha do Tempo da Dinastia">
+  <div class="custom-dialog" style="max-width:640px;width:95vw;max-height:85vh;display:flex;flex-direction:column">
+    <div class="custom-dialog-header">
+      <span class="custom-dialog-icon">📜</span>
+      <div>
+        <h3>Linha do Tempo da Dinastia</h3>
+        <small style="color:var(--text-muted)">Os anais imortais dos governantes e antepassados da Casa</small>
+      </div>
+    </div>
+    <div id="timeline-content" style="flex:1;min-height:0;overflow-y:auto;padding:0.75rem 0.25rem"></div>
+    <div class="custom-dialog-buttons achievements-footer">
+      <button type="button" class="primary" onclick="window.UI.closeTimelineModal()">Fechar Linha do Tempo</button>
+    </div>
+  </div>
+</div>
+
 <!-- CARTÃO DE AUDIÊNCIA COM PERSONAGEM (NPC) -->
 <div id="npc-modal-backdrop" class="custom-dialog-backdrop" style="z-index:9998">
   <div class="custom-dialog npc-dialog" role="dialog" aria-modal="true">
@@ -191,6 +208,13 @@
       <h3 style="margin:0;font-size:1.15rem">🏆 Conquistas da Linhagem</h3>
       <span id="achievements-progress-badge" class="badge gold">0/20 Desbloqueadas</span>
     </div>
+    <div id="achievements-filter-bar" class="sub-tabs-bar" style="margin:0.6rem 0 0.8rem">
+      <button type="button" class="chip-btn active" onclick="window.UI.setAchievementFilter('todas', this)">Todas</button>
+      <button type="button" class="chip-btn" onclick="window.UI.setAchievementFilter('marcial', this)">⚔️ Marciais</button>
+      <button type="button" class="chip-btn" onclick="window.UI.setAchievementFilter('dinastia', this)">👑 Dinastia</button>
+      <button type="button" class="chip-btn" onclick="window.UI.setAchievementFilter('riqueza', this)">🪙 Riqueza</button>
+      <button type="button" class="chip-btn" onclick="window.UI.setAchievementFilter('geral', this)">📜 Gerais</button>
+    </div>
     <div id="achievements-list" class="stack-list" style="overflow-y:auto;overflow-x:hidden;flex:1;min-height:0;padding-right:0.25rem"></div>
     <div class="custom-dialog-buttons achievements-footer">
       <button type="button" class="primary" onclick="window.UI.closeAchievementsModal()">Fechar Conquistas</button>
@@ -226,7 +250,7 @@
     <div class="brand-crest">👑</div>
     <div>
       <h1>Crônicas de Cinza e Ferro</h1>
-      <span class="royal-subtitle">⚜ Edição Mercador · v4.4.2 ⚜</span>
+      <span class="royal-subtitle">⚜ Edição Marcial · v5.0 ⚜</span>
     </div>
   </div>
   <div style="display:flex;gap:0.35rem;align-items:center">
@@ -241,13 +265,14 @@
     <div class="card">
       <div class="royal-hero-banner">
         <h2>👑 Crônicas de Cinza e Ferro</h2>
-        <div style="margin-bottom:0.5rem"><span class="royal-subtitle">Edição Mercador — Tronos, Comarcas &amp; Linhagens</span></div>
+        <div style="margin-bottom:0.5rem"><span class="royal-subtitle">Edição Marcial — Estandartes, Guerras &amp; Conquistas</span></div>
         <p style="font-size:0.92rem;opacity:0.95">
           Nasça do barro ou da púrpura real. Ingresse em corporações de ofício, negocie em grandes mercados, tome e conceda empréstimos bancários, governe feudos e forje sua dinastia.
         </p>
       </div>
       <button type="button" class="primary" style="width:100%;padding:0.8rem;font-size:1.08rem;margin-bottom:0.45rem" onclick="window.Creator.init()">⚔️ Iniciar Nova Linhagem Régia</button>
-      <button type="button" style="width:100%;padding:0.6rem;font-size:0.95rem;margin-bottom:0.9rem" onclick="window.UI.openAchievementsModal()">🏆 Conquistas da Linhagem</button>
+      <button type="button" style="width:100%;padding:0.6rem;font-size:0.95rem;margin-bottom:0.45rem" onclick="window.UI.openAchievementsModal()">🏆 Conquistas da Linhagem</button>
+      <button type="button" class="action-btn" style="width:100%;padding:0.6rem;font-size:0.95rem;margin-bottom:0.9rem" onclick="window.UI.openTimelineModal()">📜 Linha do Tempo da Dinastia</button>
       <h3>📜 Crônicas Salvas (Autosave Anual)</h3>
       <div id="menu-slots" class="slot-list"></div>
     </div>
@@ -565,6 +590,7 @@
     <div id="fief-stats" class="stat-grid fief-stats-box"></div>
     <h4>Decretos e Ações de Governação (De acordo com seu Grau de Nobreza)</h4>
     <div id="fief-actions" class="actions-panel"></div>
+    <div id="fief-military-panel" style="margin-top:1.2rem"></div>
   </div>
 </div>
 
@@ -695,12 +721,37 @@
       <button type="button" id="btn-typewriter" aria-label="Alternar animação de texto" onclick="window.UI.toggleTypewriter()">✒️ Digitação: OFF</button>
       <button type="button" id="btn-theme" aria-label="Alternar tema visual" onclick="window.UI.toggleTheme()">☀️ Tema: Claro</button>
       <button type="button" onclick="window.UI.openAchievementsModal()">🏆 Conquistas da Linhagem</button>
+      <button type="button" onclick="window.UI.openTimelineModal()">📜 Linha do Tempo da Dinastia</button>
       <button type="button" onclick="window.Storage.exportSave()">💾 Exportar</button>
       <button type="button" onclick="document.getElementById('import-input').click()">📂 Importar</button>
       <input type="file" id="import-input" style="display:none" accept=".json" onchange="window.Storage.importSave(event)">
       <button type="button" onclick="window.UI.showScreen('screen-menu')">🏰 Menu</button>
     </div>
-    <p class="cfg-version">Crônicas de Cinza e Ferro - Edição Mercador<br>v4.4.2 — Integridade Financeira, Genealogia &amp; Acessibilidade</p>
+    <p class="cfg-version">Crônicas de Cinza e Ferro - Edição Marcial<br>v5.0 — Aço, Estandartes &amp; Glória Dinástica</p>
+  </div>
+</div>
+
+<!-- MODAL: DUELO QTE SWEET SPOT (Edição Marcial 5.0) -->
+<div id="duel-qte-backdrop" class="custom-dialog-backdrop" style="z-index:9999" role="dialog" aria-modal="true" aria-label="Duelo Singular QTE">
+  <div class="custom-dialog" style="max-width:480px;width:94vw;text-align:center">
+    <div class="custom-dialog-header" style="justify-content:center">
+      <span class="custom-dialog-icon">🤺</span>
+      <h3 id="duel-qte-title">Duelo de Honra &amp; Aço</h3>
+    </div>
+    <p id="duel-qte-desc" style="font-size:0.92rem;margin:0.5rem 0 1rem;color:var(--text-muted)"></p>
+    
+    <div id="duel-qte-meter-box" style="position:relative;width:100%;height:32px;background:#140e0a;border:2px solid var(--border-gold);border-radius:16px;margin:1.2rem 0;overflow:hidden;box-shadow:inset 0 2px 8px rgba(0,0,0,0.85)">
+      <div id="duel-qte-sweetspot" style="position:absolute;top:0;height:100%;background:linear-gradient(90deg, rgba(229,183,70,0.4), rgba(255,215,107,0.9), rgba(229,183,70,0.4));border-left:2px solid var(--gold-bright);border-right:2px solid var(--gold-bright);box-shadow:0 0 12px var(--gold-glow)"></div>
+      <div id="duel-qte-needle" style="position:absolute;top:0;width:4px;height:100%;background:#ffffff;box-shadow:0 0 10px #ffffff;transition:left 0.05s linear"></div>
+    </div>
+    
+    <div style="margin-bottom:1rem">
+      <small style="color:var(--gold-bright);font-weight:700">Pressione no momento exato em que a agulha branca atingir a área dourada!</small>
+    </div>
+
+    <div class="custom-dialog-buttons" style="position:static;padding:0;background:none;border:none;box-shadow:none">
+      <button type="button" id="btn-strike-qte" class="primary" style="min-height:50px;font-size:1.1rem;font-weight:700" onclick="window.UI.strikeDuelQTE()">⚔️ DESFERIR GOLPE!</button>
+    </div>
   </div>
 </div>
 

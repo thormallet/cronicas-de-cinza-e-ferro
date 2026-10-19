@@ -106,5 +106,33 @@ Object.assign(Engine, {
       Storage.saveToSlot(CONFIG.activeSlot);
       UI.renderAll();
     }
+  },
+
+  negotiatePeaceTreaty() {
+    if (!STATE || !STATE.activeWar) {
+      UI.notify("🕊️ Nenhuma Guerra Ativa", "O reino não está em guerra continental no momento.", "info");
+      return;
+    }
+    const intellect = (STATE.attrs && STATE.attrs.intelecto) || 50;
+    const charisma = (STATE.attrs && STATE.attrs.carisma) || 50;
+    const honor = STATE.honor || 50;
+    const score = Math.round((intellect * 0.4) + (charisma * 0.4) + (honor * 0.2));
+
+    if (score >= 60) {
+      const indemnity = 300 + Utils.rand(50, 200);
+      STATE.gold += indemnity;
+      STATE.honor = Utils.clamp(STATE.honor + 25, 0, 100);
+      STATE.reputation = Utils.clamp(STATE.reputation + 3, -10, 10);
+      STATE.activeWar = null;
+      SoundFX.play("royal_fanfare");
+      this.addLog(`🕊️ TRATADO DE PAZ HISTÓRICO SELADO: Como grande diplomata, você negociou a paz e pôs fim à Guerra Continental! A Coroa recebeu +${indemnity} Ouro de indenização (+25 Honra, +3 Reputação)!`, "good");
+      if (this.unlockAchievement) this.unlockAchievement("conq_pacificador");
+      UI.notify("🕊️ Paz Continental Selada!", `Tratado assinado com louvor internacional! +${indemnity} Ouro e +25 Honra.`, "success");
+    } else {
+      STATE.honor = Utils.clamp(STATE.honor - 5, 0, 100);
+      this.addLog(`📜 Negociação Frustrada: Os embaixadores inimigos rejeitaram seus termos de armistício (-5 Honra).`, "bad");
+      UI.notify("❌ Embaixada Fracassada", "O inimigo exigiu concessões inaceitáveis e a guerra continuará.", "fail");
+    }
+    UI.renderAll();
   }
 });

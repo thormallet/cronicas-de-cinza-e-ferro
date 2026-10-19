@@ -201,7 +201,22 @@ const Engine = {
     state.history = Array.isArray(state.history) ? state.history : [];
     state.log = Array.isArray(state.log) ? state.log : [];
     state.scars = Array.isArray(state.scars) ? state.scars : [];
+    if (!state.army || typeof state.army !== "object") {
+      state.army = { levies: 0, archers: 0, knights: 0, siege: 0, morale: 70, supplies: 75, readiness: 50 };
+    } else {
+      if (state.army.levies === undefined) state.army.levies = 0;
+      if (state.army.archers === undefined) state.army.archers = 0;
+      if (state.army.knights === undefined) state.army.knights = 0;
+      if (state.army.siege === undefined) state.army.siege = 0;
+      if (state.army.morale === undefined) state.army.morale = 70;
+      if (state.army.supplies === undefined) state.army.supplies = 75;
+      if (state.army.readiness === undefined) state.army.readiness = 50;
+    }
+    state.activeWar = state.activeWar || null;
+    state.warsWon = state.warsWon || 0;
     state.duelsWon = state.duelsWon || 0;
+    state.relicsInherited = Array.isArray(state.relicsInherited) ? state.relicsInherited : [];
+    state.activeDuelQTE = state.activeDuelQTE || null;
 
     if (state.socialClass === "nobre") {
       if (!state.fief || typeof state.fief !== "object") {

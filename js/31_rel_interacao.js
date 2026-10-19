@@ -566,6 +566,61 @@ Object.assign(Engine, {
         UI.closeNPCModal();
         break;
       }
+
+      case "give_money": {
+        const giftAmount = 25;
+        if (STATE.gold < giftAmount) {
+          UI.notify("🪙 Ouro Insuficiente", `Você precisa de ao menos ${giftAmount} Ouro para presentear.`, "fail");
+          return;
+        }
+        STATE.gold -= giftAmount;
+        STATE.vigor = Math.max(0, STATE.vigor - 2);
+        const isFam = ["Pai", "Mãe", "Filho", "Filha", "Cônjuge", "Irmão/Irmã"].includes(npc.role);
+        if (isFam) {
+          npc.affinity = Utils.clamp((npc.affinity || 0) + 15, -100, 100);
+          this.addLog(`🪙 Generosidade Familiar: Você presenteou ${npc.name} com ${giftAmount} Ouro (+15 Afinidade).`, "good");
+        } else if (npc.role === "Rival") {
+          npc.affinity = Utils.clamp((npc.affinity || 0) + 10, -100, 100);
+          this.addLog(`🤝 Suborno / Apaziguamento: Você entregou ${giftAmount} Ouro para abrandar o rancor de ${npc.name}.`, "good");
+        } else {
+          npc.affinity = Utils.clamp((npc.affinity || 0) + 12, -100, 100);
+          STATE.honor = Utils.clamp(STATE.honor + 2, 0, 100);
+          this.addLog(`🪙 Caridade & Dádiva: Você presenteou ${npc.name} com ${giftAmount} Ouro (+12 Afinidade, +2 Honra).`, "good");
+        }
+        SoundFX.play("coins");
+        UI.renderAll();
+        break;
+      }
+
+      case "ask_money": {
+        STATE.vigor = Math.max(0, STATE.vigor - 3);
+        const isParent = ["Pai", "Mãe", "Mentor"].includes(npc.role);
+        const isSpouse = npc.role === "Cônjuge";
+        const aff = npc.affinity || 0;
+
+        if ((isParent || isSpouse) && aff >= 30) {
+          const grant = Utils.rand(20, 60);
+          STATE.gold += grant;
+          npc.affinity = Utils.clamp(aff + 2, -100, 100);
+          SoundFX.play("coins");
+          this.addLog(`🪙 Auxílio Concedido: ${npc.name} acolheu seu pedido e lhe entregou ${grant} Ouro com afeto familiar.`, "good");
+          UI.notify("🪙 Auxílio Recebido", `${npc.name} concedeu ${grant} Ouro para auxiliar suas despesas.`, "success");
+        } else if (npc.role === "Amigo" && aff >= 50) {
+          const loan = Utils.rand(15, 40);
+          STATE.gold += loan;
+          npc.affinity = Utils.clamp(aff - 5, -100, 100);
+          SoundFX.play("coins");
+          this.addLog(`🤝 Empréstimo de Amigo: ${npc.name} emprestou ${loan} Ouro por consideração mútua (-5 Afinidade).`, "good");
+          UI.notify("🪙 Empréstimo Concedido", `${npc.name} auxiliou com ${loan} Ouro.`, "success");
+        } else {
+          npc.affinity = Utils.clamp(aff - 10, -100, 100);
+          SoundFX.play("fail");
+          this.addLog(`❌ Pedido Recusado: ${npc.name} negou veementemente seu pedido de dinheiro (-10 Afinidade).`, "bad");
+          UI.notify("❌ Pedido Recusado", `${npc.name} fechou a bolsa e repreendeu sua dependência financeira.`, "fail");
+        }
+        UI.renderAll();
+        break;
+      }
     }
 
     Storage.saveToSlot(CONFIG.activeSlot);

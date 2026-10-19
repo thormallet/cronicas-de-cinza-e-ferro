@@ -1,5 +1,5 @@
 ======================================================================
-Crônicas de Cinza e Ferro — Versão 4.4.2 (Edição Mercador — Patch de Integridade Financeira, Genealogia & Acessibilidade)
+Crônicas de Cinza e Ferro — Versão 5.0 (Edição Marcial — Aço, Estandartes & Glória Dinástica)
 ======================================================================
 
 COMO EXECUTAR:
@@ -10,6 +10,49 @@ ESTRUTURA MODULAR:
 - css/ (01 a 07): estilos visuais, layout flex/grid, HUD BitLife, sheets e desktop.
 - js/  (01 a 36 + extensões b/c): arquitetura modular com injeção via Object.assign(Engine|UI|DATA, {...}).
   A ordem de carregamento respeita os numerais dos arquivos declarados em index.html.
+======================================================================
+
+VERSÃO 5.0 — EDIÇÃO MARCIAL: AÇO, ESTANDARTES & GLÓRIA DINÁSTICA:
+======================================================================
+FRENTE 1 — REFORMULAÇÃO MARCIAL & 3 TRILHAS DE CARREIRA:
+- Três Trilhas Militares Claras com Ascensão Social Meritocrática:
+  * Guarda e Infantaria da Coroa (soldado): Recruta de Leva até Marechal da Coroa. Soldados camponeses que demonstrarem bravura extrema em guerras continentais podem ser sagrados pelo Rei no campo de batalha como Cavaleiros de Esporas Douradas, ascendendo da plebe para a Nobreza de sangue.
+  * Cavalaria e Nobreza de Espada (cavaleiro): Escudeiro de Armas até Grão-Condestável do Reino. Vitórias campais consagram generais de batalha e concedem títulos feudais e senhorios territoriais outorgados pelo Soberano.
+  * Companhias Mercenárias Livres (mercenario): Soldado de Fortuna até Grão-Senhor da Companhia Livre, acumulando fortuna por soldos, contratos e espólios de guerra com total autonomia política.
+
+FRENTE 2 — GUERRAS CONTINENTAIS, EXÉRCITO & INFRAESTRUTURA FEUDAL:
+- Guerras Continentais Sistêmicas Dinâmicas:
+  Conflitos periódicos entre os reinos da Europa Feudal (Valois, Teutônia, Severnaya, Serenissima, Al-Zahra). Durante guerras ativas: inflação em armas e cavalos (+30%), impostos de guerra régios extraordinários, saques a colheitas em feudos fronteiriços e chance de mortes civis em caso de derrotas.
+- Gestão de Exército e Regimentos de Batalha:
+  Painel tático de comando integrado ao Feudo (#fief-military-panel) para recrutamento escalonado de Levas Camponesas, Arqueiros/Besteiros, Cavalaria Pesada e Engenhos de Cerco, além de exercícios anuais de manobras de armas (Engine.trainArmy).
+- Infraestrutura Militar Construível no Feudo:
+  Construção de Casernas Militares (instrução e bônus de prontidão), Armarias Senhoriais (-20% de desgaste em combate), Muralhas Fortificadas com Fosso (+25 Defesa e imunidade a cercos) e Torres de Vigia (+10 Defesa contra incursões).
+- Embaixadas de Paz e Espólios de Guerra:
+  Personagens diplomatas e nobres de alto prestígio podem liderar negociações diplomáticas de paz (Engine.negotiatePeaceTreaty), encerrando guerras com indenizações régias em ouro, honra internacional e a conquista "O Grande Pacificador". Em vitórias de batalha, espólios volumosos de ouro e relíquias são garantidos aos comandantes.
+
+FRENTE 3 — DUELOS QTE DINÂMICOS COM BARRA SWEET SPOT:
+- Minigame Analógico de Reflexo e Precisão:
+  Duelos singulares de honra e combate agora utilizam o modal #duel-qte-backdrop com uma agulha branca que oscila em alta velocidade sobre uma barra de gradiente. O jogador deve acionar o golpe no momento exato em que a agulha atinge a área dourada (Sweet Spot).
+- Calibragem por Atributos e Armas:
+  A largura da zona de acerto crítico é ampliada dinamicamente pela Destreza do duelista e por armas montantes de alta forja. Acertos críticos perfeitos desarmam e subjugam o oponente sem sofrer ferimentos (+Honra, +Reputação); erros acarretam contragolpes ferinos e cicatrizes de combate.
+
+FRENTE 4 — HUD DESKTOP TELA ÚNICA DO CÓDICE & INTERAÇÃO SOCIAL:
+- Códice Aberto no Desktop (>= 601px):
+  O layout no desktop foi unificado em uma tela única imersiva. A barra de botões inferiores foi ocultada, restando exclusivamente o imponente Selo Régio de cera centralizado de 96px para avançar o ano. As abas de gestão são acessadas unicamente pelos marcadores de seda no topo (#ribbon-dock).
+- Ficha ao Clicar na Moldura do Herói:
+  O toque/clique na moldura do avatar do herói abre diretamente a Ficha do Personagem com o radar octogonal e atributos cardeais.
+- Preservação da Ergonomia Mobile (<= 600px):
+  Em celulares, o dock inferior clássico com os botões rápidos é preservado integralmente para navegação confortável com uma mão.
+- Interações Financeiras com NPCs (Pedir & Dar Dinheiro):
+  Adicionadas opções contextuais de "Presentear com Ouro" (aumenta afeto familiar, esmola a plebeus ou suborno a rivais) e "Pedir Ajuda Financeira" (mesada de pais, auxílio conjugal ou empréstimos leais de amigos).
+
+FRENTE 5 — LINHA DO TEMPO DA DINASTIA, CONQUISTAS EXPANDIDAS & EASTER EGGS:
+- Linha do Tempo Dinâmica no Menu (#timeline-modal-backdrop):
+  A aba de anais foi substituída por uma árvore genealógica cronológica e ilustrada acessível no Menu Inicial e nas Configurações, exibindo anos vividos, títulos, guerras e epitáfios de toda a linhagem histórica.
+- Códice de Conquistas com Filtros por Categoria:
+  Modal de conquistas totalmente reformulado com cards horizontais espaçosos (.achievement-card-v5) e filtros de navegação por abas: Todas, Marciais, Dinastia, Riqueza e Gerais.
+- Relíquias Ocultas e Easter Eggs Transversais:
+  Introdução da Lâmina Ancestral de Valença (espada mística transmitida hereditariamente pela dinastia), do Códice Hermético dos Alquimistas e da bênção do Sangue de Cinza.
 ======================================================================
 
 VERSÃO 4.4.2 — PATCH DE INTEGRIDADE FINANCEIRA, GENEALOGIA & ACESSIBILIDADE:

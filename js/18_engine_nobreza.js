@@ -294,5 +294,83 @@ Object.assign(Engine, {
       dBox.innerHTML = diorama;
     }
     return diorama;
+  },
+
+  recruitTroops(type, amount = 10) {
+    return this.recruitRegiment(type, amount);
+  },
+
+  recruitRegiment(type, amount = 10) {
+    if (!STATE) return;
+    this.ensureVigorFields();
+    if (this.ensureStateIntegrity) this.ensureStateIntegrity();
+    if (STATE.vigor < 5) {
+      UI.notify("⚡ Vigor Insuficiente", "Você precisa de ao menos 5 de Vigor para organizar recrutamento.", "fail");
+      return;
+    }
+    const costs = { levies: 1, archers: 3, knights: 15, siege: 50 };
+    const unitCost = costs[type] || 2;
+    const totalGold = unitCost * amount;
+    if (STATE.gold < totalGold) {
+      UI.notify("🪙 Ouro Insuficiente", `Você precisa de ${totalGold} Ouro para recrutar ${amount} tropas deste regimento.`, "fail");
+      return;
+    }
+    STATE.gold -= totalGold;
+    STATE.vigor = Math.max(0, STATE.vigor - 5);
+    STATE.army[type] = (STATE.army[type] || 0) + amount;
+    STATE.army.readiness = Utils.clamp((STATE.army.readiness || 50) + 5, 0, 100);
+    if (STATE.fief) {
+      STATE.fief.defense = Utils.clamp((STATE.fief.defense || 50) + 3, 0, 100);
+    }
+    SoundFX.play("coins");
+    this.addLog(`⚔️ Recrutamento Concluído: +${amount} homens incorporados ao regimento (${type}). Gasto de ${totalGold} Ouro e 5 Vigor.`);
+    const totalMen = (STATE.army.levies || 0) + (STATE.army.archers || 0) + (STATE.army.knights || 0);
+    if (totalMen >= 500 && this.unlockAchievement) {
+      this.unlockAchievement("conq_senhor_exercito");
+    }
+    UI.renderAll();
+  },
+
+  trainArmy() {
+    if (!STATE) return;
+    this.ensureVigorFields();
+    if (this.ensureStateIntegrity) this.ensureStateIntegrity();
+    if (STATE.vigor < 8) {
+      UI.notify("⚡ Vigor Insuficiente", "Requer 8 de Vigor para conduzir exercícios de armas com a guarnição.", "fail");
+      return;
+    }
+    if (STATE.gold < 15) {
+      UI.notify("🪙 Ouro Insuficiente", "Requer 15 Ouro para provisões e flechas de treino.", "fail");
+      return;
+    }
+    STATE.gold -= 15;
+    STATE.vigor = Math.max(0, STATE.vigor - 8);
+    const hasCaserna = Array.isArray(STATE.itemInstances) && STATE.itemInstances.some(it => it.id === "caserna_militar" && it.state !== "arruinado");
+    const boostMorale = hasCaserna ? 15 : 10;
+    const boostReady = hasCaserna ? 12 : 7;
+    STATE.army.morale = Utils.clamp((STATE.army.morale || 70) + boostMorale, 0, 100);
+    STATE.army.readiness = Utils.clamp((STATE.army.readiness || 50) + boostReady, 0, 100);
+    SoundFX.play("click");
+    this.addLog(`🛡️ Instrução Marcial Conduzida: Moral militar +${boostMorale}% e Prontidão +${boostReady}%. ${hasCaserna ? "Bônus de Caserna Militar aplicado!" : ""}`);
+    UI.notify("⚔️ Guarnição Treinada!", `Exercícios concluídos com sucesso. Moral: ${STATE.army.morale}% | Prontidão: ${STATE.army.readiness}%.`, "success");
+    UI.renderAll();
+  },
+
+  grantBattlefieldNobility() {
+    if (!STATE || STATE.socialClass === "nobre") return;
+    STATE.socialClass = "nobre";
+    STATE.nobleTitle = "Cavaleiro de Esporas Douradas";
+    STATE.nobleTitleLevel = 1;
+    STATE.wealthTier = "nobre";
+    STATE.honor = Utils.clamp((STATE.honor || 50) + 30, 0, 100);
+    STATE.reputation = Utils.clamp((STATE.reputation || 0) + 4, -10, 10);
+    if (!STATE.fief) {
+      STATE.fief = { prosperity: 55, loyalty: 65, defense: 60, influence: 50, peasantry: 60 };
+    }
+    SoundFX.play("royal_fanfare");
+    if (this.unlockAchievement) this.unlockAchievement("conq_enobrecido_campo");
+    this.addLog(`⚜️ SAGRAÇÃO NOBRE NO CAMPO DE BATALHA: Por bravura extrema perante o Estandarte Real, o Soberano conferiu a você o título de Cavaleiro de Esporas Douradas e um senhorio feudal! Você agora é nobre!`, "good");
+    UI.notify("👑 Sagrado Cavaleiro de Esporas Douradas!", "O Soberano tocou seus ombros com a lâmina régia. Você ascendeu da plebe para a nobreza de sangue!", "success");
+    UI.renderAll();
   }
 });

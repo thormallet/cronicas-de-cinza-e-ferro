@@ -171,6 +171,23 @@ Object.assign(Engine, {
       }
     }
 
+    const inheritedFlags = [`Herdeiro de ${prevName}`];
+    if (Array.isArray(STATE.flags) && STATE.flags.includes("Portador da Lâmina Ancestral")) {
+      inheritedFlags.push("Portador da Lâmina Ancestral");
+    }
+
+    const heirInventory = [...(STATE.inventory || [])];
+    const heirItemInstances = Array.isArray(STATE.itemInstances) ? STATE.itemInstances.map(x => ({ ...x })) : [];
+    ["lamina_ancestral_valenca", "codice_hermetico"].forEach(rId => {
+      if ((STATE.inventory || []).includes(rId) && !heirInventory.includes(rId)) {
+        heirInventory.push(rId);
+      }
+      const existingInst = (STATE.itemInstances || []).find(it => it.id === rId);
+      if (existingInst && !heirItemInstances.some(it => it.id === rId)) {
+        heirItemInstances.push({ ...existingInst, mortgaged: false });
+      }
+    });
+
     STATE = {
       generation: STATE.generation + 1,
       alive: true,
@@ -192,7 +209,7 @@ Object.assign(Engine, {
       travelMode: STATE.travelMode || "regular",
       pendingFiefOrders: [...(STATE.pendingFiefOrders || [])],
       propertyMeta: Array.isArray(STATE.propertyMeta) ? STATE.propertyMeta.map(m => ({ ...m })) : [],
-      itemInstances: Array.isArray(STATE.itemInstances) ? STATE.itemInstances.map(x => ({ ...x })) : [],
+      itemInstances: heirItemInstances,
       activeLoans: Array.isArray(STATE.activeLoans) ? STATE.activeLoans.map(x => ({ ...x })) : [],
       bankerLoans: Array.isArray(STATE.bankerLoans) ? STATE.bankerLoans.map(x => ({ ...x })) : [],
       socialClass: STATE.socialClass,
@@ -200,7 +217,12 @@ Object.assign(Engine, {
       successionLaw: STATE.successionLaw || "primogenitura",
       designatedHeirId: null,
       abandonedChildrenCount: 0,
+      army: STATE.army ? { ...STATE.army, morale: 75, readiness: 60 } : { levies: 0, archers: 0, knights: 0, siege: 0, morale: 75, supplies: 80, readiness: 60 },
+      activeWar: null,
+      warsWon: STATE.warsWon || 0,
       duelsWon: 0,
+      relicsInherited: Array.isArray(STATE.relicsInherited) ? [...STATE.relicsInherited] : [],
+      activeDuelQTE: null,
       bargainsWon: 0,
       bankerProfits: 0,
       job: heirJob,
@@ -216,8 +238,8 @@ Object.assign(Engine, {
       attrs: { ...heir.attrs },
       traits: heir.hiddenTraits || Utils.genHiddenTraits(),
       npcs: inheritedNpcs,
-      inventory: [...STATE.inventory],
-      flags: [`Herdeiro de ${prevName}`],
+      inventory: heirInventory,
+      flags: inheritedFlags,
       history: [...STATE.history],
       log: [],
       usedEvents: [],

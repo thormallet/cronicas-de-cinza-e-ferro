@@ -498,5 +498,67 @@ Object.assign(Engine, {
         }
       }
     }
+
+    // PROCESSAMENTO DE GUERRA CONTINENTAL (Edição Marcial 5.0)
+    if (STATE.activeWar) {
+      STATE.activeWar.turnsRemaining = (STATE.activeWar.turnsRemaining || 3) - 1;
+      const totalMen = ((STATE.army && STATE.army.levies) || 0) + ((STATE.army && STATE.army.archers) || 0) + ((STATE.army && STATE.army.knights) || 0);
+      const warUpkeep = Math.round(totalMen * 0.15);
+      if (warUpkeep > 0) {
+        STATE.gold = Math.max(0, STATE.gold - warUpkeep);
+        this.addLog(`⚔️ Soldo e Mantimentos de Guerra: -${warUpkeep} Ouro consumidos pelos regimentos em armas.`);
+      }
+
+      // Confronto anual
+      const readiness = (STATE.army && STATE.army.readiness) || 50;
+      const roll = Utils.rand(1, 100) + (readiness > 60 ? 15 : -10);
+      if (roll >= 55) {
+        STATE.activeWar.warScore = (STATE.activeWar.warScore || 0) + 1;
+        this.addLog(`🚩 Vitória na Campanha: As forças aliadas repeliram a incursão inimiga na fronteira (+1 Vitória Marcial)!`, "good");
+      } else {
+        STATE.activeWar.warScore = (STATE.activeWar.warScore || 0) - 1;
+        if (STATE.fief) {
+          STATE.fief.prosperity = Utils.clamp(STATE.fief.prosperity - 8, 10, 100);
+          STATE.fief.peasantry = Utils.clamp(STATE.fief.peasantry - 6, 10, 100);
+        }
+        this.addLog(`🔥 Devastação nas Fronteiras: Tropas invasoras saquearam colheitas e comarcas rurais (-8 Prosperidade do Feudo).`, "bad");
+      }
+
+      if (STATE.activeWar.turnsRemaining <= 0) {
+        const victory = (STATE.activeWar.warScore || 0) >= 1;
+        if (victory) {
+          const spoils = 250 + Utils.rand(50, 150);
+          STATE.gold += spoils;
+          STATE.warsWon = (STATE.warsWon || 0) + 1;
+          STATE.honor = Utils.clamp(STATE.honor + 20, 0, 100);
+          STATE.reputation = Utils.clamp(STATE.reputation + 2, -10, 10);
+          this.addLog(`🏆 VITÓRIA NA GUERRA CONTINENTAL! O tratado foi selado em triunfo. Espólios de guerra: +${spoils} Ouro, +20 Honra e +2 Reputação!`, "good");
+          if (this.unlockAchievement) this.unlockAchievement("conq_veterano_guerra");
+          if (STATE.socialClass !== "nobre" && STATE.honor >= 60 && Math.random() < 0.6) {
+            this.grantBattlefieldNobility();
+          }
+        } else {
+          STATE.honor = Utils.clamp(STATE.honor - 10, 0, 100);
+          this.addLog(`🕊️ Fim da Guerra: O tratado de paz custoso foi assinado após duras perdas territoriais.`, "bad");
+        }
+        STATE.activeWar = null;
+      }
+    } else {
+      // Chance periódica de deflagração de guerra continental (a cada ~12-15 anos)
+      if (STATE.age >= 18 && Math.random() < 0.08) {
+        const enemyKingdoms = ["teutonia", "severnaya", "al_zahra", "valois", "serenissima"].filter(k => k !== STATE.kingdom);
+        const enemy = enemyKingdoms[Math.floor(Math.random() * enemyKingdoms.length)] || "teutonia";
+        STATE.activeWar = {
+          enemyKingdom: enemy,
+          yearStarted: STATE.year,
+          warScore: 0,
+          turnsRemaining: Utils.rand(2, 4),
+          cause: "Disputa de Fronteira e Feudos Históricos"
+        };
+        SoundFX.play("war_horn");
+        this.addLog(`⚔️ GUERRA CONTINENTAL DECLARADA! Trombetas convocam os estandartes contra o reino de ${enemy.toUpperCase()}! Preços inflacionados e recrutamento aberto.`, "bad");
+        UI.notify("⚔️ Estandartes de Guerra!", `O Reino entrou em guerra continental contra ${enemy.toUpperCase()}!`, "fail");
+      }
+    }
   }
 });

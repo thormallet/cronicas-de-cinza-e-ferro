@@ -609,3 +609,59 @@
 .sub-tabs-bar::-webkit-scrollbar {
   display: none;
 }
+
+/* ============================================================================
+   CONQUISTAS ESPAÇOSAS & AREJADAS (Edição Marcial 5.0)
+   ============================================================================ */
+.achievement-card-v5 {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: linear-gradient(135deg, rgba(36, 27, 19, 0.95), rgba(18, 12, 8, 0.98));
+  border: 1.5px solid var(--border);
+  border-left: 5px solid var(--border);
+  border-radius: 12px;
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 0.65rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+  box-sizing: border-box;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.achievement-card-v5.unlocked {
+  border-color: var(--border-gold);
+  border-left-color: var(--gold-bright);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7), 0 0 12px rgba(229, 183, 70, 0.22);
+}
+
+.achievement-card-v5 .ach-icon {
+  font-size: 2.2rem;
+  min-width: 48px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.achievement-card-v5 .ach-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.achievement-card-v5 .ach-title {
+  font-family: var(--font-serif);
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 0.25rem;
+}
+
+.achievement-card-v5.unlocked .ach-title {
+  color: var(--gold-radiant);
+}
+
+.achievement-card-v5 .ach-desc {
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+

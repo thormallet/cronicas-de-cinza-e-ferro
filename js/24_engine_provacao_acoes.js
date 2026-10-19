@@ -157,5 +157,65 @@ Object.assign(Engine, {
       UI.renderAll();
       return;
     }
+  },
+
+  startDuelQTE(opponentNpc, duelType = "honra") {
+    if (!STATE) return;
+    this.ensureVigorFields();
+    if (this.ensureStateIntegrity) this.ensureStateIntegrity();
+    const dest = (STATE.attrs && STATE.attrs.destreza) || 50;
+    const sweetWidth = Utils.clamp(Math.round(dest * 0.4) + 15, 15, 45);
+    const sweetCenter = Utils.rand(35, 65);
+    const stances = ["Golpe Alto Descendente", "Estocada Furtiva", "Aparar & Riposte"];
+    const oppStance = stances[Math.floor(Math.random() * stances.length)];
+
+    STATE.activeDuelQTE = {
+      opponent: opponentNpc,
+      duelType,
+      sweetCenter,
+      sweetWidth,
+      oppStance,
+      timestamp: Date.now()
+    };
+
+    if (window.UI && typeof UI.openDuelQTEModal === "function") {
+      UI.openDuelQTEModal(STATE.activeDuelQTE);
+    }
+  },
+
+  resolveDuelQTE(hitPos, selectedStance) {
+    if (!STATE || !STATE.activeDuelQTE) return;
+    const qte = STATE.activeDuelQTE;
+    const diff = Math.abs(hitPos - qte.sweetCenter);
+    const isCritical = diff <= (qte.sweetWidth / 2);
+    const isHit = diff <= (qte.sweetWidth * 0.85);
+
+    let resultMsg = "";
+    if (isCritical) {
+      STATE.duelsWon = (STATE.duelsWon || 0) + 1;
+      STATE.honor = Utils.clamp((STATE.honor || 50) + 12, 0, 100);
+      STATE.reputation = Utils.clamp((STATE.reputation || 0) + 2, -10, 10);
+      resultMsg = `✨ GOLPE CRÍTICO PERFEITO! Sua lâmina atingiu a guarda de ${qte.opponent.name} com maestria devastadora. O adversário foi desarmado e rendeu-se (+12 Honra, +2 Reputação)!`;
+      SoundFX.play("sword_clash");
+      if (this.unlockAchievement && STATE.duelsWon >= 5) {
+        this.unlockAchievement("conq_mestre_duelo");
+      }
+    } else if (isHit) {
+      STATE.duelsWon = (STATE.duelsWon || 0) + 1;
+      STATE.honor = Utils.clamp((STATE.honor || 50) + 6, 0, 100);
+      resultMsg = `⚔️ ACERTO TÁTICO: Você superou a postura de ${qte.opponent.name} após trocas de golpes intensas, forçando sua retirada (+6 Honra).`;
+      SoundFX.play("sword_clash");
+    } else {
+      STATE.hp = Utils.clamp((STATE.hp || 80) - 18, 1, STATE.maxHp || 100);
+      STATE.honor = Utils.clamp((STATE.honor || 50) - 8, 0, 100);
+      resultMsg = `🩸 GOLPE RECEBIDO: Sua agulha errou o tempo do impacto e ${qte.opponent.name} contra-atacou com ferocidade (-18 Saúde, -8 Honra).`;
+      SoundFX.play("damage");
+    }
+
+    this.addLog(resultMsg, isHit ? "good" : "bad");
+    STATE.activeDuelQTE = null;
+    if (window.UI && UI.closeModal) UI.closeModal();
+    UI.notify("🤺 Duelo Singular Encerrado", resultMsg, isHit ? "success" : "fail");
+    UI.renderAll();
   }
 });

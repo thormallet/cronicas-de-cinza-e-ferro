@@ -20,8 +20,8 @@ Object.assign(UI, {
     if (av) {
       av.innerHTML = Utils.renderPortraitHTML(STATE);
       av.style.cursor = "pointer";
-      av.onclick = () => window.UI.openRadarModal();
-      av.title = "Clique para abrir o Octógono das Virtudes";
+      av.onclick = () => window.UI.openSheet("sheet-ficha");
+      av.title = "Clique para abrir Ficha & Aptidões";
     }
     const nm = document.getElementById("hud-name");
     if (nm) nm.innerHTML = `${Utils.renderCrestHTML(STATE.surname)}<span>${STATE.name}</span>`;

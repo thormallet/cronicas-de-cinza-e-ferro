@@ -574,6 +574,23 @@
   #ribbon-dock {
     display: flex;
   }
+  .nav-btn {
+    display: none !important;
+  }
+  .hud-dock {
+    justify-content: center !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-bottom: 1.25rem !important;
+  }
+  .seal-btn {
+    width: 96px !important;
+    height: 96px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.9), 0 0 18px rgba(184,38,48,0.5) !important;
+  }
+  .seal-ico { font-size: 2.2rem !important; }
+  .seal-lbl { font-size: 0.68rem !important; max-width: 80px !important; }
 }
 
 .ribbon-dock {

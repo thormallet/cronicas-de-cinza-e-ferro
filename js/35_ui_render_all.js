@@ -453,6 +453,53 @@ Object.assign(UI, {
           </button>
         `;
       }).join("");
+
+      const milPanel = document.getElementById("fief-military-panel");
+      if (milPanel) {
+        if (!STATE.army) {
+          STATE.army = { levies: 0, archers: 0, knights: 0, siege: 0, morale: 70, supplies: 75, readiness: 50 };
+        }
+        const army = STATE.army;
+        const totalMen = (army.levies || 0) + (army.archers || 0) + (army.knights || 0);
+        const canRecruitLevies = STATE.gold >= 20 && STATE.vigor >= 5;
+        const canRecruitArchers = STATE.gold >= 30 && STATE.vigor >= 5;
+        const canRecruitKnights = STATE.gold >= 75 && STATE.vigor >= 5;
+        const canTrain = STATE.gold >= 15 && STATE.vigor >= 8;
+
+        milPanel.innerHTML = `
+          <div style="background:var(--panel-inner);border:1.5px solid var(--border-gold);border-radius:12px;padding:0.9rem;box-shadow:0 4px 14px rgba(0,0,0,0.6)">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.6rem">
+              <h4 style="margin:0;border:none;padding:0;font-size:0.95rem;color:var(--gold-radiant)">⚔️ Guarnição Feudal & Estandartes de Guerra</h4>
+              <span class="badge gold">${totalMen} Combatentes Mobilizados</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:0.45rem;margin-bottom:0.8rem">
+              <div class="stat-pill"><small>Levas Feudais</small><strong>🛡️ ${army.levies || 0} homens</strong></div>
+              <div class="stat-pill"><small>Arqueiros & Balistários</small><strong>🏹 ${army.archers || 0} arqueiros</strong></div>
+              <div class="stat-pill"><small>Cavaleiros de Espora</small><strong>🐎 ${army.knights || 0} fidalgos</strong></div>
+              <div class="stat-pill"><small>Moral & Prontidão</small><strong>🔥 ${army.morale || 70}% / ⚡ ${army.readiness || 50}%</strong></div>
+            </div>
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.65rem">
+              Recrute tropas para fortalecer o senhorio e manter a ordem contra invasores ou revoltas senhoriais:
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.5rem">
+              <div style="display:flex;gap:0.4rem;flex-wrap:wrap">
+                <button type="button" class="chip-btn" style="flex:1;min-height:42px" onclick="window.Engine.recruitTroops('levies', 20)" ${!canRecruitLevies ? 'disabled' : ''}>
+                  🛡️ Recrutar 20 Levas (-20 🪙, -5⚡)
+                </button>
+                <button type="button" class="chip-btn" style="flex:1;min-height:42px" onclick="window.Engine.recruitTroops('archers', 10)" ${!canRecruitArchers ? 'disabled' : ''}>
+                  🏹 Recrutar 10 Arqueiros (-30 🪙, -5⚡)
+                </button>
+                <button type="button" class="chip-btn" style="flex:1;min-height:42px" onclick="window.Engine.recruitTroops('knights', 5)" ${!canRecruitKnights ? 'disabled' : ''}>
+                  🐎 Recrutar 5 Cavaleiros (-75 🪙, -5⚡)
+                </button>
+              </div>
+              <button type="button" class="btn btn-sm gold primary" style="width:100%;min-height:42px;font-weight:700" onclick="window.Engine.trainArmy()" ${!canTrain ? 'disabled' : ''}>
+                ⚔️ Treinar & Realizar Manobras da Tropa (-15 🪙, -8⚡ | +Moral & +Prontidão)
+              </button>
+            </div>
+          </div>
+        `;
+      }
     }
 
     const famMembers = STATE.npcs.filter(n => n.alive && ["Pai","Mãe","Irmão/Irmã","Cônjuge","Filho","Filha"].includes(n.role));
